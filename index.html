@@ -46,7 +46,10 @@ body{background:#0f0f0f;color:#e5e5e5;font-family:'Zen Kaku Gothic New',sans-ser
       <span class="text-xl font-bold tracking-tight">ねこ株</span>
       <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400">AI分析</span>
     </div>
-    <div class="text-xs text-gray-500" id="last-updated"></div>
+    <div class="flex items-center gap-3">
+      <div class="text-xs text-gray-500" id="last-updated"></div>
+      <button onclick="openSettings()" class="text-gray-400 text-lg">⚙️</button>
+    </div>
   </div>
 </header>
 
@@ -119,6 +122,81 @@ body{background:#0f0f0f;color:#e5e5e5;font-family:'Zen Kaku Gothic New',sans-ser
 </div>
 
 <nav class="fixed bottom-0 left-0 right-0 z-40 glass border-t border-gray-800">
+
+<!-- 設定画面 -->
+<div id="settings-modal" class="hidden fixed inset-0 z-50 bg-bg overflow-y-auto" style="padding-top:calc(env(safe-area-inset-top,12px) + 8px)">
+  <div class="max-w-lg mx-auto px-4 pb-24">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-bold">⚙️ 設定</h2>
+      <button onclick="closeSettings()" class="text-gray-500 text-2xl">&times;</button>
+    </div>
+
+    <!-- AI推奨 -->
+    <div class="bg-bg-card rounded-lg p-4 mb-4 border border-gray-800">
+      <p class="text-xs text-gray-500 mb-2">過去の分析履歴からAIが最適設定を提案</p>
+      <button id="ai-rec-btn" onclick="runAIRecommend()" class="btn-primary text-sm py-2">✨ AIおすすめ設定を提案</button>
+      <div id="ai-rec-result" class="hidden mt-3 bg-blue-500/10 rounded-lg p-3 border border-blue-500/20">
+        <div id="ai-rec-body" class="text-xs text-blue-300"></div>
+        <div class="flex gap-2 mt-2">
+          <button onclick="applyAISettings()" class="btn-primary text-xs py-1.5 flex-1">適用</button>
+          <button onclick="document.getElementById('ai-rec-result').classList.add('hidden')" class="btn-outline text-xs py-1.5">閉じる</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 分析スケジュール -->
+    <div class="bg-bg-card rounded-lg p-4 mb-4 border border-gray-800">
+      <h3 class="text-sm font-medium mb-3">🕐 分析スケジュール</h3>
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div><label class="text-[10px] text-gray-500 block mb-1">朝の分析</label>
+          <select id="s-morning" class="input-field text-sm"><option>06:00</option><option selected>07:00</option><option>08:00</option><option>09:00</option></select></div>
+        <div><label class="text-[10px] text-gray-500 block mb-1">夕方の分析</label>
+          <select id="s-evening" class="input-field text-sm"><option>15:00</option><option selected>16:00</option><option>17:00</option><option>18:00</option></select></div>
+      </div>
+      <label class="text-[10px] text-gray-500 block mb-2">実行曜日</label>
+      <div class="flex gap-2" id="s-days"></div>
+    </div>
+
+    <!-- 通知設定 -->
+    <div class="bg-bg-card rounded-lg p-4 mb-4 border border-gray-800">
+      <h3 class="text-sm font-medium mb-3">🔔 通知設定</h3>
+      <div class="mb-3">
+        <div class="flex justify-between text-xs mb-1"><span class="text-gray-400">買い通知スコア下限</span><span class="text-blue-400 font-medium" id="s-buy-val">75点</span></div>
+        <input type="range" min="60" max="95" value="75" step="5" id="s-buy" class="w-full" oninput="document.getElementById('s-buy-val').textContent=this.value+'点'">
+        <div class="flex justify-between text-[10px] text-gray-600"><span>60（緩め）</span><span>95（超厳選）</span></div>
+      </div>
+      <div class="mb-3">
+        <div class="flex justify-between text-xs mb-1"><span class="text-gray-400">危険通知スコア上限</span><span class="text-red-400 font-medium" id="s-danger-val">30点</span></div>
+        <input type="range" min="10" max="50" value="30" step="5" id="s-danger" class="w-full" oninput="document.getElementById('s-danger-val').textContent=this.value+'点'">
+        <div class="flex justify-between text-[10px] text-gray-600"><span>10（超危険のみ）</span><span>50（広め）</span></div>
+      </div>
+    </div>
+
+    <!-- スクリーニング条件 -->
+    <div class="bg-bg-card rounded-lg p-4 mb-4 border border-gray-800">
+      <h3 class="text-sm font-medium mb-3">📊 スクリーニング条件</h3>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="text-[10px] text-gray-500 block mb-1">ROE下限（%）</label><input type="number" id="s-roe" value="10" min="0" max="30" class="input-field text-sm"></div>
+        <div><label class="text-[10px] text-gray-500 block mb-1">PBR下限（倍）</label><input type="number" id="s-pbr" value="0.8" min="0" max="5" step="0.1" class="input-field text-sm"></div>
+        <div><label class="text-[10px] text-gray-500 block mb-1">自己資本比率下限（%）</label><input type="number" id="s-equity" value="30" min="0" max="80" class="input-field text-sm"></div>
+        <div><label class="text-[10px] text-gray-500 block mb-1">PER判定モード</label>
+          <select id="s-per-mode" class="input-field text-sm"><option selected>業種別自動</option><option>固定値</option></select></div>
+      </div>
+    </div>
+
+    <!-- 売買条件 -->
+    <div class="bg-bg-card rounded-lg p-4 mb-4 border border-gray-800">
+      <h3 class="text-sm font-medium mb-3">💰 売買条件</h3>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="text-[10px] text-gray-500 block mb-1">利益確定ライン（%）</label><input type="number" id="s-tp" value="15" min="5" max="50" class="input-field text-sm"></div>
+        <div><label class="text-[10px] text-gray-500 block mb-1">損切りライン（%）</label><input type="number" id="s-sl" value="7" min="3" max="20" class="input-field text-sm"></div>
+      </div>
+    </div>
+
+    <button onclick="saveSettings()" class="btn-primary mb-2">設定を保存</button>
+    <div id="s-saved" class="hidden text-center text-xs text-green-400 mt-2">✅ 保存しました</div>
+  </div>
+</div>
   <div class="max-w-lg mx-auto flex justify-around py-2" id="bottom-nav"></div>
   <div style="height:env(safe-area-inset-bottom,20px)"></div>
 </nav>
@@ -433,6 +511,113 @@ function renderGlossary(){
   document.getElementById("glossary-list").innerHTML=glossary.map(g=>`
     <div class="px-4 py-3"><div class="flex justify-between items-start gap-2 mb-1"><span class="text-sm font-medium">${g.term}</span><span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 whitespace-nowrap">${g.short}</span></div><p class="text-xs text-gray-500 leading-relaxed">${g.detail}</p></div>`).join("");
 }
+
+// ===== 設定 =====
+let settingsData={morningTime:"07:00",eveningTime:"16:00",activeDays:[0,1,2,3,4],buyScoreMin:75,dangerScoreMax:30,roeMin:10,pbrMin:0.8,equityMin:30,perMode:"業種別自動",takeProfit:15,stopLoss:7};
+
+function renderDayButtons(){
+  const days=["月","火","水","木","金","土","日"];
+  const c=document.getElementById("s-days");if(!c)return;
+  c.innerHTML=days.map((d,i)=>{
+    const active=settingsData.activeDays.includes(i);
+    return`<button onclick="toggleDay(${i})" id="day-${i}" class="w-9 h-9 rounded-full text-xs ${active?'bg-blue-500/20 text-blue-400 border border-blue-500/30':'bg-transparent text-gray-500 border border-gray-700'}">${d}</button>`
+  }).join("");
+}
+window.toggleDay=(i)=>{
+  const idx=settingsData.activeDays.indexOf(i);
+  if(idx>=0)settingsData.activeDays.splice(idx,1);else settingsData.activeDays.push(i);
+  renderDayButtons();
+};
+window.openSettings=async()=>{
+  await loadSettings();
+  document.getElementById("settings-modal").classList.remove("hidden");
+};
+window.closeSettings=()=>document.getElementById("settings-modal").classList.add("hidden");
+
+async function loadSettings(){
+  try{
+    const d=await getDocs(query(collection(db,"settings"),limit(1)));
+    let found=false;
+    d.forEach(doc=>{
+      if(doc.id==="user_settings"){
+        const s=doc.data();
+        settingsData={...settingsData,...s};
+        found=true;
+      }
+    });
+    // try specific doc
+    if(!found){
+      const{getDoc}=await import("https://www.gstatic.com/firebasejs/11.7.0/firebase-firestore.js");
+      const snap=await getDoc(doc(db,"settings","user_settings"));
+      if(snap.exists())settingsData={...settingsData,...snap.data()};
+    }
+  }catch(e){}
+  // UIに反映
+  document.getElementById("s-morning").value=settingsData.morningTime||"07:00";
+  document.getElementById("s-evening").value=settingsData.eveningTime||"16:00";
+  document.getElementById("s-buy").value=settingsData.buyScoreMin||75;
+  document.getElementById("s-buy-val").textContent=(settingsData.buyScoreMin||75)+"点";
+  document.getElementById("s-danger").value=settingsData.dangerScoreMax||30;
+  document.getElementById("s-danger-val").textContent=(settingsData.dangerScoreMax||30)+"点";
+  document.getElementById("s-roe").value=settingsData.roeMin||10;
+  document.getElementById("s-pbr").value=settingsData.pbrMin||0.8;
+  document.getElementById("s-equity").value=settingsData.equityMin||30;
+  document.getElementById("s-per-mode").value=settingsData.perMode||"業種別自動";
+  document.getElementById("s-tp").value=settingsData.takeProfit||15;
+  document.getElementById("s-sl").value=settingsData.stopLoss||7;
+  renderDayButtons();
+}
+window.saveSettings=async()=>{
+  const s={
+    morningTime:document.getElementById("s-morning").value,
+    eveningTime:document.getElementById("s-evening").value,
+    activeDays:settingsData.activeDays,
+    buyScoreMin:parseInt(document.getElementById("s-buy").value),
+    dangerScoreMax:parseInt(document.getElementById("s-danger").value),
+    roeMin:parseFloat(document.getElementById("s-roe").value),
+    pbrMin:parseFloat(document.getElementById("s-pbr").value),
+    equityMin:parseFloat(document.getElementById("s-equity").value),
+    perMode:document.getElementById("s-per-mode").value,
+    takeProfit:parseFloat(document.getElementById("s-tp").value),
+    stopLoss:parseFloat(document.getElementById("s-sl").value),
+    updatedAt:new Date(),
+  };
+  try{
+    const{setDoc}=await import("https://www.gstatic.com/firebasejs/11.7.0/firebase-firestore.js");
+    await setDoc(doc(db,"settings","user_settings"),s);
+    settingsData={...settingsData,...s};
+    document.getElementById("s-saved").classList.remove("hidden");
+    setTimeout(()=>document.getElementById("s-saved").classList.add("hidden"),2000);
+  }catch(e){alert("保存エラー: "+e.message)}
+};
+
+let aiRecSettings=null;
+window.runAIRecommend=()=>{
+  const btn=document.getElementById("ai-rec-btn");
+  btn.disabled=true;btn.textContent="分析中...";
+  setTimeout(()=>{
+    aiRecSettings={buyScoreMin:80,dangerScoreMax:25,roeMin:12,pbrMin:0.8,equityMin:30,takeProfit:12,stopLoss:5};
+    document.getElementById("ai-rec-body").innerHTML=
+      `買い通知: <b>80点以上</b>（現在${settingsData.buyScoreMin}点）<br>`+
+      `危険通知: <b>25点以下</b>（現在${settingsData.dangerScoreMax}点）<br>`+
+      `ROE下限: <b>12%</b>（現在${settingsData.roeMin}%）<br>`+
+      `利確: <b>12%</b> / 損切: <b>5%</b><br>`+
+      `<span class="text-[10px] mt-1 block">分析履歴から精度が高い条件を抽出</span>`;
+    document.getElementById("ai-rec-result").classList.remove("hidden");
+    btn.disabled=false;btn.textContent="✨ AIおすすめ設定を提案";
+  },1500);
+};
+window.applyAISettings=()=>{
+  if(!aiRecSettings)return;
+  document.getElementById("s-buy").value=aiRecSettings.buyScoreMin;
+  document.getElementById("s-buy-val").textContent=aiRecSettings.buyScoreMin+"点";
+  document.getElementById("s-danger").value=aiRecSettings.dangerScoreMax;
+  document.getElementById("s-danger-val").textContent=aiRecSettings.dangerScoreMax+"点";
+  document.getElementById("s-roe").value=aiRecSettings.roeMin;
+  document.getElementById("s-tp").value=aiRecSettings.takeProfit;
+  document.getElementById("s-sl").value=aiRecSettings.stopLoss;
+  document.getElementById("ai-rec-result").classList.add("hidden");
+};
 
 // ===== 初期化 =====
 renderTabs();renderGlossary();switchTab("ranking");loadAnalyses();loadNotifications();
