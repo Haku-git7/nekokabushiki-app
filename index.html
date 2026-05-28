@@ -91,7 +91,7 @@ a{color:inherit;text-decoration:none}
     <div class="px-4 py-2">
       <div class="relative">
         <svg class="absolute left-3 top-1/2 -translate-y-1/2 ti" style="width:16px;height:16px;stroke:var(--tx3)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="text" id="search-input" class="inp pl-9 text-sm" placeholder="銘柄名・コードで検索" oninput="renderStockList()">
+        <input type="text" id="search-input" class="inp pl-9 text-sm" placeholder="銘柄名・コードで検索" oninput="debounceSearch()">
       </div>
     </div>
     <!-- Filter -->
@@ -205,11 +205,15 @@ const LS={g(k,d=[]){try{return JSON.parse(localStorage.getItem("nk_"+k))||d}catc
 function safe(v){return v==null||(typeof v==='number'&&isNaN(v))?null:v}
 function str(v){const s=String(v||'');return s==='NaN'||s==='null'||s==='undefined'?'':s}
 
-// === Firestore Sync ===
-async function syncToCloud(key,data){try{await setDoc(doc(db,"userdata",key),{data:JSON.stringify(data),updatedAt:new Date()})}catch(e){}}
+// === Firestore Sync (debounced) ===
+let syncTimers={};
+async function syncToCloud(key,data){try{await setDoc(doc(db,"userdata",key),{data:JSON.stringify(data),updatedAt:new Date()})}catch(e){console.warn("Sync failed:",key)}}
+function debouncedSync(key,data){clearTimeout(syncTimers[key]);syncTimers[key]=setTimeout(()=>syncToCloud(key,data),500)}
 async function syncFromCloud(key){try{const snap=await getDoc(doc(db,"userdata",key));if(snap.exists()){const d=JSON.parse(snap.data().data);return d}}catch(e){}return null}
 async function initSync(key){const cloud=await syncFromCloud(key);const local=LS.g(key);if(cloud&&cloud.length>0){if(!local||local.length===0){LS.s(key,cloud);return cloud}const localTs=Math.max(...local.map(x=>x.addedAt||x.buyDate||x.date||0));const cloudTs=Math.max(...cloud.map(x=>x.addedAt||x.buyDate||x.date||0));if(cloudTs>localTs){LS.s(key,cloud);return cloud}}return local}
-function saveSync(key,data){LS.s(key,data);syncToCloud(key,data)}
+function saveSync(key,data){LS.s(key,data);debouncedSync(key,data)}
+function atomicTradeSave(p,t){portfolio=p;trades=t;LS.s("portfolio",p);LS.s("trades",t);clearTimeout(syncTimers["portfolio"]);clearTimeout(syncTimers["trades"]);setTimeout(()=>{syncToCloud("portfolio",p);syncToCloud("trades",t)},300)}
+let searchTimer;window.debounceSearch=()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>renderStockList(),200)};
 
 // === Theme ===
 function initTheme(){const t=localStorage.getItem("nk_theme")||"dark";document.documentElement.setAttribute("data-theme",t);updTh(t)}
@@ -229,13 +233,20 @@ window.toggleWatch=(c,n)=>{let l=[...watchlist];const i=l.findIndex(w=>w.code===
 let buyTgt=null,sellTgt=null;
 window.openB=(c,n,p)=>{buyTgt={c,n};$('b-stk').textContent=`${c} ${n}`;$('b-price').value=p||'';$('b-qty').value='100';$('b-modal').classList.remove('hidden');document.body.classList.add('modal-open')};
 window.closeB=()=>{$('b-modal').classList.add('hidden');document.body.classList.remove('modal-open')};
-window.doBuy=()=>{const p=parseFloat($('b-price').value),q=parseInt($('b-qty').value);if(!p||p<=0||!q||q<=0||!buyTgt){toast("正しい値を入力してください");return}const pt=[...portfolio];pt.push({code:buyTgt.c,name:buyTgt.n,buyPrice:p,qty:q,buyDate:Date.now(),status:"holding"});setP(pt);const t=[...trades];t.push({code:buyTgt.c,name:buyTgt.n,type:"buy",price:p,qty:q,date:Date.now()});setT(t);
+window.doBuy=()=>{const p=parseFloat($('b-price').value),q=parseInt($('b-qty').value);if(!p||p<=0||!q||q<=0||!buyTgt){toast("正しい値を入力してください");return}
+  // 重複チェック
+  const existing=portfolio.find(x=>x.code===buyTgt.c&&x.status==="holding");
+  if(existing&&!confirm(`${buyTgt.c}は既に保有中です。追加購入として記録しますか？`))return;
+  const pt=[...portfolio];pt.push({code:buyTgt.c,name:buyTgt.n,buyPrice:p,qty:q,buyDate:Date.now(),status:"holding"});
+  const t=[...trades];t.push({code:buyTgt.c,name:buyTgt.n,type:"buy",price:p,qty:q,date:Date.now()});
+  atomicTradeSave(pt,t);
   $('b-modal').classList.add('hidden');$('d-modal').classList.add('hidden');document.body.classList.remove('modal-open');
-  toast("購入記録を保存しました");
-  setTimeout(()=>{toTab("log")},100)};
+  toast("購入記録を保存しました");setTimeout(()=>{toTab("log")},100)};
 window.openS=(c,n,idx)=>{sellTgt={c,n,idx};$('s-stk').textContent=`${c} ${n}`;$('s-price').value='';$('s-modal').classList.remove('hidden');document.body.classList.add('modal-open')};
 window.closeS=()=>{$('s-modal').classList.add('hidden');document.body.classList.remove('modal-open')};
-window.doSell=()=>{const p=parseFloat($('s-price').value);if(!p||p<=0||!sellTgt){toast("正しい値を入力してください");return}const pt=[...portfolio];const it=pt[sellTgt.idx];if(!it)return;const pnl=(p-it.buyPrice)*it.qty;it.status="sold";it.sellPrice=p;it.sellDate=Date.now();it.pnl=pnl;setP(pt);const t=[...trades];t.push({code:sellTgt.c,name:sellTgt.n,type:"sell",price:p,qty:it.qty,date:Date.now(),pnl});setT(t);
+window.doSell=()=>{const p=parseFloat($('s-price').value);if(!p||p<=0||!sellTgt){toast("正しい値を入力してください");return}const pt=[...portfolio];const it=pt[sellTgt.idx];if(!it)return;const pnl=(p-it.buyPrice)*it.qty;it.status="sold";it.sellPrice=p;it.sellDate=Date.now();it.pnl=pnl;
+  const t=[...trades];t.push({code:sellTgt.c,name:sellTgt.n,type:"sell",price:p,qty:it.qty,date:Date.now(),pnl});
+  atomicTradeSave(pt,t);
   $('s-modal').classList.add('hidden');document.body.classList.remove('modal-open');
   toast(pnl>=0?`+${pnl.toLocaleString()}円の利益！`:`${pnl.toLocaleString()}円の損失`);
   setTimeout(()=>renderLog(),100)};
@@ -307,7 +318,7 @@ window.showD=(s)=>{document.body.classList.add('modal-open');const sg=SM[s.signa
   const theme=document.documentElement.getAttribute('data-theme')||'dark';
   $('d-body').innerHTML=`
     <div class="flex items-center justify-between mb-3"><div><div class="text-base font-bold">${n}</div><div class="text-xs tx2">${s.stockCode}.T 東証</div></div><div class="text-right"><span class="text-2xl font-bold">${s.score}</span><span class="text-xs tx2">点</span></div></div>
-    <div class="flex gap-2 mb-3"><span class="text-sm font-bold r${s.rank}">${s.rank}ランク</span><span class="text-xs px-2 py-0.5 rounded ${sg.c}">${sg.l}</span></div>
+    <div class="flex gap-2 mb-3"><span class="text-sm font-bold r${s.rank}">${s.rank}ランク</span><span class="text-xs px-2 py-0.5 rounded ${sg.c}">${sg.l}</span>${s.confidence?`<span class="text-xs tx2">信頼度 ${s.confidence}%</span>`:''}</div>
     ${!h?`<button class="btn bp mb-3" onclick="openB('${s.stockCode}','${n.replace(/'/g,"")}',${s.close||0})">買った</button>`:''}${hH}
     <div class="rounded-xl overflow-hidden mb-3 border bc" style="height:350px"><div id="tv-chart"></div></div>
     <div class="flex gap-2 mb-3 overflow-x-auto">${['1D','1W','1M','3M','6M','1Y'].map(tf=>`<button onclick="changeTF('${s.stockCode}','${tf}')" class="ch text-[10px] ${tf==='3M'?'on':''}" id="tf-${tf}">${tf}</button>`).join('')}</div>
