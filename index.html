@@ -13,24 +13,29 @@
 <link rel="manifest" href="/manifest.json">
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
-<script>
-tailwind.config={theme:{extend:{fontFamily:{sans:['"Zen Kaku Gothic New"','sans-serif']},colors:{bg:{DEFAULT:'#0f0f0f',card:'#1a1a1a',hover:'#222'},accent:{buy:'#22c55e',danger:'#ef4444',warn:'#f59e0b',info:'#3b82f6'}}}}}
-</script>
+<script>tailwind.config={theme:{extend:{fontFamily:{sans:['"Zen Kaku Gothic New"','sans-serif']},colors:{bg:{DEFAULT:'#0f0f0f',card:'#1a1a1a',hover:'#222'},accent:{buy:'#22c55e',danger:'#ef4444',warn:'#f59e0b',info:'#3b82f6'}}}}}</script>
 <style>
-  body{background:#0f0f0f;color:#e5e5e5;font-family:'Zen Kaku Gothic New',sans-serif;-webkit-user-select:none;user-select:none;}
-  .rank-S{color:#ef4444}.rank-A{color:#3b82f6}.rank-B{color:#888}.rank-C{color:#555}
-  .signal-buy{background:rgba(34,197,94,.15);color:#22c55e}
-  .signal-danger{background:rgba(239,68,68,.15);color:#ef4444}
-  .signal-watch{background:rgba(245,158,11,.15);color:#f59e0b}
-  .fade-in{animation:fadeIn .3s ease}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-  .glass{background:rgba(26,26,26,.92);backdrop-filter:blur(12px)}
-  ::-webkit-scrollbar{width:0}
-  .stock-row{position:relative;overflow:hidden}
-  .stock-content{position:relative;z-index:2;background:#0f0f0f;transition:transform .2s ease}
-  .star-btn{position:absolute;right:0;top:0;bottom:0;width:64px;display:flex;align-items:center;justify-content:center;z-index:1}
-  .star-btn button{width:44px;height:44px;border-radius:50%;background:rgba(59,130,246,.2);border:1px solid rgba(59,130,246,.3);color:#3b82f6;font-size:20px;display:flex;align-items:center;justify-content:center}
-  .star-btn button.watched{background:rgba(250,204,21,.2);border-color:rgba(250,204,21,.4);color:#facc15}
+body{background:#0f0f0f;color:#e5e5e5;font-family:'Zen Kaku Gothic New',sans-serif;-webkit-user-select:none;user-select:none;overflow-x:hidden}
+.rank-S{color:#ef4444}.rank-A{color:#3b82f6}.rank-B{color:#888}.rank-C{color:#555}
+.signal-buy{background:rgba(34,197,94,.15);color:#22c55e}
+.signal-danger{background:rgba(239,68,68,.15);color:#ef4444}
+.signal-watch{background:rgba(245,158,11,.15);color:#f59e0b}
+.fade-in{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.glass{background:rgba(26,26,26,.92);backdrop-filter:blur(12px)}
+::-webkit-scrollbar{width:0}
+.stock-row{position:relative;overflow:hidden}
+.stock-content{position:relative;z-index:2;background:#0f0f0f;transition:transform .2s ease}
+.star-btn{position:absolute;right:0;top:0;bottom:0;width:64px;display:flex;align-items:center;justify-content:center;z-index:1}
+.star-btn button{width:44px;height:44px;border-radius:50%;background:rgba(59,130,246,.2);border:1px solid rgba(59,130,246,.3);color:#3b82f6;font-size:20px;display:flex;align-items:center;justify-content:center}
+.star-btn button.watched{background:rgba(250,204,21,.2);border-color:rgba(250,204,21,.4);color:#facc15}
+.pull-indicator{text-align:center;padding:12px;color:#555;font-size:12px;transition:opacity .2s}
+.input-field{background:#222;border:1px solid #333;border-radius:8px;padding:8px 12px;color:#e5e5e5;font-size:14px;width:100%;outline:none}
+.input-field:focus{border-color:#3b82f6}
+.btn-primary{background:#3b82f6;color:white;border:none;border-radius:8px;padding:10px;font-size:14px;font-weight:500;width:100%;cursor:pointer}
+.btn-sell{background:#ef4444;color:white;border:none;border-radius:8px;padding:10px;font-size:14px;font-weight:500;width:100%;cursor:pointer}
+.btn-outline{background:transparent;border:1px solid #333;color:#e5e5e5;border-radius:8px;padding:10px;font-size:14px;width:100%;cursor:pointer}
+.pnl-plus{color:#22c55e}.pnl-minus{color:#ef4444}
 </style>
 </head>
 <body class="min-h-screen" style="padding-bottom:calc(80px + env(safe-area-inset-bottom,20px))">
@@ -45,49 +50,73 @@ tailwind.config={theme:{extend:{fontFamily:{sans:['"Zen Kaku Gothic New"','sans-
   </div>
 </header>
 
-<main class="max-w-lg mx-auto">
+<main class="max-w-lg mx-auto" id="main-scroll">
+  <div id="pull-indicator" class="pull-indicator" style="opacity:0">↓ 引っ張って更新</div>
+
   <div id="view-ranking" class="hidden">
     <div class="px-4 py-3 flex justify-between text-xs text-gray-500 border-b border-gray-800">
-      <span id="analysis-date"></span>
-      <span id="analysis-count"></span>
+      <span id="analysis-date"></span><span id="analysis-count"></span>
     </div>
     <div id="stock-list"></div>
-    <div id="loading" class="text-center py-12 text-gray-500">
-      <div class="animate-pulse text-2xl mb-2">📊</div>データ読み込み中...
-    </div>
+    <div id="loading" class="text-center py-12 text-gray-500"><div class="animate-pulse text-2xl mb-2">📊</div>データ読み込み中...</div>
   </div>
 
   <div id="view-watch" class="hidden">
     <div id="watch-list"></div>
-    <div id="watch-empty" class="text-center py-16 text-gray-500">
-      <div class="text-3xl mb-3">⭐</div>
-      <p class="text-sm">ウォッチリストに銘柄を追加してください</p>
-      <p class="text-xs mt-2 text-gray-600">ランキングの銘柄を左にスワイプ→★で追加</p>
-    </div>
+    <div id="watch-empty" class="text-center py-16 text-gray-500"><div class="text-3xl mb-3">⭐</div><p class="text-sm">ウォッチリストに銘柄を追加してください</p><p class="text-xs mt-2 text-gray-600">ランキングの銘柄を左にスワイプ→★で追加</p></div>
+  </div>
+
+  <div id="view-log" class="hidden">
+    <div id="log-summary" class="grid grid-cols-3 gap-2 p-4"></div>
+    <div class="px-4 pb-2"><canvas id="pnl-chart" height="160" style="width:100%"></canvas></div>
+    <div class="px-4 py-2 text-xs text-gray-500 border-b border-gray-800">取引履歴</div>
+    <div id="trade-list"></div>
+    <div id="trade-empty" class="text-center py-12 text-gray-500"><div class="text-3xl mb-3">📈</div><p class="text-sm">まだ取引記録がありません</p><p class="text-xs mt-2 text-gray-600">銘柄詳細画面から「買った」で記録開始</p></div>
   </div>
 
   <div id="view-notify" class="hidden">
     <div id="notify-list"></div>
-    <div id="notify-empty" class="text-center py-16 text-gray-500">
-      <div class="text-3xl mb-3">🔔</div>
-      <p class="text-sm">まだ通知はありません</p>
-    </div>
+    <div id="notify-empty" class="text-center py-16 text-gray-500"><div class="text-3xl mb-3">🔔</div><p class="text-sm">まだ通知はありません</p></div>
   </div>
 
   <div id="view-glossary" class="hidden">
     <div id="glossary-list" class="divide-y divide-gray-800"></div>
   </div>
-
-  <div id="detail-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-end justify-center">
-    <div class="glass w-full max-w-lg rounded-t-2xl p-5 max-h-[85vh] overflow-y-auto border-t border-gray-700">
-      <div class="flex justify-between items-center mb-4">
-        <h2 id="detail-title" class="text-lg font-bold"></h2>
-        <button onclick="closeDetail()" class="text-gray-500 text-2xl leading-none">&times;</button>
-      </div>
-      <div id="detail-body"></div>
-    </div>
-  </div>
 </main>
+
+<!-- 銘柄詳細モーダル -->
+<div id="detail-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-end justify-center">
+  <div class="glass w-full max-w-lg rounded-t-2xl p-5 max-h-[85vh] overflow-y-auto border-t border-gray-700">
+    <div class="flex justify-between items-center mb-4">
+      <h2 id="detail-title" class="text-lg font-bold"></h2>
+      <button onclick="closeDetail()" class="text-gray-500 text-2xl leading-none">&times;</button>
+    </div>
+    <div id="detail-body"></div>
+  </div>
+</div>
+
+<!-- 買い入力モーダル -->
+<div id="buy-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center px-4">
+  <div class="glass w-full max-w-sm rounded-2xl p-5 border border-gray-700">
+    <h3 class="text-base font-bold mb-4">購入記録</h3>
+    <p id="buy-modal-stock" class="text-sm text-gray-400 mb-3"></p>
+    <div class="mb-3"><label class="text-xs text-gray-500 block mb-1">買値（円）</label><input type="number" id="buy-price" class="input-field" placeholder="例: 3022"></div>
+    <div class="mb-4"><label class="text-xs text-gray-500 block mb-1">数量（株）</label><input type="number" id="buy-qty" class="input-field" placeholder="例: 100" value="100"></div>
+    <button class="btn-primary mb-2" onclick="confirmBuy()">記録する</button>
+    <button class="btn-outline" onclick="closeBuyModal()">キャンセル</button>
+  </div>
+</div>
+
+<!-- 売り入力モーダル -->
+<div id="sell-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center px-4">
+  <div class="glass w-full max-w-sm rounded-2xl p-5 border border-gray-700">
+    <h3 class="text-base font-bold mb-4">売却記録</h3>
+    <p id="sell-modal-stock" class="text-sm text-gray-400 mb-3"></p>
+    <div class="mb-4"><label class="text-xs text-gray-500 block mb-1">売値（円）</label><input type="number" id="sell-price" class="input-field" placeholder="例: 3500"></div>
+    <button class="btn-sell mb-2" onclick="confirmSell()">売却記録する</button>
+    <button class="btn-outline" onclick="closeSellModal()">キャンセル</button>
+  </div>
+</div>
 
 <nav class="fixed bottom-0 left-0 right-0 z-40 glass border-t border-gray-800">
   <div class="max-w-lg mx-auto flex justify-around py-2" id="bottom-nav"></div>
@@ -96,52 +125,93 @@ tailwind.config={theme:{extend:{fontFamily:{sans:['"Zen Kaku Gothic New"','sans-
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/11.7.0/firebase-app.js";
-import{getFirestore,collection,query,orderBy,limit,getDocs}from"https://www.gstatic.com/firebasejs/11.7.0/firebase-firestore.js";
+import{getFirestore,collection,query,orderBy,limit,getDocs,addDoc,updateDoc,doc,Timestamp}from"https://www.gstatic.com/firebasejs/11.7.0/firebase-firestore.js";
 
-const firebaseConfig={
-  apiKey:"AIzaSyB0ejbZVpUUJr_GJL5h3XZ93-WeyvRQIIc",
-  authDomain:"nekokabushiki.firebaseapp.com",
-  projectId:"nekokabushiki",
-  storageBucket:"nekokabushiki.firebasestorage.app",
-  messagingSenderId:"575051800779",
-  appId:"1:575051800779:web:23b819dcfdd70c55f53b4e"
-};
-const app=initializeApp(firebaseConfig);
+const app=initializeApp({apiKey:"AIzaSyB0ejbZVpUUJr_GJL5h3XZ93-WeyvRQIIc",authDomain:"nekokabushiki.firebaseapp.com",projectId:"nekokabushiki",storageBucket:"nekokabushiki.firebasestorage.app",messagingSenderId:"575051800779",appId:"1:575051800779:web:23b819dcfdd70c55f53b4e"});
 const db=getFirestore(app);
 
-// ===== ウォッチリスト管理 =====
-function getWatchlist(){
-  try{return JSON.parse(localStorage.getItem("nekokabushiki_watch")||"[]")}
-  catch{return[]}
-}
-function saveWatchlist(list){
-  localStorage.setItem("nekokabushiki_watch",JSON.stringify(list));
-}
+// ===== ローカルストレージ =====
+const LS={
+  get(k,d=[]){try{return JSON.parse(localStorage.getItem("neko_"+k))||d}catch{return d}},
+  set(k,v){localStorage.setItem("neko_"+k,JSON.stringify(v))},
+};
+
+// ===== ウォッチリスト =====
+function getWatchlist(){return LS.get("watch")}
+function saveWatchlist(l){LS.set("watch",l)}
 function toggleWatch(code,name){
-  let list=getWatchlist();
-  const idx=list.findIndex(w=>w.code===code);
-  if(idx>=0){list.splice(idx,1)}else{list.push({code,name,addedAt:Date.now()})}
-  saveWatchlist(list);
-  renderWatchlist();
-  renderStockList();
+  let l=getWatchlist();const i=l.findIndex(w=>w.code===code);
+  if(i>=0)l.splice(i,1);else l.push({code,name,addedAt:Date.now()});
+  saveWatchlist(l);renderWatchlist();renderStockList();
 }
-function isWatched(code){return getWatchlist().some(w=>w.code===code)}
+function isWatched(c){return getWatchlist().some(w=>w.code===c)}
+
+// ===== ポートフォリオ =====
+function getPortfolio(){return LS.get("portfolio")}
+function savePortfolio(l){LS.set("portfolio",l)}
+function getTrades(){return LS.get("trades")}
+function saveTrades(l){LS.set("trades",l)}
+
+let buyTarget=null;
+window.openBuyModal=(code,name,price)=>{
+  buyTarget={code,name};
+  document.getElementById("buy-modal-stock").textContent=`${code} ${name}`;
+  document.getElementById("buy-price").value=price||"";
+  document.getElementById("buy-qty").value="100";
+  document.getElementById("buy-modal").classList.remove("hidden");
+};
+window.closeBuyModal=()=>document.getElementById("buy-modal").classList.add("hidden");
+window.confirmBuy=()=>{
+  const price=parseFloat(document.getElementById("buy-price").value);
+  const qty=parseInt(document.getElementById("buy-qty").value);
+  if(!price||!qty||!buyTarget)return;
+  const p=getPortfolio();
+  p.push({code:buyTarget.code,name:buyTarget.name,buyPrice:price,qty,buyDate:Date.now(),status:"holding"});
+  savePortfolio(p);
+  const t=getTrades();
+  t.push({code:buyTarget.code,name:buyTarget.name,type:"buy",price,qty,date:Date.now()});
+  saveTrades(t);
+  closeBuyModal();closeDetail();
+  switchTab("log");
+};
+
+let sellTarget=null;
+window.openSellModal=(code,name,idx)=>{
+  sellTarget={code,name,idx};
+  document.getElementById("sell-modal-stock").textContent=`${code} ${name}`;
+  document.getElementById("sell-price").value="";
+  document.getElementById("sell-modal").classList.remove("hidden");
+};
+window.closeSellModal=()=>document.getElementById("sell-modal").classList.add("hidden");
+window.confirmSell=()=>{
+  const price=parseFloat(document.getElementById("sell-price").value);
+  if(!price||!sellTarget)return;
+  const p=getPortfolio();
+  const item=p[sellTarget.idx];
+  if(!item)return;
+  const pnl=(price-item.buyPrice)*item.qty;
+  item.status="sold";item.sellPrice=price;item.sellDate=Date.now();item.pnl=pnl;
+  savePortfolio(p);
+  const t=getTrades();
+  t.push({code:sellTarget.code,name:sellTarget.name,type:"sell",price,qty:item.qty,date:Date.now(),pnl});
+  saveTrades(t);
+  closeSellModal();
+  renderLog();
+};
 
 // ===== タブ =====
 const tabs=[
   {id:"ranking",label:"ランキング",icon:"📊"},
   {id:"watch",label:"ウォッチ",icon:"⭐"},
+  {id:"log",label:"ログ",icon:"📈"},
   {id:"notify",label:"通知",icon:"🔔"},
   {id:"glossary",label:"用語",icon:"📖"},
 ];
 let activeTab="ranking";
-
 function renderTabs(){
   document.getElementById("bottom-nav").innerHTML=tabs.map(t=>
     `<button onclick="switchTab('${t.id}')" class="flex flex-col items-center gap-0.5 transition ${t.id===activeTab?'text-blue-400':'text-gray-500'}">
-      <span class="text-lg">${t.icon}</span>
-      <span class="text-[10px]">${t.label}</span>
-    </button>`
+      <span class="text-lg">${t.icon}</span><span class="text-[10px]">${t.label}</span></button>`
   ).join("");
 }
 window.switchTab=(id)=>{
@@ -149,170 +219,199 @@ window.switchTab=(id)=>{
   tabs.forEach(t=>document.getElementById("view-"+t.id).classList.toggle("hidden",t.id!==id));
   renderTabs();
   if(id==="watch")renderWatchlist();
+  if(id==="log")renderLog();
 };
 
-// ===== ランキング =====
-const signalMap={buy:{label:"買い",cls:"signal-buy"},danger:{label:"危険",cls:"signal-danger"},watch:{label:"様子見",cls:"signal-watch"}};
-let stocksData=[];
+// ===== プルリフレッシュ =====
+let pullStartY=0,pulling=false;
+const mainEl=document.getElementById("main-scroll");
+const pullInd=document.getElementById("pull-indicator");
+document.addEventListener("touchstart",e=>{
+  if(window.scrollY===0&&activeTab==="ranking"){pullStartY=e.touches[0].clientY;pulling=true}
+},{passive:true});
+document.addEventListener("touchmove",e=>{
+  if(!pulling)return;
+  const diff=e.touches[0].clientY-pullStartY;
+  if(diff>0&&diff<120){pullInd.style.opacity=Math.min(diff/60,1);pullInd.textContent=diff>60?"↑ 離して更新":"↓ 引っ張って更新"}
+},{passive:true});
+document.addEventListener("touchend",()=>{
+  if(!pulling)return;
+  const op=parseFloat(pullInd.style.opacity);
+  if(op>=1){pullInd.textContent="更新中...";loadAnalyses().then(()=>{pullInd.style.opacity=0})}
+  else{pullInd.style.opacity=0}
+  pulling=false;
+});
 
+// ===== ランキング =====
+const sigMap={buy:{label:"買い",cls:"signal-buy"},danger:{label:"危険",cls:"signal-danger"},watch:{label:"様子見",cls:"signal-watch"}};
+let stocksData=[];
 function renderStockList(){
-  const el=document.getElementById("stock-list");
-  if(!stocksData.length)return;
+  const el=document.getElementById("stock-list");if(!stocksData.length)return;
   el.innerHTML=stocksData.map((s,i)=>{
-    const sig=signalMap[s.signal]||signalMap.watch;
-    const rank=s.rank||"B";
-    const watched=isWatched(s.stockCode);
-    return`
-    <div class="stock-row border-b border-gray-800/50 fade-in" style="animation-delay:${i*50}ms" data-code="${s.stockCode}">
-      <div class="star-btn">
-        <button class="${watched?'watched':''}" onclick="event.stopPropagation();toggleWatch('${s.stockCode}','${(s.name||'').replace(/'/g,'')}')">${watched?'★':'☆'}</button>
-      </div>
+    const sig=sigMap[s.signal]||sigMap.watch;const w=isWatched(s.stockCode);
+    return`<div class="stock-row border-b border-gray-800/50 fade-in" style="animation-delay:${i*40}ms">
+      <div class="star-btn"><button class="${w?'watched':''}" onclick="event.stopPropagation();toggleWatch('${s.stockCode}','${(s.name||'').replace(/'/g,'')}')">${w?'★':'☆'}</button></div>
       <div class="stock-content px-4 py-3 flex items-center gap-3" data-idx="${i}">
-        <span class="text-xl font-bold rank-${rank} w-6 text-center">${rank}</span>
+        <span class="text-xl font-bold rank-${s.rank||'B'} w-6 text-center">${s.rank||'B'}</span>
         <div class="flex-1 min-w-0" onclick='showDetail(${JSON.stringify(s).replace(/'/g,"&#39;")})'>
-          <div class="flex items-center gap-2 mb-0.5">
-            <span class="text-sm font-medium">${s.stockCode} ${s.name||''}</span>
-            <span class="text-[10px] px-1.5 py-0.5 rounded ${sig.cls}">${sig.label}</span>
-          </div>
-          <p class="text-xs text-gray-500 truncate">${s.summary||''}</p>
-          <span class="text-[10px] text-gray-600">${s.strategy||''}</span>
+          <div class="flex items-center gap-2 mb-0.5"><span class="text-sm font-medium">${s.stockCode} ${s.name||''}</span><span class="text-[10px] px-1.5 py-0.5 rounded ${sig.cls}">${sig.label}</span></div>
+          <p class="text-xs text-gray-500 truncate">${s.summary||''}</p><span class="text-[10px] text-gray-600">${s.strategy||''}</span>
         </div>
         <div class="text-right" onclick='showDetail(${JSON.stringify(s).replace(/'/g,"&#39;")})'>
-          <span class="text-lg font-bold">${s.score||0}</span>
-          <span class="text-[10px] text-gray-500 block">点</span>
-        </div>
-      </div>
-    </div>`;
+          <span class="text-lg font-bold">${s.score||0}</span><span class="text-[10px] text-gray-500 block">点</span></div>
+      </div></div>`;
   }).join("");
   initSwipe();
 }
-
-// ===== スワイプ処理 =====
 function initSwipe(){
   document.querySelectorAll(".stock-content").forEach(el=>{
-    let startX=0,currentX=0,swiped=false;
-    el.addEventListener("touchstart",e=>{startX=e.touches[0].clientX;currentX=0;},{passive:true});
-    el.addEventListener("touchmove",e=>{
-      const diff=e.touches[0].clientX-startX;
-      if(diff<0){
-        currentX=Math.max(diff,-64);
-        el.style.transform=`translateX(${currentX}px)`;
-        el.style.transition="none";
-      }
-    },{passive:true});
-    el.addEventListener("touchend",()=>{
-      el.style.transition="transform .2s ease";
-      if(currentX<-30){el.style.transform="translateX(-64px)";swiped=true}
-      else{el.style.transform="translateX(0)";swiped=false}
-    });
-    el.addEventListener("click",e=>{
-      if(swiped){e.preventDefault();e.stopPropagation();el.style.transform="translateX(0)";swiped=false}
-    },true);
+    let sx=0,cx=0,sw=false;
+    el.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;cx=0},{passive:true});
+    el.addEventListener("touchmove",e=>{const d=e.touches[0].clientX-sx;if(d<0){cx=Math.max(d,-64);el.style.transform=`translateX(${cx}px)`;el.style.transition="none"}},{passive:true});
+    el.addEventListener("touchend",()=>{el.style.transition="transform .2s ease";if(cx<-30){el.style.transform="translateX(-64px)";sw=true}else{el.style.transform="translateX(0)";sw=false}});
+    el.addEventListener("click",e=>{if(sw){e.preventDefault();e.stopPropagation();el.style.transform="translateX(0)";sw=false}},true);
   });
 }
-
 async function loadAnalyses(){
   try{
     const q=query(collection(db,"analyses"),orderBy("analyzedAt","desc"),limit(20));
-    const snap=await getDocs(q);
-    const all=snap.docs.map(d=>({id:d.id,...d.data()}));
+    const snap=await getDocs(q);const all=snap.docs.map(d=>({id:d.id,...d.data()}));
     if(!all.length){document.getElementById("loading").innerHTML='<div class="text-2xl mb-2">📊</div>分析データがまだありません';return}
-
-    const latestDate=all[0].analyzedAt?.toDate?.()||new Date();
-    const dateStr=latestDate.toLocaleDateString("ja-JP");
-    const timeStr=latestDate.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
-
-    const seen=new Set();
-    stocksData=[];
+    const ld=all[0].analyzedAt?.toDate?.()||new Date();
+    document.getElementById("analysis-date").textContent=`${ld.toLocaleDateString("ja-JP")} ${ld.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"})} 更新`;
+    document.getElementById("last-updated").textContent=ld.toLocaleDateString("ja-JP");
+    const seen=new Set();stocksData=[];
     for(const s of all){if(!seen.has(s.stockCode)){seen.add(s.stockCode);stocksData.push(s)}}
     stocksData.sort((a,b)=>(b.score||0)-(a.score||0));
-
-    document.getElementById("analysis-date").textContent=`${dateStr} ${timeStr} 更新`;
-    document.getElementById("analysis-count").textContent=`${stocksData.length}銘柄分析済`;
-    document.getElementById("last-updated").textContent=dateStr;
+    document.getElementById("analysis-count").textContent=`${stocksData.length}銘柄`;
     document.getElementById("loading").classList.add("hidden");
     renderStockList();
-  }catch(e){
-    document.getElementById("loading").innerHTML=`<div class="text-2xl mb-2">😿</div><p class="text-sm">データ取得エラー</p><p class="text-xs text-gray-600 mt-1">${e.message}</p>`;
-  }
+  }catch(e){document.getElementById("loading").innerHTML=`<div class="text-2xl mb-2">😿</div><p class="text-sm">エラー</p><p class="text-xs text-gray-600">${e.message}</p>`}
 }
 
-// ===== 銘柄詳細 =====
+// ===== 詳細モーダル =====
 window.showDetail=(s)=>{
   document.getElementById("detail-title").textContent=`${s.stockCode} ${s.name||''}`;
-  const sig=signalMap[s.signal]||signalMap.watch;
+  const sig=sigMap[s.signal]||sigMap.watch;
+  const holding=getPortfolio().find(p=>p.code===s.stockCode&&p.status==="holding");
+  let holdingHtml="";
+  if(holding){
+    const cur=s.close||0;const pnl=(cur-holding.buyPrice)*holding.qty;const pct=((cur/holding.buyPrice-1)*100).toFixed(1);
+    holdingHtml=`<div class="bg-bg rounded-lg p-3 mb-3 border border-gray-700">
+      <div class="text-xs text-gray-500 mb-1">保有中</div>
+      <div class="flex justify-between mb-1"><span class="text-sm">買値 ${holding.buyPrice.toLocaleString()}円 × ${holding.qty}株</span></div>
+      <div class="text-sm ${pnl>=0?'pnl-plus':'pnl-minus'}">${pnl>=0?'+':''}${pnl.toLocaleString()}円 (${pnl>=0?'+':''}${pct}%)</div>
+      <button class="btn-sell mt-2 text-sm py-2" onclick="openSellModal('${s.stockCode}','${(s.name||'').replace(/'/g,'')}',${getPortfolio().indexOf(holding)})">売った</button>
+    </div>`;
+  }
   document.getElementById("detail-body").innerHTML=`
-    <div class="flex items-center gap-3 mb-4">
-      <span class="text-3xl font-bold rank-${s.rank}">${s.rank}</span>
-      <div><span class="text-2xl font-bold">${s.score}点</span>
-      <span class="text-xs px-2 py-0.5 rounded ml-2 ${sig.cls}">${sig.label}</span></div>
-    </div>
-    <div class="bg-bg rounded-lg p-3 mb-3"><div class="text-xs text-gray-500 mb-1">戦略</div><div class="text-sm">${s.strategy||'未設定'}</div></div>
-    <div class="bg-bg rounded-lg p-3 mb-3"><div class="text-xs text-gray-500 mb-1">AI分析コメント</div><div class="text-sm">${s.summary||''}</div></div>
+    <div class="flex items-center gap-3 mb-4"><span class="text-3xl font-bold rank-${s.rank}">${s.rank}</span><div><span class="text-2xl font-bold">${s.score}点</span><span class="text-xs px-2 py-0.5 rounded ml-2 ${sig.cls}">${sig.label}</span></div></div>
+    ${holdingHtml}
+    <div class="bg-bg rounded-lg p-3 mb-3"><div class="text-xs text-gray-500 mb-1">戦略</div><div class="text-sm">${s.strategy||''}</div></div>
+    <div class="bg-bg rounded-lg p-3 mb-3"><div class="text-xs text-gray-500 mb-1">AI分析</div><div class="text-sm">${s.summary||''}</div></div>
     ${s.reasons?.length?`<div class="bg-bg rounded-lg p-3 mb-3"><div class="text-xs text-gray-500 mb-1">買い理由</div>${s.reasons.map(r=>`<div class="text-sm text-green-400 mb-1">+ ${r}</div>`).join("")}</div>`:''}
     ${s.risks?.length?`<div class="bg-bg rounded-lg p-3 mb-3"><div class="text-xs text-gray-500 mb-1">リスク</div>${s.risks.map(r=>`<div class="text-sm text-red-400 mb-1">- ${r}</div>`).join("")}</div>`:''}
-    <div class="grid grid-cols-3 gap-2 text-center">
+    <div class="grid grid-cols-3 gap-2 text-center mb-3">
       <div class="bg-bg rounded-lg p-2"><div class="text-[10px] text-gray-500">終値</div><div class="text-sm font-medium">${s.close?.toLocaleString()||'-'}円</div></div>
       <div class="bg-bg rounded-lg p-2"><div class="text-[10px] text-gray-500">RSI</div><div class="text-sm font-medium">${s.rsi||'-'}</div></div>
       <div class="bg-bg rounded-lg p-2"><div class="text-[10px] text-gray-500">MACD</div><div class="text-sm font-medium">${s.macd_cross==='golden_cross'?'GC':s.macd_cross==='dead_cross'?'DC':'-'}</div></div>
-    </div>`;
+    </div>
+    ${!holding?`<button class="btn-primary" onclick="openBuyModal('${s.stockCode}','${(s.name||'').replace(/'/g,'')}',${s.close||0})">買った</button>`:''}`;
   document.getElementById("detail-modal").classList.remove("hidden");
 };
 window.closeDetail=()=>document.getElementById("detail-modal").classList.add("hidden");
 
-// ===== ウォッチリスト表示 =====
+// ===== ウォッチ =====
 window.toggleWatch=toggleWatch;
-
 function renderWatchlist(){
-  const list=getWatchlist();
-  const el=document.getElementById("watch-list");
-  const empty=document.getElementById("watch-empty");
-  if(!list.length){el.innerHTML="";empty.classList.remove("hidden");return}
-  empty.classList.add("hidden");
-
-  el.innerHTML=list.map(w=>{
-    const stock=stocksData.find(s=>s.stockCode===w.code);
-    if(stock){
-      const sig=signalMap[stock.signal]||signalMap.watch;
+  const l=getWatchlist(),el=document.getElementById("watch-list"),em=document.getElementById("watch-empty");
+  if(!l.length){el.innerHTML="";em.classList.remove("hidden");return}
+  em.classList.add("hidden");
+  el.innerHTML=l.map(w=>{
+    const s=stocksData.find(x=>x.stockCode===w.code);
+    if(s){const sig=sigMap[s.signal]||sigMap.watch;
       return`<div class="flex items-center gap-3 px-4 py-3 border-b border-gray-800/50">
-        <span class="text-xl font-bold rank-${stock.rank} w-6 text-center">${stock.rank}</span>
-        <div class="flex-1 min-w-0" onclick='showDetail(${JSON.stringify(stock).replace(/'/g,"&#39;")})'>
-          <div class="flex items-center gap-2 mb-0.5">
-            <span class="text-sm font-medium">${stock.stockCode} ${stock.name||''}</span>
-            <span class="text-[10px] px-1.5 py-0.5 rounded ${sig.cls}">${sig.label}</span>
-          </div>
-          <p class="text-xs text-gray-500 truncate">${stock.summary||''}</p>
-        </div>
-        <div class="text-right mr-2"><span class="text-lg font-bold">${stock.score||0}</span><span class="text-[10px] text-gray-500 block">点</span></div>
-        <button onclick="toggleWatch('${w.code}','${(w.name||'').replace(/'/g,'')}')" class="text-yellow-400 text-xl">★</button>
-      </div>`;
-    }
-    return`<div class="flex items-center justify-between px-4 py-3 border-b border-gray-800/50">
-      <span class="text-sm">${w.code} ${w.name||''}</span>
-      <button onclick="toggleWatch('${w.code}','${(w.name||'').replace(/'/g,'')}')" class="text-yellow-400 text-xl">★</button>
-    </div>`;
+        <span class="text-xl font-bold rank-${s.rank} w-6 text-center">${s.rank}</span>
+        <div class="flex-1 min-w-0" onclick='showDetail(${JSON.stringify(s).replace(/'/g,"&#39;")})'>
+          <div class="flex items-center gap-2 mb-0.5"><span class="text-sm font-medium">${s.stockCode} ${s.name||''}</span><span class="text-[10px] px-1.5 py-0.5 rounded ${sig.cls}">${sig.label}</span></div>
+          <p class="text-xs text-gray-500 truncate">${s.summary||''}</p></div>
+        <div class="text-right mr-2"><span class="text-lg font-bold">${s.score||0}</span><span class="text-[10px] text-gray-500 block">点</span></div>
+        <button onclick="toggleWatch('${w.code}','')" class="text-yellow-400 text-xl">★</button></div>`}
+    return`<div class="flex items-center justify-between px-4 py-3 border-b border-gray-800/50"><span class="text-sm">${w.code} ${w.name||''}</span><button onclick="toggleWatch('${w.code}','')" class="text-yellow-400 text-xl">★</button></div>`
   }).join("");
 }
 
-// ===== 通知履歴 =====
+// ===== ログ =====
+function renderLog(){
+  const trades=getTrades(),portfolio=getPortfolio();
+  const sold=portfolio.filter(p=>p.status==="sold");
+  const holding=portfolio.filter(p=>p.status==="holding");
+  const totalPnl=sold.reduce((s,p)=>s+(p.pnl||0),0);
+  const winCount=sold.filter(p=>(p.pnl||0)>0).length;
+  const winRate=sold.length?Math.round(winCount/sold.length*100):0;
+
+  document.getElementById("log-summary").innerHTML=`
+    <div class="bg-bg-card rounded-lg p-3 text-center"><div class="text-[10px] text-gray-500 mb-1">総損益</div><div class="text-base font-bold ${totalPnl>=0?'pnl-plus':'pnl-minus'}">${totalPnl>=0?'+':''}${totalPnl.toLocaleString()}円</div></div>
+    <div class="bg-bg-card rounded-lg p-3 text-center"><div class="text-[10px] text-gray-500 mb-1">勝率</div><div class="text-base font-bold">${winRate}%</div></div>
+    <div class="bg-bg-card rounded-lg p-3 text-center"><div class="text-[10px] text-gray-500 mb-1">取引数</div><div class="text-base font-bold">${sold.length}件</div></div>`;
+
+  // 損益グラフ
+  drawPnlChart(sold);
+
+  // 取引一覧
+  const allTrades=[...trades].reverse();
+  if(!allTrades.length){document.getElementById("trade-empty").classList.remove("hidden");document.getElementById("trade-list").innerHTML="";return}
+  document.getElementById("trade-empty").classList.add("hidden");
+  document.getElementById("trade-list").innerHTML=allTrades.map(t=>{
+    const d=new Date(t.date);const ds=`${d.getMonth()+1}/${d.getDate()}`;
+    const isBuy=t.type==="buy";
+    return`<div class="flex items-center gap-3 px-4 py-3 border-b border-gray-800/50">
+      <span class="text-[10px] px-1.5 py-0.5 rounded ${isBuy?'signal-buy':'signal-danger'}">${isBuy?'買':'売'}</span>
+      <div class="flex-1 min-w-0"><span class="text-sm font-medium">${t.code}</span><span class="text-xs text-gray-500 ml-2">${t.price?.toLocaleString()}円 × ${t.qty}株</span></div>
+      <div class="text-right"><span class="text-xs text-gray-500">${ds}</span>
+      ${t.pnl!==undefined?`<div class="text-sm font-medium ${t.pnl>=0?'pnl-plus':'pnl-minus'}">${t.pnl>=0?'+':''}${t.pnl.toLocaleString()}円</div>`:''}</div></div>`
+  }).join("");
+}
+
+function drawPnlChart(sold){
+  const canvas=document.getElementById("pnl-chart");const ctx=canvas.getContext("2d");
+  const W=canvas.width=canvas.offsetWidth*2;const H=canvas.height=320;
+  ctx.clearRect(0,0,W,H);
+  if(!sold.length){ctx.fillStyle="#555";ctx.font="24px sans-serif";ctx.textAlign="center";ctx.fillText("取引データなし",W/2,H/2);return}
+  const cumPnl=[];let cum=0;
+  const sorted=[...sold].sort((a,b)=>(a.sellDate||0)-(b.sellDate||0));
+  for(const s of sorted){cum+=(s.pnl||0);cumPnl.push(cum)}
+  const maxV=Math.max(...cumPnl.map(Math.abs),1);const pad=40;
+  const midY=H/2;const scaleY=(H/2-pad)/maxV;
+
+  // グリッド
+  ctx.strokeStyle="#333";ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(pad,midY);ctx.lineTo(W-10,midY);ctx.stroke();
+
+  // ライン
+  ctx.beginPath();ctx.strokeStyle=cum>=0?"#22c55e":"#ef4444";ctx.lineWidth=3;
+  const stepX=(W-pad-10)/Math.max(cumPnl.length-1,1);
+  cumPnl.forEach((v,i)=>{const x=pad+i*stepX;const y=midY-v*scaleY;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});
+  ctx.stroke();
+
+  // ドット
+  cumPnl.forEach((v,i)=>{const x=pad+i*stepX;const y=midY-v*scaleY;ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle=v>=0?"#22c55e":"#ef4444";ctx.fill()});
+
+  // 0ライン文字
+  ctx.fillStyle="#555";ctx.font="20px sans-serif";ctx.textAlign="right";ctx.fillText("0",pad-8,midY+6);
+}
+
+// ===== 通知 =====
 async function loadNotifications(){
   try{
     const q=query(collection(db,"notifications"),orderBy("createdAt","desc"),limit(20));
-    const snap=await getDocs(q);
-    const notifs=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(!notifs.length)return;
+    const snap=await getDocs(q);const ns=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!ns.length)return;
     document.getElementById("notify-empty").classList.add("hidden");
-    document.getElementById("notify-list").innerHTML=notifs.map(n=>{
-      const sig=signalMap[n.type]||signalMap.watch;
-      const date=n.createdAt?.toDate?.()?n.createdAt.toDate().toLocaleDateString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}):"";
-      return`<div class="px-4 py-3 border-b border-gray-800/50">
-        <div class="flex items-center gap-2 mb-1">
-          <span class="text-[10px] px-1.5 py-0.5 rounded ${sig.cls}">${sig.label}</span>
-          <span class="text-sm font-medium">${n.stockCode}</span>
-          <span class="text-xs text-gray-500 ml-auto">${date}</span>
-        </div>
-        <p class="text-xs text-gray-400">${n.summary||''}</p>
-      </div>`;
+    document.getElementById("notify-list").innerHTML=ns.map(n=>{
+      const sig=sigMap[n.type]||sigMap.watch;
+      const d=n.createdAt?.toDate?.()?n.createdAt.toDate().toLocaleDateString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}):"";
+      return`<div class="px-4 py-3 border-b border-gray-800/50"><div class="flex items-center gap-2 mb-1"><span class="text-[10px] px-1.5 py-0.5 rounded ${sig.cls}">${sig.label}</span><span class="text-sm font-medium">${n.stockCode}</span><span class="text-xs text-gray-500 ml-auto">${d}</span></div><p class="text-xs text-gray-400">${n.summary||''}</p></div>`
     }).join("");
   }catch(e){}
 }
@@ -322,33 +421,24 @@ const glossary=[
   {term:"PER（株価収益率）",short:"業種別で判定",detail:"株価÷EPS。業種によって適正水準が異なるため、ねこ株では業種別PER上限を自動設定。"},
   {term:"PBR（株価純資産倍率）",short:"0.8倍以上",detail:"株価÷BPS。0.5倍未満は除外、0.8倍未満は警告付き通過。"},
   {term:"ROE（自己資本利益率）",short:"10%以上",detail:"純利益÷自己資本×100。10%以上で通過。15%・20%超で高収益ボーナス付与。"},
-  {term:"RSI",short:"30%以下で買い",detail:"30%以下で売られすぎ（買いシグナル）。80%以上で買われすぎ（危険）。"},
-  {term:"MACD",short:"最重要指標",detail:"ゴールデンクロス(GC)が買い、デッドクロス(DC)が売り。RSI・Stochより優先度が高い。"},
+  {term:"RSI",short:"30%以下で買い",detail:"30%以下で売られすぎ。80%以上で買われすぎ。"},
+  {term:"MACD",short:"最重要指標",detail:"ゴールデンクロス(GC)が買い、デッドクロス(DC)が売り。"},
   {term:"ストキャスティクス",short:"%K・%Dで判定",detail:"%Kが20以下で売られすぎ。MACD・RSIとの組み合わせで騙しを回避。"},
-  {term:"ボリンジャーバンド",short:"偏差3タッチで買い",detail:"偏差2以内に収まる確率が約97%。偏差3にタッチしたタイミングが買い時。"},
-  {term:"信用倍率",short:"1倍以下が良好",detail:"制度信用倍率1倍以下の銘柄は需給が良好。一般信用との合算は参考にしない。"},
-  {term:"AIスコア",short:"0〜100点",detail:"S(80-100)=強い買い、A(60-79)=買い候補、B(40-59)=様子見、C(0-39)=危険。4戦略を総合評価。"},
-  {term:"高収益ボーナス",short:"PER上限を自動拡大",detail:"ROE15%以上や営業利益率20%以上の企業はPER上限にボーナスが加算され、高品質企業を見逃さない。"},
+  {term:"ボリンジャーバンド",short:"偏差3タッチで買い",detail:"偏差2以内に収まる確率が約97%。偏差3にタッチで買い時。"},
+  {term:"信用倍率",short:"1倍以下が良好",detail:"制度信用倍率1倍以下の銘柄は需給が良好。"},
+  {term:"AIスコア",short:"0〜100点",detail:"S(80-100)=強い買い、A(60-79)=買い候補、B(40-59)=様子見、C(0-39)=危険。"},
+  {term:"高収益ボーナス",short:"PER上限を自動拡大",detail:"ROE15%以上や営業利益率20%以上の企業はPER上限にボーナス加算。"},
 ];
 function renderGlossary(){
   document.getElementById("glossary-list").innerHTML=glossary.map(g=>`
-    <div class="px-4 py-3">
-      <div class="flex justify-between items-start gap-2 mb-1">
-        <span class="text-sm font-medium">${g.term}</span>
-        <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 whitespace-nowrap">${g.short}</span>
-      </div>
-      <p class="text-xs text-gray-500 leading-relaxed">${g.detail}</p>
-    </div>`).join("");
+    <div class="px-4 py-3"><div class="flex justify-between items-start gap-2 mb-1"><span class="text-sm font-medium">${g.term}</span><span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 whitespace-nowrap">${g.short}</span></div><p class="text-xs text-gray-500 leading-relaxed">${g.detail}</p></div>`).join("");
 }
 
 // ===== 初期化 =====
-renderTabs();
-renderGlossary();
-switchTab("ranking");
-loadAnalyses();
-loadNotifications();
-
+renderTabs();renderGlossary();switchTab("ranking");loadAnalyses();loadNotifications();
 document.getElementById("detail-modal").addEventListener("click",e=>{if(e.target.id==="detail-modal")closeDetail()});
+document.getElementById("buy-modal").addEventListener("click",e=>{if(e.target.id==="buy-modal")closeBuyModal()});
+document.getElementById("sell-modal").addEventListener("click",e=>{if(e.target.id==="sell-modal")closeSellModal()});
 </script>
 </body>
 </html>
