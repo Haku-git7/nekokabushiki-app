@@ -110,7 +110,7 @@ a{color:inherit;text-decoration:none}
   </div>
 
   <!-- Watch -->
-  <div id="v-watch" class="view"><div id="watch-list"></div><div id="watch-empty" class="text-center py-16 tx2"><svg class="ti mx-auto mb-3" style="width:32px;height:32px;stroke:var(--tx3)"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><p class="text-sm">ウォッチリストに銘柄を追加</p><p class="text-xs mt-1 tx3">ホームの銘柄を左スワイプ→★</p></div></div>
+  <div id="v-watch" class="view"><div id="watch-list"></div><div id="watch-empty" class="text-center py-16 tx2"><svg class="ti mx-auto mb-3" style="width:32px;height:32px;stroke:var(--tx3)"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><p class="text-sm">監視リストに銘柄を追加</p><p class="text-xs mt-1 tx3">ホームの銘柄を左スワイプ→★</p></div></div>
 
   <!-- Log -->
   <div id="v-log" class="view">
@@ -227,7 +227,7 @@ async function loadData(){watchlist=await initSync("watch")||[];portfolio=await 
 function getW(){return watchlist}function getP(){return portfolio}function getT(){return trades}
 function setW(d){watchlist=d;saveSync("watch",d)}function setP(d){portfolio=d;saveSync("portfolio",d)}function setT(d){trades=d;saveSync("trades",d)}
 function isW(c){return watchlist.some(w=>w.code===c)}
-window.toggleWatch=(c,n)=>{let l=[...watchlist];const i=l.findIndex(w=>w.code===c);if(i>=0){l.splice(i,1);toast("ウォッチリストから削除")}else{l.push({code:c,name:n,addedAt:Date.now()});toast("ウォッチリストに追加")}setW(l);renderWatch();renderStockList()};
+window.toggleWatch=(c,n)=>{let l=[...watchlist];const i=l.findIndex(w=>w.code===c);if(i>=0){l.splice(i,1);toast("監視リストから削除")}else{l.push({code:c,name:n,addedAt:Date.now()});toast("監視リストに追加")}setW(l);renderWatch();renderStockList()};
 
 // === Buy/Sell ===
 let buyTgt=null,sellTgt=null;
@@ -242,7 +242,16 @@ window.doBuy=()=>{const p=parseFloat($('b-price').value),q=parseInt($('b-qty').v
   atomicTradeSave(pt,t);
   $('b-modal').classList.add('hidden');$('d-modal').classList.add('hidden');document.body.classList.remove('modal-open');
   toast("購入記録を保存しました");setTimeout(()=>{toTab("log")},100)};
-window.openS=(c,n,idx)=>{sellTgt={c,n,idx};$('s-stk').textContent=`${c} ${n}`;$('s-price').value='';$('s-modal').classList.remove('hidden');document.body.classList.add('modal-open')};
+window.openS=(c,n,idx)=>{sellTgt={c,n,idx};
+  const h=portfolio[idx];const s=sData.find(x=>x.stockCode===c);
+  const cur=s?.close;const pnl=cur&&h?(cur-h.buyPrice)*h.qty:null;
+  let info=`${c} ${n}`;
+  if(h)info+=`\n買値: ${h.buyPrice.toLocaleString()}円 × ${h.qty}株`;
+  if(cur)info+=`\n現在値: ${cur.toLocaleString()}円`;
+  if(pnl!=null)info+=`\n含み損益: ${pnl>=0?'+':''}${pnl.toLocaleString()}円`;
+  $('s-stk').textContent=info;$('s-stk').style.whiteSpace='pre-line';
+  $('s-price').value=cur||'';
+  $('s-modal').classList.remove('hidden');document.body.classList.add('modal-open')};
 window.closeS=()=>{$('s-modal').classList.add('hidden');document.body.classList.remove('modal-open')};
 window.doSell=()=>{const p=parseFloat($('s-price').value);if(!p||p<=0||!sellTgt){toast("正しい値を入力してください");return}const pt=[...portfolio];const it=pt[sellTgt.idx];if(!it)return;const pnl=(p-it.buyPrice)*it.qty;it.status="sold";it.sellPrice=p;it.sellDate=Date.now();it.pnl=pnl;
   const t=[...trades];t.push({code:sellTgt.c,name:sellTgt.n,type:"sell",price:p,qty:it.qty,date:Date.now(),pnl});
@@ -280,10 +289,10 @@ function renderPortSummary(){
   let totalCost=0,totalVal=0;
   h.forEach(p=>{totalCost+=p.buyPrice*p.qty;const s=sData.find(x=>x.stockCode===p.code);if(s)totalVal+=(s.close||p.buyPrice)*p.qty;else totalVal+=p.buyPrice*p.qty});
   const pnl=totalVal-totalCost;const pct=totalCost?((totalVal/totalCost-1)*100).toFixed(1):0;
-  $('port-count').textContent=`${h.length}銘柄保有`;
+  $('port-count').textContent=`${h.length}銘柄 / 投資額 ${Math.round(totalCost).toLocaleString()}円`;
   $('port-pnl').className=`text-lg font-bold ${pnl>=0?'pnl-p':'pnl-m'}`;
   $('port-pnl').textContent=`${pnl>=0?'+':''}${Math.round(pnl).toLocaleString()}円`;
-  $('port-pnl-pct').textContent=`(${pnl>=0?'+':''}${pct}%)`}
+  $('port-pnl-pct').textContent=`(${pnl>=0?'+':''}${pct}%) 評価額 ${Math.round(totalVal).toLocaleString()}円`}
 
 function renderStockList(){
   const el=$('stock-list');if(!sData.length)return;
@@ -305,7 +314,12 @@ function initSw(){document.querySelectorAll(".sc").forEach(el=>{let sx=0,cx=0,sw
 
 async function loadAnalyses(){try{const q=query(collection(db,"analyses"),orderBy("analyzedAt","desc"),limit(30));const snap=await getDocs(q);const all=snap.docs.map(d=>({id:d.id,...d.data()}));
   if(!all.length){$('loading').innerHTML='<div class="text-center py-12 tx2">分析データがありません</div>';return}
-  const ld=all[0].analyzedAt?.toDate?.()||new Date();$('a-date').textContent=`${ld.toLocaleDateString("ja-JP")} ${ld.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"})}`;$('hdr-date').textContent=ld.toLocaleDateString("ja-JP");
+  const ld=all[0].analyzedAt?.toDate?.()||new Date();const jst=ld.toLocaleString("ja-JP",{timeZone:"Asia/Tokyo",month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});const jstDate=ld.toLocaleDateString("ja-JP",{timeZone:"Asia/Tokyo"});$('a-date').textContent=jst+' 更新';
+  // 経過時間表示
+  const now=new Date();const diff=Math.floor((now-ld)/60000);
+  if(diff<60)$('hdr-date').textContent=`${diff}分前`;
+  else if(diff<1440)$('hdr-date').textContent=`${Math.floor(diff/60)}時間前`;
+  else $('hdr-date').textContent=jstDate;
   const seen=new Set();sData=[];for(const s of all){if(!seen.has(s.stockCode)){seen.add(s.stockCode);sData.push(s)}}
   sData.sort((a,b)=>(b.score||0)-(a.score||0));$('a-count').textContent=`${sData.length}銘柄`;$('loading').classList.add('hidden');
   renderFilt();renderStockList()}catch(e){$('loading').innerHTML=`<div class="text-center py-12 tx2">エラー: ${e.message}</div>`}}
@@ -315,50 +329,27 @@ window.showD=(s)=>{document.body.classList.add('modal-open');const sg=SM[s.signa
   const h=portfolio.find(p=>p.code===s.stockCode&&p.status==="holding");
   let hH="";if(h){const c=s.close||0;const pnl=(c-h.buyPrice)*h.qty;const pc=((c/h.buyPrice-1)*100).toFixed(1);
     hH=`<div class="bg1 rounded-lg p-3 mb-3 border bc"><div class="text-[10px] tx2 mb-1">保有中</div><div class="text-sm mb-1">買値 ${h.buyPrice.toLocaleString()}円 × ${h.qty}株</div><div class="text-sm ${pnl>=0?'pnl-p':'pnl-m'} font-medium">${pnl>=0?'+':''}${pnl.toLocaleString()}円 (${pnl>=0?'+':''}${pc}%)</div><button class="btn bs mt-2 text-sm py-2" onclick="openS('${s.stockCode}','${n.replace(/'/g,"")}',${portfolio.indexOf(h)})">売った</button></div>`}
-  const theme=document.documentElement.getAttribute('data-theme')||'dark';
+  // 推奨価格の算出
+  const bb_lo=s.bollinger?.lower2;const bb_hi=s.bollinger?.upper2;const ma25=s.moving_avg?.ma25;const hi52=s.high_52w;
+  const recBuy=bb_lo?Math.round(bb_lo):null;
+  const recSell=bb_hi?Math.round(bb_hi):null;
+
   $('d-body').innerHTML=`
     <div class="flex items-center justify-between mb-3"><div><div class="text-base font-bold">${n}</div><div class="text-xs tx2">${s.stockCode}.T 東証</div></div><div class="text-right"><span class="text-2xl font-bold">${s.score}</span><span class="text-xs tx2">点</span></div></div>
     <div class="flex gap-2 mb-3"><span class="text-sm font-bold r${s.rank}">${s.rank}ランク</span><span class="text-xs px-2 py-0.5 rounded ${sg.c}">${sg.l}</span>${s.confidence?`<span class="text-xs tx2">信頼度 ${s.confidence}%</span>`:''}</div>
-    ${!h?`<button class="btn bp mb-3" onclick="openB('${s.stockCode}','${n.replace(/'/g,"")}',${s.close||0})">買った</button>`:''}${hH}
-    <div class="rounded-xl overflow-hidden mb-3 border bc" style="height:350px"><div id="tv-chart"></div></div>
-    <div class="flex gap-2 mb-3 overflow-x-auto">${['1D','1W','1M','3M','6M','1Y'].map(tf=>`<button onclick="changeTF('${s.stockCode}','${tf}')" class="ch text-[10px] ${tf==='3M'?'on':''}" id="tf-${tf}">${tf}</button>`).join('')}</div>
+    ${!h?`<button class="btn bp mb-3" onclick="openB('${s.stockCode}','${n.replace(/'/g,"")}',${recBuy||s.close||0})">買った</button>`:''}${hH}
+    <div class="grid grid-cols-2 gap-2 mb-3">
+      <div class="bg1 rounded-lg p-3 border bc text-center"><div class="text-[10px] tx2 mb-1">推奨買い価格</div><div class="text-sm font-medium pnl-p">${recBuy?recBuy.toLocaleString()+'円':'-'}</div><div class="text-[10px] tx3">BB下限(2σ)</div></div>
+      <div class="bg1 rounded-lg p-3 border bc text-center"><div class="text-[10px] tx2 mb-1">推奨売り価格</div><div class="text-sm font-medium pnl-m">${recSell?recSell.toLocaleString()+'円':'-'}</div><div class="text-[10px] tx3">BB上限(2σ)</div></div>
+    </div>
     <div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">戦略</div><div class="text-sm">${s.strategy||'-'}</div></div>
     <div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">AI分析</div><div class="text-sm">${s.summary||'-'}</div></div>
     ${s.reasons?.length?`<div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">買い理由</div>${s.reasons.map(r=>`<div class="text-sm pnl-p mb-0.5">+ ${r}</div>`).join("")}</div>`:''}
     ${s.risks?.length?`<div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">リスク</div>${s.risks.map(r=>`<div class="text-sm pnl-m mb-0.5">- ${r}</div>`).join("")}</div>`:''}
     <div class="grid grid-cols-3 gap-2 text-center"><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">終値</div><div class="text-sm font-medium">${s.close?.toLocaleString()||'-'}円</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">RSI</div><div class="text-sm font-medium">${safe(s.rsi)??'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">MACD</div><div class="text-sm font-medium">${s.macd_cross==='golden_cross'?'🟢 GC':s.macd_cross==='dead_cross'?'🔴 DC':'-'}</div></div></div>`;
-  $('d-modal').classList.remove('hidden');
-  loadTVChart(s.stockCode,'3M',theme)};
+  $('d-modal').classList.remove('hidden')};
 
-let currentChartCode='';
-const tfMap={'1D':'1','1W':'5','1M':'D','3M':'D','6M':'W','1Y':'W'};
-const rangeMap={'1D':'1D','1W':'5D','1M':'1M','3M':'3M','6M':'6M','1Y':'12M'};
-
-function loadTVChart(code,tf,theme){
-  currentChartCode=code;
-  const container=$('tv-chart');if(!container)return;
-  container.innerHTML='';
-  const div=document.createElement('div');div.className='tradingview-widget-container';div.style.height='350px';
-  const inner=document.createElement('div');inner.className='tradingview-widget-container__widget';inner.style.height='100%';
-  div.appendChild(inner);container.appendChild(div);
-  const script=document.createElement('script');
-  script.src='https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-  script.type='text/javascript';script.async=true;
-  script.textContent=JSON.stringify({
-    autosize:true,symbol:`TSE:${code}`,interval:tfMap[tf]||'D',range:rangeMap[tf]||'3M',
-    timezone:"Asia/Tokyo",theme:theme==='light'?'light':'dark',style:"1",locale:"ja",
-    allow_symbol_change:false,hide_top_toolbar:false,hide_legend:false,save_image:false,
-    calendar:false,hide_volume:false,support_host:"https://www.tradingview.com",
-    studies:["MASimple@tv-basicstudies","RSI@tv-basicstudies","MACD@tv-basicstudies"]
-  });
-  div.appendChild(script);
-}
-window.changeTF=(code,tf)=>{
-  ['1D','1W','1M','3M','6M','1Y'].forEach(t=>{const e=$('tf-'+t);if(e){e.classList.toggle('on',t===tf)}});
-  const theme=document.documentElement.getAttribute('data-theme')||'dark';
-  loadTVChart(code,tf,theme)};
-
-window.closeD=()=>{$('d-modal').classList.add('hidden');document.body.classList.remove('modal-open');const c=$('tv-chart');if(c)c.innerHTML=''};
+window.closeD=()=>{$('d-modal').classList.add('hidden');document.body.classList.remove('modal-open')};
 
 // === Watch ===
 function renderWatch(){
@@ -401,9 +392,9 @@ function renderWatch(){
       </div>`}).join("");
   }
 
-  // ウォッチリストセクション
+  // 監視中セクション
   if(wl.length>0){
-    html+=`<div class="px-4 pt-3 pb-1"><span class="text-xs font-medium tx2">⭐ ウォッチリスト</span></div>`;
+    html+=`<div class="px-4 pt-3 pb-1"><span class="text-xs font-medium tx2">⭐ 監視中</span></div>`;
     html+=wl.map(w=>{const s=sData.find(x=>x.stockCode===w.code);if(s){const sg=SM[s.signal]||SM.watch;
       return`<div class="flex items-center gap-3 px-4 py-3 border-b bc" onclick='showD(${JSON.stringify(s).replace(/'/g,"&#39;")})'>
         <span class="text-xl font-bold r${s.rank} w-6 text-center">${s.rank}</span><div class="flex-1 min-w-0"><div class="text-[13px] font-medium">${str(s.name)}</div><div class="flex items-center gap-2 mt-0.5"><span class="text-[11px] tx2">${s.stockCode}.T</span><span class="text-[10px] px-1.5 py-0.5 rounded ${sg.c}">${sg.l}</span></div></div>
@@ -465,7 +456,7 @@ function drawMonthly(sold){const cv=$('monthly-cv');const ctx=cv.getContext('2d'
 // === Notifications ===
 async function loadNoti(){try{const q=query(collection(db,"notifications"),orderBy("createdAt","desc"),limit(20));const snap=await getDocs(q);const ns=snap.docs.map(d=>({id:d.id,...d.data()}));if(!ns.length)return;
   $('noti-empty').classList.add('hidden');
-  $('noti-list').innerHTML=ns.map(n=>{const sg=SM[n.type]||SM.watch;const d=n.createdAt?.toDate?.()?n.createdAt.toDate().toLocaleDateString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}):"";
+  $('noti-list').innerHTML=ns.map(n=>{const sg=SM[n.type]||SM.watch;const d=n.createdAt?.toDate?.()?n.createdAt.toDate().toLocaleString("ja-JP",{timeZone:"Asia/Tokyo",month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}):"";
     return`<div class="px-4 py-3 border-b bc"><div class="flex items-center gap-2 mb-1"><span class="text-[10px] px-1.5 py-0.5 rounded ${sg.c}">${sg.l}</span><span class="text-sm font-medium">${n.stockCode}</span><span class="text-xs tx2 ml-auto">${d}</span></div><p class="text-xs tx3">${n.summary||''}</p></div>`}).join("")}catch(e){}}
 
 // === Glossary ===
