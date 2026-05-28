@@ -1,0 +1,9 @@
+{
+  "name": "ねこ株",
+  "short_name": "ねこ株",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f0f",
+  "theme_color": "#0f0f0f",
+  "description": "AIが日本株を分析し、買い・危険シグナルを通知"
+}

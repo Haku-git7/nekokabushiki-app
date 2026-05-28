@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f0f0f">
+<title>ねこ株</title>
+<link rel="manifest" href="/manifest.json">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['"Zen Kaku Gothic New"', 'sans-serif'] },
+      colors: {
+        bg:      { DEFAULT: '#0f0f0f', card: '#1a1a1a', hover: '#222' },
+        accent:  { buy: '#22c55e', danger: '#ef4444', warn: '#f59e0b', info: '#3b82f6' },
+      }
+    }
+  }
+}
+</script>
+<style>
+  body { background: #0f0f0f; color: #e5e5e5; font-family: 'Zen Kaku Gothic New', sans-serif; }
+  .tab-active { background: rgba(59,130,246,0.15); color: #3b82f6; border-color: rgba(59,130,246,0.3); }
+  .tab-inactive { color: #888; border-color: #333; }
+  .rank-S { color: #ef4444; } .rank-A { color: #3b82f6; }
+  .rank-B { color: #888; } .rank-C { color: #555; }
+  .signal-buy { background: rgba(34,197,94,0.15); color: #22c55e; }
+  .signal-danger { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .signal-watch { background: rgba(245,158,11,0.15); color: #f59e0b; }
+  .fade-in { animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  .glass { background: rgba(26,26,26,0.9); backdrop-filter: blur(12px); }
+  ::-webkit-scrollbar { width: 0; }
+</style>
+</head>
+<body class="min-h-screen pb-20">
+
+<!-- ヘッダー -->
+<header class="sticky top-0 z-40 glass border-b border-gray-800 px-4 pt-3 pb-2">
+  <div class="flex items-center justify-between mb-3">
+    <div class="flex items-center gap-2">
+      <span class="text-xl font-bold tracking-tight">🐱 ねこ株</span>
+      <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400">AI分析</span>
+    </div>
+    <div class="text-xs text-gray-500" id="last-updated"></div>
+  </div>
+  <div class="flex gap-2 overflow-x-auto" id="tab-bar"></div>
+</header>
+
+<!-- メインコンテンツ -->
+<main class="max-w-lg mx-auto">
+  <!-- ランキング -->
+  <div id="view-ranking" class="hidden">
+    <div class="px-4 py-3 flex justify-between text-xs text-gray-500 border-b border-gray-800">
+      <span id="analysis-date"></span>
+      <span id="analysis-count"></span>
+    </div>
+    <div id="stock-list"></div>
+    <div id="loading" class="text-center py-12 text-gray-500">
+      <div class="animate-pulse text-2xl mb-2">🐱</div>
+      データ読み込み中...
+    </div>
+  </div>
+
+  <!-- ウォッチリスト -->
+  <div id="view-watch" class="hidden">
+    <div class="text-center py-16 text-gray-500">
+      <div class="text-3xl mb-3">⭐</div>
+      <p class="text-sm">ウォッチリストに銘柄を追加してください</p>
+      <p class="text-xs mt-2 text-gray-600">ランキング画面の銘柄を長押しで追加</p>
+    </div>
+  </div>
+
+  <!-- 通知履歴 -->
+  <div id="view-notify" class="hidden">
+    <div id="notify-list"></div>
+    <div id="notify-empty" class="text-center py-16 text-gray-500">
+      <div class="text-3xl mb-3">🔔</div>
+      <p class="text-sm">まだ通知はありません</p>
+    </div>
+  </div>
+
+  <!-- 用語説明 -->
+  <div id="view-glossary" class="hidden">
+    <div id="glossary-list" class="divide-y divide-gray-800"></div>
+  </div>
+
+  <!-- 銘柄詳細モーダル -->
+  <div id="detail-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-end justify-center">
+    <div class="glass w-full max-w-lg rounded-t-2xl p-5 max-h-[85vh] overflow-y-auto border-t border-gray-700">
+      <div class="flex justify-between items-center mb-4">
+        <h2 id="detail-title" class="text-lg font-bold"></h2>
+        <button onclick="closeDetail()" class="text-gray-500 text-2xl leading-none">&times;</button>
+      </div>
+      <div id="detail-body"></div>
+    </div>
+  </div>
+</main>
+
+<!-- ボトムナビ -->
+<nav class="fixed bottom-0 left-0 right-0 z-40 glass border-t border-gray-800">
+  <div class="max-w-lg mx-auto flex justify-around py-2" id="bottom-nav"></div>
+</nav>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.0/firebase-app.js";
+import { getFirestore, collection, query, orderBy, limit, getDocs, where, Timestamp }
+  from "https://www.gstatic.com/firebasejs/11.7.0/firebase-firestore.js";
+
+// ===== Firebase設定（★ここを書き換え）=====
+const firebaseConfig = {
+  apiKey: "AIzaSyB0ejbZVpUUJr_GJL5h3XZ93-WeyvRQIIc",
+  authDomain: "nekokabushiki.firebaseapp.com",
+  projectId: "nekokabushiki",
+  storageBucket: "nekokabushiki.firebasestorage.app",
+  messagingSenderId: "575051800779",
+  appId: "1:575051800779:web:23b819dcfdd70c55f53b4e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ===== タブ管理 =====
+const tabs = [
+  { id: "ranking", label: "ランキング", icon: "📊" },
+  { id: "notify",  label: "通知",       icon: "🔔" },
+  { id: "glossary", label: "用語",      icon: "📖" },
+  { id: "watch",   label: "ウォッチ",   icon: "⭐" },
+];
+
+let activeTab = "ranking";
+
+function renderTabs() {
+  document.getElementById("tab-bar").innerHTML = tabs.map(t =>
+    `<button onclick="switchTab('${t.id}')" id="tab-${t.id}"
+      class="px-3 py-1.5 text-xs rounded-lg border whitespace-nowrap transition
+      ${t.id === activeTab ? 'tab-active' : 'tab-inactive'}">${t.label}</button>`
+  ).join("");
+
+  document.getElementById("bottom-nav").innerHTML = tabs.map(t =>
+    `<button onclick="switchTab('${t.id}')"
+      class="flex flex-col items-center gap-0.5 transition
+      ${t.id === activeTab ? 'text-blue-400' : 'text-gray-500'}">
+      <span class="text-lg">${t.icon}</span>
+      <span class="text-[10px]">${t.label}</span>
+    </button>`
+  ).join("");
+}
+
+window.switchTab = (id) => {
+  activeTab = id;
+  tabs.forEach(t => {
+    document.getElementById(`view-${t.id}`).classList.toggle("hidden", t.id !== id);
+  });
+  renderTabs();
+};
+
+// ===== ランキング表示 =====
+const signalMap = {
+  buy:    { label: "買い",   cls: "signal-buy" },
+  danger: { label: "危険",   cls: "signal-danger" },
+  watch:  { label: "様子見", cls: "signal-watch" },
+};
+
+function rankClass(rank) {
+  return `rank-${rank}`;
+}
+
+async function loadAnalyses() {
+  try {
+    const q = query(
+      collection(db, "analyses"),
+      orderBy("analyzedAt", "desc"),
+      limit(20)
+    );
+    const snap = await getDocs(q);
+
+    // 最新日付の分析だけ抽出
+    const all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (all.length === 0) {
+      document.getElementById("loading").innerHTML =
+        '<div class="text-2xl mb-2">🐱</div>分析データがまだありません';
+      return;
+    }
+
+    const latestDate = all[0].analyzedAt?.toDate?.() || new Date();
+    const dateStr = latestDate.toLocaleDateString("ja-JP");
+    const timeStr = latestDate.toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
+
+    // 同日のデータだけ（重複銘柄は最新のみ）
+    const seen = new Set();
+    const stocks = [];
+    for (const s of all) {
+      if (!seen.has(s.stockCode)) {
+        seen.add(s.stockCode);
+        stocks.push(s);
+      }
+    }
+    stocks.sort((a, b) => (b.score || 0) - (a.score || 0));
+
+    document.getElementById("analysis-date").textContent = `${dateStr} ${timeStr} 更新`;
+    document.getElementById("analysis-count").textContent = `${stocks.length}銘柄分析済`;
+    document.getElementById("last-updated").textContent = dateStr;
+
+    document.getElementById("stock-list").innerHTML = stocks.map((s, i) => {
+      const sig = signalMap[s.signal] || signalMap.watch;
+      const rank = s.rank || "B";
+      return `
+        <div onclick='showDetail(${JSON.stringify(s).replace(/'/g, "&#39;")})'
+          class="flex items-center gap-3 px-4 py-3 border-b border-gray-800/50 active:bg-bg-hover transition cursor-pointer fade-in"
+          style="animation-delay:${i * 50}ms">
+          <span class="text-xl font-bold ${rankClass(rank)} w-6 text-center">${rank}</span>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="text-sm font-medium">${s.stockCode} ${s.name || ''}</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded ${sig.cls}">${sig.label}</span>
+            </div>
+            <p class="text-xs text-gray-500 truncate">${s.summary || ''}</p>
+            <span class="text-[10px] text-gray-600">${s.strategy || ''}</span>
+          </div>
+          <div class="text-right">
+            <span class="text-lg font-bold">${s.score || 0}</span>
+            <span class="text-[10px] text-gray-500 block">点</span>
+          </div>
+        </div>`;
+    }).join("");
+
+    document.getElementById("loading").classList.add("hidden");
+  } catch (e) {
+    document.getElementById("loading").innerHTML =
+      `<div class="text-2xl mb-2">😿</div><p class="text-sm">データ取得エラー</p><p class="text-xs text-gray-600 mt-1">${e.message}</p>`;
+  }
+}
+
+// ===== 銘柄詳細 =====
+window.showDetail = (s) => {
+  document.getElementById("detail-title").textContent = `${s.stockCode} ${s.name || ''}`;
+  const sig = signalMap[s.signal] || signalMap.watch;
+  document.getElementById("detail-body").innerHTML = `
+    <div class="flex items-center gap-3 mb-4">
+      <span class="text-3xl font-bold ${rankClass(s.rank)}">${s.rank}</span>
+      <div>
+        <span class="text-2xl font-bold">${s.score}点</span>
+        <span class="text-xs px-2 py-0.5 rounded ml-2 ${sig.cls}">${sig.label}</span>
+      </div>
+    </div>
+    <div class="bg-bg rounded-lg p-3 mb-3">
+      <div class="text-xs text-gray-500 mb-1">戦略</div>
+      <div class="text-sm">${s.strategy || '未設定'}</div>
+    </div>
+    <div class="bg-bg rounded-lg p-3 mb-3">
+      <div class="text-xs text-gray-500 mb-1">AI分析コメント</div>
+      <div class="text-sm">${s.summary || ''}</div>
+    </div>
+    ${s.reasons?.length ? `
+    <div class="bg-bg rounded-lg p-3 mb-3">
+      <div class="text-xs text-gray-500 mb-1">買い理由</div>
+      ${s.reasons.map(r => `<div class="text-sm text-green-400 mb-1">+ ${r}</div>`).join("")}
+    </div>` : ''}
+    ${s.risks?.length ? `
+    <div class="bg-bg rounded-lg p-3 mb-3">
+      <div class="text-xs text-gray-500 mb-1">リスク</div>
+      ${s.risks.map(r => `<div class="text-sm text-red-400 mb-1">- ${r}</div>`).join("")}
+    </div>` : ''}
+    <div class="grid grid-cols-3 gap-2 text-center">
+      <div class="bg-bg rounded-lg p-2">
+        <div class="text-[10px] text-gray-500">終値</div>
+        <div class="text-sm font-medium">${s.close?.toLocaleString() || '-'}円</div>
+      </div>
+      <div class="bg-bg rounded-lg p-2">
+        <div class="text-[10px] text-gray-500">RSI</div>
+        <div class="text-sm font-medium">${s.rsi || '-'}</div>
+      </div>
+      <div class="bg-bg rounded-lg p-2">
+        <div class="text-[10px] text-gray-500">MACD</div>
+        <div class="text-sm font-medium">${s.macd_cross === 'golden_cross' ? 'GC' : s.macd_cross === 'dead_cross' ? 'DC' : '-'}</div>
+      </div>
+    </div>
+  `;
+  document.getElementById("detail-modal").classList.remove("hidden");
+};
+
+window.closeDetail = () => {
+  document.getElementById("detail-modal").classList.add("hidden");
+};
+
+// ===== 通知履歴 =====
+async function loadNotifications() {
+  try {
+    const q = query(
+      collection(db, "notifications"),
+      orderBy("createdAt", "desc"),
+      limit(20)
+    );
+    const snap = await getDocs(q);
+    const notifs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    if (notifs.length === 0) return;
+
+    document.getElementById("notify-empty").classList.add("hidden");
+    document.getElementById("notify-list").innerHTML = notifs.map(n => {
+      const sig = signalMap[n.type] || signalMap.watch;
+      const date = n.createdAt?.toDate?.()
+        ? n.createdAt.toDate().toLocaleDateString("ja-JP", { month:"numeric", day:"numeric", hour:"2-digit", minute:"2-digit" })
+        : "";
+      return `
+        <div class="px-4 py-3 border-b border-gray-800/50">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-[10px] px-1.5 py-0.5 rounded ${sig.cls}">${sig.label}</span>
+            <span class="text-sm font-medium">${n.stockCode}</span>
+            <span class="text-xs text-gray-500 ml-auto">${date}</span>
+          </div>
+          <p class="text-xs text-gray-400">${n.summary || ''}</p>
+        </div>`;
+    }).join("");
+  } catch (e) {}
+}
+
+// ===== 用語辞典 =====
+const glossary = [
+  { term: "PER（株価収益率）", short: "業種別で判定", detail: "株価÷EPS。業種によって適正水準が異なるため、ねこ株では業種別PER上限を自動設定。" },
+  { term: "PBR（株価純資産倍率）", short: "0.8倍以上", detail: "株価÷BPS。0.5倍未満は除外、0.8倍未満は警告付き通過。" },
+  { term: "ROE（自己資本利益率）", short: "10%以上", detail: "純利益÷自己資本×100。10%以上で通過。15%・20%超で高収益ボーナス付与。" },
+  { term: "RSI", short: "30%以下で買い", detail: "30%以下で売られすぎ（買いシグナル）。80%以上で買われすぎ（危険）。" },
+  { term: "MACD", short: "最重要指標", detail: "ゴールデンクロス(GC)が買い、デッドクロス(DC)が売り。RSI・Stochより優先度が高い。" },
+  { term: "ストキャスティクス", short: "%K・%Dで判定", detail: "%Kが20以下で売られすぎ。MACD・RSIとの組み合わせで騙しを回避。" },
+  { term: "ボリンジャーバンド", short: "偏差3タッチで買い", detail: "偏差2以内に収まる確率が約97%。偏差3にタッチしたタイミングが買い時。" },
+  { term: "信用倍率", short: "1倍以下が良好", detail: "制度信用倍率1倍以下の銘柄は需給が良好。一般信用との合算は参考にしない。" },
+  { term: "AIスコア", short: "0〜100点", detail: "S(80-100)=強い買い、A(60-79)=買い候補、B(40-59)=様子見、C(0-39)=危険。4戦略を総合評価。" },
+  { term: "高収益ボーナス", short: "PER上限を自動拡大", detail: "ROE15%以上や営業利益率20%以上の企業はPER上限にボーナスが加算され、高品質企業を見逃さない。" },
+];
+
+function renderGlossary() {
+  document.getElementById("glossary-list").innerHTML = glossary.map(g => `
+    <div class="px-4 py-3">
+      <div class="flex justify-between items-start gap-2 mb-1">
+        <span class="text-sm font-medium">${g.term}</span>
+        <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 whitespace-nowrap">${g.short}</span>
+      </div>
+      <p class="text-xs text-gray-500 leading-relaxed">${g.detail}</p>
+    </div>
+  `).join("");
+}
+
+// ===== 初期化 =====
+renderTabs();
+renderGlossary();
+switchTab("ranking");
+loadAnalyses();
+loadNotifications();
+
+// モーダル外クリックで閉じる
+document.getElementById("detail-modal").addEventListener("click", (e) => {
+  if (e.target.id === "detail-modal") closeDetail();
+});
+</script>
+</body>
+</html>
