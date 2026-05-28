@@ -229,10 +229,16 @@ window.toggleWatch=(c,n)=>{let l=[...watchlist];const i=l.findIndex(w=>w.code===
 let buyTgt=null,sellTgt=null;
 window.openB=(c,n,p)=>{buyTgt={c,n};$('b-stk').textContent=`${c} ${n}`;$('b-price').value=p||'';$('b-qty').value='100';$('b-modal').classList.remove('hidden');document.body.classList.add('modal-open')};
 window.closeB=()=>{$('b-modal').classList.add('hidden');document.body.classList.remove('modal-open')};
-window.doBuy=()=>{const p=parseFloat($('b-price').value),q=parseInt($('b-qty').value);if(!p||p<=0||!q||q<=0||!buyTgt){toast("正しい値を入力してください");return}const pt=[...portfolio];pt.push({code:buyTgt.c,name:buyTgt.n,buyPrice:p,qty:q,buyDate:Date.now(),status:"holding"});setP(pt);const t=[...trades];t.push({code:buyTgt.c,name:buyTgt.n,type:"buy",price:p,qty:q,date:Date.now()});setT(t);closeB();closeD();toast("購入記録を保存しました");toTab("log")};
+window.doBuy=()=>{const p=parseFloat($('b-price').value),q=parseInt($('b-qty').value);if(!p||p<=0||!q||q<=0||!buyTgt){toast("正しい値を入力してください");return}const pt=[...portfolio];pt.push({code:buyTgt.c,name:buyTgt.n,buyPrice:p,qty:q,buyDate:Date.now(),status:"holding"});setP(pt);const t=[...trades];t.push({code:buyTgt.c,name:buyTgt.n,type:"buy",price:p,qty:q,date:Date.now()});setT(t);
+  $('b-modal').classList.add('hidden');$('d-modal').classList.add('hidden');document.body.classList.remove('modal-open');
+  toast("購入記録を保存しました");
+  setTimeout(()=>{toTab("log")},100)};
 window.openS=(c,n,idx)=>{sellTgt={c,n,idx};$('s-stk').textContent=`${c} ${n}`;$('s-price').value='';$('s-modal').classList.remove('hidden');document.body.classList.add('modal-open')};
 window.closeS=()=>{$('s-modal').classList.add('hidden');document.body.classList.remove('modal-open')};
-window.doSell=()=>{const p=parseFloat($('s-price').value);if(!p||p<=0||!sellTgt){toast("正しい値を入力してください");return}const pt=[...portfolio];const it=pt[sellTgt.idx];if(!it)return;const pnl=(p-it.buyPrice)*it.qty;it.status="sold";it.sellPrice=p;it.sellDate=Date.now();it.pnl=pnl;setP(pt);const t=[...trades];t.push({code:sellTgt.c,name:sellTgt.n,type:"sell",price:p,qty:it.qty,date:Date.now(),pnl});setT(t);closeS();toast(pnl>=0?`+${pnl.toLocaleString()}円の利益！`:`${pnl.toLocaleString()}円の損失`);renderLog()};
+window.doSell=()=>{const p=parseFloat($('s-price').value);if(!p||p<=0||!sellTgt){toast("正しい値を入力してください");return}const pt=[...portfolio];const it=pt[sellTgt.idx];if(!it)return;const pnl=(p-it.buyPrice)*it.qty;it.status="sold";it.sellPrice=p;it.sellDate=Date.now();it.pnl=pnl;setP(pt);const t=[...trades];t.push({code:sellTgt.c,name:sellTgt.n,type:"sell",price:p,qty:it.qty,date:Date.now(),pnl});setT(t);
+  $('s-modal').classList.add('hidden');document.body.classList.remove('modal-open');
+  toast(pnl>=0?`+${pnl.toLocaleString()}円の利益！`:`${pnl.toLocaleString()}円の損失`);
+  setTimeout(()=>renderLog(),100)};
 
 // === Tabs ===
 const tabs=[{id:"home",l:"ホーム",s:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>'},{id:"watch",l:"ウォッチ",s:'<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>'},{id:"log",l:"ログ",s:'<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>'},{id:"menu",l:"メニュー",s:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'}];
@@ -298,25 +304,104 @@ window.showD=(s)=>{document.body.classList.add('modal-open');const sg=SM[s.signa
   const h=portfolio.find(p=>p.code===s.stockCode&&p.status==="holding");
   let hH="";if(h){const c=s.close||0;const pnl=(c-h.buyPrice)*h.qty;const pc=((c/h.buyPrice-1)*100).toFixed(1);
     hH=`<div class="bg1 rounded-lg p-3 mb-3 border bc"><div class="text-[10px] tx2 mb-1">保有中</div><div class="text-sm mb-1">買値 ${h.buyPrice.toLocaleString()}円 × ${h.qty}株</div><div class="text-sm ${pnl>=0?'pnl-p':'pnl-m'} font-medium">${pnl>=0?'+':''}${pnl.toLocaleString()}円 (${pnl>=0?'+':''}${pc}%)</div><button class="btn bs mt-2 text-sm py-2" onclick="openS('${s.stockCode}','${n.replace(/'/g,"")}',${portfolio.indexOf(h)})">売った</button></div>`}
+  const theme=document.documentElement.getAttribute('data-theme')||'dark';
   $('d-body').innerHTML=`
     <div class="flex items-center justify-between mb-3"><div><div class="text-base font-bold">${n}</div><div class="text-xs tx2">${s.stockCode}.T 東証</div></div><div class="text-right"><span class="text-2xl font-bold">${s.score}</span><span class="text-xs tx2">点</span></div></div>
     <div class="flex gap-2 mb-3"><span class="text-sm font-bold r${s.rank}">${s.rank}ランク</span><span class="text-xs px-2 py-0.5 rounded ${sg.c}">${sg.l}</span></div>
     ${!h?`<button class="btn bp mb-3" onclick="openB('${s.stockCode}','${n.replace(/'/g,"")}',${s.close||0})">買った</button>`:''}${hH}
+    <div class="rounded-xl overflow-hidden mb-3 border bc" style="height:350px"><div id="tv-chart"></div></div>
+    <div class="flex gap-2 mb-3 overflow-x-auto">${['1D','1W','1M','3M','6M','1Y'].map(tf=>`<button onclick="changeTF('${s.stockCode}','${tf}')" class="ch text-[10px] ${tf==='3M'?'on':''}" id="tf-${tf}">${tf}</button>`).join('')}</div>
     <div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">戦略</div><div class="text-sm">${s.strategy||'-'}</div></div>
     <div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">AI分析</div><div class="text-sm">${s.summary||'-'}</div></div>
     ${s.reasons?.length?`<div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">買い理由</div>${s.reasons.map(r=>`<div class="text-sm pnl-p mb-0.5">+ ${r}</div>`).join("")}</div>`:''}
     ${s.risks?.length?`<div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">リスク</div>${s.risks.map(r=>`<div class="text-sm pnl-m mb-0.5">- ${r}</div>`).join("")}</div>`:''}
     <div class="grid grid-cols-3 gap-2 text-center"><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">終値</div><div class="text-sm font-medium">${s.close?.toLocaleString()||'-'}円</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">RSI</div><div class="text-sm font-medium">${safe(s.rsi)??'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">MACD</div><div class="text-sm font-medium">${s.macd_cross==='golden_cross'?'🟢 GC':s.macd_cross==='dead_cross'?'🔴 DC':'-'}</div></div></div>`;
-  $('d-modal').classList.remove('hidden')};
-window.closeD=()=>{$('d-modal').classList.add('hidden');document.body.classList.remove('modal-open')};
+  $('d-modal').classList.remove('hidden');
+  loadTVChart(s.stockCode,'3M',theme)};
+
+let currentChartCode='';
+const tfMap={'1D':'1','1W':'5','1M':'D','3M':'D','6M':'W','1Y':'W'};
+const rangeMap={'1D':'1D','1W':'5D','1M':'1M','3M':'3M','6M':'6M','1Y':'12M'};
+
+function loadTVChart(code,tf,theme){
+  currentChartCode=code;
+  const container=$('tv-chart');if(!container)return;
+  container.innerHTML='';
+  const div=document.createElement('div');div.className='tradingview-widget-container';div.style.height='350px';
+  const inner=document.createElement('div');inner.className='tradingview-widget-container__widget';inner.style.height='100%';
+  div.appendChild(inner);container.appendChild(div);
+  const script=document.createElement('script');
+  script.src='https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+  script.type='text/javascript';script.async=true;
+  script.textContent=JSON.stringify({
+    autosize:true,symbol:`TSE:${code}`,interval:tfMap[tf]||'D',range:rangeMap[tf]||'3M',
+    timezone:"Asia/Tokyo",theme:theme==='light'?'light':'dark',style:"1",locale:"ja",
+    allow_symbol_change:false,hide_top_toolbar:false,hide_legend:false,save_image:false,
+    calendar:false,hide_volume:false,support_host:"https://www.tradingview.com",
+    studies:["MASimple@tv-basicstudies","RSI@tv-basicstudies","MACD@tv-basicstudies"]
+  });
+  div.appendChild(script);
+}
+window.changeTF=(code,tf)=>{
+  ['1D','1W','1M','3M','6M','1Y'].forEach(t=>{const e=$('tf-'+t);if(e){e.classList.toggle('on',t===tf)}});
+  const theme=document.documentElement.getAttribute('data-theme')||'dark';
+  loadTVChart(code,tf,theme)};
+
+window.closeD=()=>{$('d-modal').classList.add('hidden');document.body.classList.remove('modal-open');const c=$('tv-chart');if(c)c.innerHTML=''};
 
 // === Watch ===
-function renderWatch(){const l=watchlist,el=$('watch-list'),em=$('watch-empty');if(!l.length){el.innerHTML="";em.classList.remove('hidden');return}em.classList.add('hidden');
-  el.innerHTML=l.map(w=>{const s=sData.find(x=>x.stockCode===w.code);if(s){const sg=SM[s.signal]||SM.watch;return`<div class="flex items-center gap-3 px-4 py-3 border-b bc" onclick='showD(${JSON.stringify(s).replace(/'/g,"&#39;")})'>
-    <span class="text-xl font-bold r${s.rank} w-6 text-center">${s.rank}</span><div class="flex-1 min-w-0"><div class="text-[13px] font-medium">${str(s.name)}</div><div class="flex items-center gap-2 mt-0.5"><span class="text-[11px] tx2">${s.stockCode}.T</span><span class="text-[10px] px-1.5 py-0.5 rounded ${sg.c}">${sg.l}</span></div></div>
-    <div class="text-right mr-2"><span class="text-lg font-bold">${s.score||0}</span><span class="text-[10px] tx2 block">点</span></div>
-    <button onclick="event.stopPropagation();toggleWatch('${w.code}','')" style="color:var(--yw)" class="text-xl">★</button></div>`}
-    return`<div class="flex items-center justify-between px-4 py-3 border-b bc"><span class="text-sm">${w.code} ${str(w.name)}</span><button onclick="toggleWatch('${w.code}','')" style="color:var(--yw)" class="text-xl">★</button></div>`}).join("")}
+function renderWatch(){
+  const el=$('watch-list'),em=$('watch-empty');
+  const holdings=portfolio.filter(p=>p.status==="holding");
+  const wl=watchlist;
+  const hasContent=holdings.length>0||wl.length>0;
+  if(!hasContent){el.innerHTML="";em.classList.remove('hidden');return}
+  em.classList.add('hidden');
+  let html="";
+
+  // 保有中セクション
+  if(holdings.length>0){
+    html+=`<div class="px-4 pt-3 pb-1"><span class="text-xs font-medium tx2">💰 保有中</span></div>`;
+    html+=holdings.map((h,idx)=>{
+      const pidx=portfolio.indexOf(h);
+      const s=sData.find(x=>x.stockCode===h.code);
+      const cur=s?s.close:null;
+      const pnl=cur?(cur-h.buyPrice)*h.qty:null;
+      const pct=cur?((cur/h.buyPrice-1)*100).toFixed(1):null;
+      const n=str(h.name);
+      if(s){const sg=SM[s.signal]||SM.watch;
+        return`<div class="px-4 py-3 border-b bc">
+          <div class="flex items-center gap-3" onclick='showD(${JSON.stringify(s).replace(/'/g,"&#39;")})'>
+            <span class="text-xl font-bold r${s.rank} w-6 text-center">${s.rank}</span>
+            <div class="flex-1 min-w-0"><div class="text-[13px] font-medium">${n}</div>
+              <div class="flex items-center gap-2 mt-0.5"><span class="text-[11px] tx2">${h.code}.T</span><span class="text-[10px] px-1.5 py-0.5 rounded ${sg.c}">${sg.l}</span></div></div>
+            <div class="text-right"><span class="text-sm ${pnl>=0?'pnl-p':'pnl-m'} font-medium">${pnl!=null?(pnl>=0?'+':'')+pnl.toLocaleString()+'円':''}</span><span class="text-[10px] tx2 block">${pct!=null?(pnl>=0?'+':'')+pct+'%':''}</span></div>
+          </div>
+          <div class="flex gap-2 mt-2 pl-9"><button class="btn bs text-xs py-1.5 flex-1" onclick="openS('${h.code}','${n.replace(/'/g,"")}',${pidx})">売った</button><button class="btn bo text-xs py-1.5" onclick='showD(${JSON.stringify(s).replace(/'/g,"&#39;")})'>詳細</button></div>
+        </div>`}
+      // ランキングにない保有銘柄（ホームから消えた銘柄）
+      return`<div class="px-4 py-3 border-b bc">
+        <div class="flex items-center gap-3">
+          <span class="text-xl font-bold tx3 w-6 text-center">-</span>
+          <div class="flex-1 min-w-0"><div class="text-[13px] font-medium">${n||h.code}</div>
+            <div class="text-[11px] tx2 mt-0.5">${h.code}.T / 買値 ${h.buyPrice.toLocaleString()}円 × ${h.qty}株</div></div>
+        </div>
+        <div class="flex gap-2 mt-2 pl-9"><button class="btn bs text-xs py-1.5 flex-1" onclick="openS('${h.code}','${n.replace(/'/g,"")}',${pidx})">売った</button></div>
+      </div>`}).join("");
+  }
+
+  // ウォッチリストセクション
+  if(wl.length>0){
+    html+=`<div class="px-4 pt-3 pb-1"><span class="text-xs font-medium tx2">⭐ ウォッチリスト</span></div>`;
+    html+=wl.map(w=>{const s=sData.find(x=>x.stockCode===w.code);if(s){const sg=SM[s.signal]||SM.watch;
+      return`<div class="flex items-center gap-3 px-4 py-3 border-b bc" onclick='showD(${JSON.stringify(s).replace(/'/g,"&#39;")})'>
+        <span class="text-xl font-bold r${s.rank} w-6 text-center">${s.rank}</span><div class="flex-1 min-w-0"><div class="text-[13px] font-medium">${str(s.name)}</div><div class="flex items-center gap-2 mt-0.5"><span class="text-[11px] tx2">${s.stockCode}.T</span><span class="text-[10px] px-1.5 py-0.5 rounded ${sg.c}">${sg.l}</span></div></div>
+        <div class="text-right mr-2"><span class="text-lg font-bold">${s.score||0}</span><span class="text-[10px] tx2 block">点</span></div>
+        <button onclick="event.stopPropagation();toggleWatch('${w.code}','')" style="color:var(--yw)" class="text-xl">★</button></div>`}
+      return`<div class="flex items-center justify-between px-4 py-3 border-b bc"><span class="text-sm">${w.code} ${str(w.name)}</span><button onclick="toggleWatch('${w.code}','')" style="color:var(--yw)" class="text-xl">★</button></div>`}).join("");
+  }
+  el.innerHTML=html;
+}
 
 // === Log ===
 let logEd=false;
@@ -324,7 +409,7 @@ window.toggleLogEdit=()=>{logEd=!logEd;$('log-ed').textContent=logEd?"完了":"�
 window.delTrade=(idx)=>{if(!confirm("この取引記録を削除しますか？"))return;const t=[...trades];const rm=t[idx];t.splice(idx,1);setT(t);
   if(rm?.type==="buy"){const p=[...portfolio];const pi=p.findIndex(x=>x.code===rm.code&&x.buyPrice===rm.price&&x.qty===rm.qty);if(pi>=0){p.splice(pi,1);setP(p)}}
   if(rm?.type==="sell"){const p=[...portfolio];const pi=p.findIndex(x=>x.code===rm.code&&x.status==="sold"&&x.sellPrice===rm.price);if(pi>=0){p[pi].status="holding";delete p[pi].sellPrice;delete p[pi].sellDate;delete p[pi].pnl;setP(p)}}
-  toast("取引記録を削除しました");renderLog()};
+  toast("削除しました");setTimeout(()=>renderLog(),50)};
 
 function renderLog(){
   const sold=portfolio.filter(p=>p.status==="sold");const tp=sold.reduce((s,p)=>s+(p.pnl||0),0);const wc=sold.filter(p=>(p.pnl||0)>0).length;const wr=sold.length?Math.round(wc/sold.length*100):0;
