@@ -7,623 +7,405 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0f0f0f">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <title>ねこ株</title>
+<link rel="icon" type="image/png" href="/icon.png">
+<link rel="apple-touch-icon" href="/icon.png">
 <link rel="manifest" href="/manifest.json">
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
-<script>tailwind.config={theme:{extend:{fontFamily:{sans:['"Zen Kaku Gothic New"','sans-serif']},colors:{bg:{DEFAULT:'#0f0f0f',card:'#1a1a1a',hover:'#222'},accent:{buy:'#22c55e',danger:'#ef4444',warn:'#f59e0b',info:'#3b82f6'}}}}}</script>
+<script>tailwind.config={theme:{extend:{fontFamily:{sans:['"Zen Kaku Gothic New"','sans-serif']}}}}</script>
 <style>
-body{background:#0f0f0f;color:#e5e5e5;font-family:'Zen Kaku Gothic New',sans-serif;-webkit-user-select:none;user-select:none;overflow-x:hidden}
-.rank-S{color:#ef4444}.rank-A{color:#3b82f6}.rank-B{color:#888}.rank-C{color:#555}
-.signal-buy{background:rgba(34,197,94,.15);color:#22c55e}
-.signal-danger{background:rgba(239,68,68,.15);color:#ef4444}
-.signal-watch{background:rgba(245,158,11,.15);color:#f59e0b}
-.fade-in{animation:fadeIn .3s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.glass{background:rgba(26,26,26,.92);backdrop-filter:blur(12px)}
+:root{--bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#222;--tx:#e5e5e5;--tx2:#999;--tx3:#555;--bd:#2a2a2a;--ac:#3b82f6;--gn:#22c55e;--rd:#ef4444;--yw:#f59e0b;--glass:rgba(26,26,26,.92)}
+[data-theme="light"]{--bg:#f5f5f5;--bg2:#fff;--bg3:#eee;--tx:#1a1a1a;--tx2:#666;--tx3:#aaa;--bd:#ddd;--ac:#2563eb;--glass:rgba(255,255,255,.92)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:'Zen Kaku Gothic New',sans-serif;-webkit-user-select:none;user-select:none;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}
+.bg1{background:var(--bg)}.bg2{background:var(--bg2)}.bg3{background:var(--bg3)}
+.tx2{color:var(--tx2)}.tx3{color:var(--tx3)}.bc{border-color:var(--bd)}
+.rS{color:var(--rd)}.rA{color:var(--ac)}.rB{color:var(--tx2)}.rC{color:var(--tx3)}
+.sb{background:rgba(34,197,94,.1);color:var(--gn)}.sd{background:rgba(239,68,68,.1);color:var(--rd)}.sw{background:rgba(245,158,11,.1);color:var(--yw)}
+.glass{background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
 ::-webkit-scrollbar{width:0}
-.stock-row{position:relative;overflow:hidden}
-.stock-content{position:relative;z-index:2;background:#0f0f0f;transition:transform .2s ease}
-.star-btn{position:absolute;right:0;top:0;bottom:0;width:64px;display:flex;align-items:center;justify-content:center;z-index:1}
-.star-btn button{width:44px;height:44px;border-radius:50%;background:rgba(59,130,246,.2);border:1px solid rgba(59,130,246,.3);color:#3b82f6;font-size:20px;display:flex;align-items:center;justify-content:center}
-.star-btn button.watched{background:rgba(250,204,21,.2);border-color:rgba(250,204,21,.4);color:#facc15}
-.pull-indicator{text-align:center;padding:12px;color:#555;font-size:12px;transition:opacity .2s}
-.input-field{background:#222;border:1px solid #333;border-radius:8px;padding:8px 12px;color:#e5e5e5;font-size:14px;width:100%;outline:none}
-.input-field:focus{border-color:#3b82f6}
-.btn-primary{background:#3b82f6;color:white;border:none;border-radius:8px;padding:10px;font-size:14px;font-weight:500;width:100%;cursor:pointer}
-.btn-sell{background:#ef4444;color:white;border:none;border-radius:8px;padding:10px;font-size:14px;font-weight:500;width:100%;cursor:pointer}
-.btn-outline{background:transparent;border:1px solid #333;color:#e5e5e5;border-radius:8px;padding:10px;font-size:14px;width:100%;cursor:pointer}
-.pnl-plus{color:#22c55e}.pnl-minus{color:#ef4444}
+.fi{animation:fi .3s ease}@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.modal-open{overflow:hidden!important;height:100vh!important}
+.fp{position:fixed;inset:0;z-index:60;background:var(--bg);overflow-y:auto}
+.ti{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.mi{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .15s}
+.mi:active{background:var(--bg3)}.mi svg{width:20px;height:20px;stroke:var(--tx2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ch{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--bd);color:var(--tx2);cursor:pointer;white-space:nowrap;transition:all .2s}
+.ch.on{background:rgba(59,130,246,.12);color:var(--ac);border-color:rgba(59,130,246,.25)}
+.inp{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px 12px;color:var(--tx);font-size:14px;width:100%;outline:none;transition:border .2s}.inp:focus{border-color:var(--ac)}
+.btn{border:none;border-radius:8px;padding:10px;font-size:14px;font-weight:500;width:100%;cursor:pointer;transition:opacity .15s}.btn:active{opacity:.8}
+.bp{background:var(--ac);color:#fff}.bs{background:var(--rd);color:#fff}.bo{background:transparent;border:1px solid var(--bd);color:var(--tx)}
+.pnl-p{color:var(--gn)}.pnl-m{color:var(--rd)}
+/* swipe */
+.sr{position:relative;overflow:hidden}.sc{position:relative;z-index:2;background:var(--bg);transition:transform .2s ease}
+.sb2{position:absolute;right:0;top:0;bottom:0;width:64px;display:flex;align-items:center;justify-content:center;z-index:1}
+.sb2 button{width:44px;height:44px;border-radius:50%;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.2);color:var(--ac);font-size:20px;display:flex;align-items:center;justify-content:center}
+.sb2 button.wd{background:rgba(250,204,21,.12);border-color:rgba(250,204,21,.25);color:var(--yw)}
+/* skeleton */
+.sk{background:linear-gradient(90deg,var(--bg3) 25%,var(--bd) 50%,var(--bg3) 75%);background-size:200% 100%;animation:sk 1.5s infinite}@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+/* toast */
+#toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--bg2);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:10px 20px;font-size:13px;z-index:99;opacity:0;transition:opacity .3s;pointer-events:none}
+#toast.show{opacity:1}
+/* view transition */
+.view{display:none;opacity:0;transition:opacity .2s ease}.view.active{display:block;opacity:1}
 </style>
 </head>
-<body class="min-h-screen" style="padding-bottom:calc(80px + env(safe-area-inset-bottom,20px))">
+<body class="min-h-screen" style="padding-bottom:calc(72px + env(safe-area-inset-bottom,20px))">
 
-<header class="sticky top-0 z-40 glass border-b border-gray-800 px-4 pb-2" style="padding-top:calc(env(safe-area-inset-top,12px) + 8px)">
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Header -->
+<header class="sticky top-0 z-40 glass border-b bc px-4 pb-2" style="padding-top:calc(env(safe-area-inset-top,12px) + 8px)">
   <div class="flex items-center justify-between">
     <div class="flex items-center gap-2">
-      <span class="text-xl font-bold tracking-tight">ねこ株</span>
-      <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400">AI分析</span>
+      <img src="/icon.png" alt="" width="26" height="26" style="border-radius:6px">
+      <span class="text-lg font-bold tracking-tight">ねこ株</span>
     </div>
     <div class="flex items-center gap-3">
-      <div class="text-xs text-gray-500" id="last-updated"></div>
-      <button onclick="openSettings()" class="text-gray-400 text-lg">⚙️</button>
+      <span class="text-[11px] tx2" id="hdr-date"></span>
     </div>
   </div>
 </header>
 
-<main class="max-w-lg mx-auto" id="main-scroll">
-  <div id="pull-indicator" class="pull-indicator" style="opacity:0">↓ 引っ張って更新</div>
+<main class="max-w-lg mx-auto">
+  <!-- Pull refresh -->
+  <div id="pull-ind" class="text-center py-2 tx3 text-xs" style="opacity:0;transition:opacity .2s"></div>
 
-  <div id="view-ranking" class="hidden">
-    <div class="px-4 py-3 flex justify-between text-xs text-gray-500 border-b border-gray-800">
-      <span id="analysis-date"></span><span id="analysis-count"></span>
+  <!-- Home -->
+  <div id="v-home" class="view">
+    <!-- Portfolio summary -->
+    <div id="port-summary" class="hidden mx-4 mt-3 mb-1 bg2 rounded-xl p-3 border bc fi">
+      <div class="flex justify-between items-center">
+        <span class="text-xs tx2">保有資産</span>
+        <span class="text-xs tx3" id="port-count"></span>
+      </div>
+      <div class="flex items-baseline gap-2 mt-1">
+        <span class="text-lg font-bold" id="port-pnl"></span>
+        <span class="text-xs tx2" id="port-pnl-pct"></span>
+      </div>
     </div>
+    <!-- Search -->
+    <div class="px-4 py-2">
+      <div class="relative">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 ti" style="width:16px;height:16px;stroke:var(--tx3)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="search-input" class="inp pl-9 text-sm" placeholder="銘柄名・コードで検索" oninput="renderStockList()">
+      </div>
+    </div>
+    <!-- Filter -->
+    <div class="px-4 py-1 flex gap-2 overflow-x-auto" id="filter-bar"></div>
+    <!-- Stock list -->
+    <div class="px-4 py-2 flex justify-between text-[11px] tx3"><span id="a-date"></span><span id="a-count"></span></div>
     <div id="stock-list"></div>
-    <div id="loading" class="text-center py-12 text-gray-500"><div class="animate-pulse text-2xl mb-2">📊</div>データ読み込み中...</div>
+    <div id="loading" class="py-12">
+      <div class="px-4 space-y-3" id="skeleton">
+        <div class="flex gap-3 items-center"><div class="sk w-8 h-8 rounded-lg"></div><div class="flex-1 space-y-2"><div class="sk h-4 rounded w-3/4"></div><div class="sk h-3 rounded w-1/2"></div></div><div class="sk w-10 h-8 rounded"></div></div>
+        <div class="flex gap-3 items-center"><div class="sk w-8 h-8 rounded-lg"></div><div class="flex-1 space-y-2"><div class="sk h-4 rounded w-2/3"></div><div class="sk h-3 rounded w-2/5"></div></div><div class="sk w-10 h-8 rounded"></div></div>
+        <div class="flex gap-3 items-center"><div class="sk w-8 h-8 rounded-lg"></div><div class="flex-1 space-y-2"><div class="sk h-4 rounded w-4/5"></div><div class="sk h-3 rounded w-1/3"></div></div><div class="sk w-10 h-8 rounded"></div></div>
+        <div class="flex gap-3 items-center"><div class="sk w-8 h-8 rounded-lg"></div><div class="flex-1 space-y-2"><div class="sk h-4 rounded w-1/2"></div><div class="sk h-3 rounded w-2/5"></div></div><div class="sk w-10 h-8 rounded"></div></div>
+      </div>
+    </div>
   </div>
 
-  <div id="view-watch" class="hidden">
-    <div id="watch-list"></div>
-    <div id="watch-empty" class="text-center py-16 text-gray-500"><div class="text-3xl mb-3">⭐</div><p class="text-sm">ウォッチリストに銘柄を追加してください</p><p class="text-xs mt-2 text-gray-600">ランキングの銘柄を左にスワイプ→★で追加</p></div>
-  </div>
+  <!-- Watch -->
+  <div id="v-watch" class="view"><div id="watch-list"></div><div id="watch-empty" class="text-center py-16 tx2"><svg class="ti mx-auto mb-3" style="width:32px;height:32px;stroke:var(--tx3)"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><p class="text-sm">ウォッチリストに銘柄を追加</p><p class="text-xs mt-1 tx3">ホームの銘柄を左スワイプ→★</p></div></div>
 
-  <div id="view-log" class="hidden">
-    <div id="log-summary" class="grid grid-cols-3 gap-2 p-4"></div>
-    <div class="px-4 pb-2"><canvas id="pnl-chart" height="160" style="width:100%"></canvas></div>
-    <div class="px-4 py-2 text-xs text-gray-500 border-b border-gray-800">取引履歴</div>
+  <!-- Log -->
+  <div id="v-log" class="view">
+    <div id="log-sum" class="grid grid-cols-3 gap-2 p-4"></div>
+    <div class="px-4 pb-1"><canvas id="pnl-cv" height="140" style="width:100%"></canvas></div>
+    <div class="px-4 pb-1"><canvas id="monthly-cv" height="100" style="width:100%"></canvas></div>
+    <div class="px-4 py-2 flex justify-between items-center text-xs tx2 border-t bc"><span>取引履歴</span><button id="log-ed" onclick="toggleLogEdit()" class="text-xs" style="color:var(--ac)">編集</button></div>
     <div id="trade-list"></div>
-    <div id="trade-empty" class="text-center py-12 text-gray-500"><div class="text-3xl mb-3">📈</div><p class="text-sm">まだ取引記録がありません</p><p class="text-xs mt-2 text-gray-600">銘柄詳細画面から「買った」で記録開始</p></div>
+    <div id="trade-empty" class="text-center py-12 tx2"><svg class="ti mx-auto mb-3" style="width:28px;height:28px;stroke:var(--tx3)"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg><p class="text-sm">取引記録がありません</p></div>
   </div>
 
-  <div id="view-notify" class="hidden">
-    <div id="notify-list"></div>
-    <div id="notify-empty" class="text-center py-16 text-gray-500"><div class="text-3xl mb-3">🔔</div><p class="text-sm">まだ通知はありません</p></div>
+  <!-- Menu -->
+  <div id="v-menu" class="view">
+    <div class="mi" onclick="openSettings()"><svg><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><div class="flex-1"><div class="text-sm">設定</div><div class="text-xs tx2">分析・通知・スクリーニング</div></div><span class="tx3">›</span></div>
+    <div class="mi" onclick="toSub('notify')"><svg><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><div class="flex-1"><div class="text-sm">通知履歴</div><div class="text-xs tx2">買い・危険シグナル</div></div><span class="tx3">›</span></div>
+    <div class="mi" onclick="toSub('glossary')"><svg><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg><div class="flex-1"><div class="text-sm">用語集</div><div class="text-xs tx2">投資用語・指標の解説</div></div><span class="tx3">›</span></div>
+    <div class="mi" onclick="toggleTheme()"><svg id="t-ico"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><div class="flex-1"><div class="text-sm" id="t-lbl">ライトモード</div><div class="text-xs tx2">表示テーマを切り替え</div></div><div id="t-tog" class="w-10 h-5 rounded-full relative transition-colors" style="background:var(--tx3)"><div class="w-4 h-4 rounded-full bg-white absolute top-0.5 left-0.5 transition-all" id="t-dot"></div></div></div>
+    <div class="mi" onclick="exportBackup()"><svg><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><div class="flex-1"><div class="text-sm">バックアップ</div><div class="text-xs tx2">データをエクスポート</div></div><span class="tx3">›</span></div>
+    <div class="mi" onclick="importBackup()"><svg><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><div class="flex-1"><div class="text-sm">復元</div><div class="text-xs tx2">バックアップから復元</div></div><span class="tx3">›</span></div>
+    <input type="file" id="imp-f" accept=".json" class="hidden" onchange="handleImport(event)">
+    <div class="px-4 py-6 text-center tx3 text-xs">ねこ株 v2.0</div>
   </div>
 
-  <div id="view-glossary" class="hidden">
-    <div id="glossary-list" class="divide-y divide-gray-800"></div>
-  </div>
+  <!-- Sub: Notify -->
+  <div id="v-notify" class="view"><div class="px-4 py-3 flex items-center gap-2 border-b bc"><button onclick="toTab('menu')" class="tx2 text-sm">← メニュー</button><span class="text-sm font-medium">通知履歴</span></div><div id="noti-list"></div><div id="noti-empty" class="text-center py-16 tx2"><p class="text-sm">通知はありません</p></div></div>
+
+  <!-- Sub: Glossary -->
+  <div id="v-glossary" class="view"><div class="px-4 py-3 flex items-center gap-2 border-b bc"><button onclick="toTab('menu')" class="tx2 text-sm">← メニュー</button><span class="text-sm font-medium">用語集</span></div><div class="px-4 py-2"><input type="text" id="gls-search" class="inp text-sm" placeholder="用語を検索" oninput="renderGlossary()"></div><div id="gls-list"></div></div>
 </main>
 
-<!-- 銘柄詳細モーダル -->
-<div id="detail-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-end justify-center">
-  <div class="glass w-full max-w-lg rounded-t-2xl p-5 max-h-[85vh] overflow-y-auto border-t border-gray-700">
-    <div class="flex justify-between items-center mb-4">
-      <h2 id="detail-title" class="text-lg font-bold"></h2>
-      <button onclick="closeDetail()" class="text-gray-500 text-2xl leading-none">&times;</button>
-    </div>
-    <div id="detail-body"></div>
+<!-- Detail Modal -->
+<div id="d-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-end" onclick="if(event.target===this)closeD()">
+  <div class="bg2 w-full max-w-lg mx-auto rounded-t-2xl max-h-[80vh] overflow-y-auto border-t bc" style="padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px))">
+    <div class="w-10 h-1 rounded-full mx-auto mb-3" style="background:var(--tx3)"></div>
+    <div id="d-body"></div>
   </div>
 </div>
 
-<!-- 買い入力モーダル -->
-<div id="buy-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center px-4">
-  <div class="glass w-full max-w-sm rounded-2xl p-5 border border-gray-700">
-    <h3 class="text-base font-bold mb-4">購入記録</h3>
-    <p id="buy-modal-stock" class="text-sm text-gray-400 mb-3"></p>
-    <div class="mb-3"><label class="text-xs text-gray-500 block mb-1">買値（円）</label><input type="number" id="buy-price" class="input-field" placeholder="例: 3022"></div>
-    <div class="mb-4"><label class="text-xs text-gray-500 block mb-1">数量（株）</label><input type="number" id="buy-qty" class="input-field" placeholder="例: 100" value="100"></div>
-    <button class="btn-primary mb-2" onclick="confirmBuy()">記録する</button>
-    <button class="btn-outline" onclick="closeBuyModal()">キャンセル</button>
+<!-- Buy Modal -->
+<div id="b-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center px-4" onclick="if(event.target===this)closeB()">
+  <div class="bg2 w-full max-w-sm rounded-2xl p-5 border bc">
+    <h3 class="text-sm font-bold mb-3">購入記録</h3>
+    <p id="b-stk" class="text-xs tx2 mb-3"></p>
+    <div class="mb-3"><label class="text-[10px] tx2 block mb-1">買値（円）</label><input type="number" id="b-price" class="inp" min="1" placeholder="3022"></div>
+    <div class="mb-3"><label class="text-[10px] tx2 block mb-1">数量（株）</label><input type="number" id="b-qty" class="inp" min="1" value="100"></div>
+    <button class="btn bp mb-2" onclick="doBuy()">記録する</button>
+    <button class="btn bo" onclick="closeB()">キャンセル</button>
   </div>
 </div>
 
-<!-- 売り入力モーダル -->
-<div id="sell-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center px-4">
-  <div class="glass w-full max-w-sm rounded-2xl p-5 border border-gray-700">
-    <h3 class="text-base font-bold mb-4">売却記録</h3>
-    <p id="sell-modal-stock" class="text-sm text-gray-400 mb-3"></p>
-    <div class="mb-4"><label class="text-xs text-gray-500 block mb-1">売値（円）</label><input type="number" id="sell-price" class="input-field" placeholder="例: 3500"></div>
-    <button class="btn-sell mb-2" onclick="confirmSell()">売却記録する</button>
-    <button class="btn-outline" onclick="closeSellModal()">キャンセル</button>
+<!-- Sell Modal -->
+<div id="s-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center px-4" onclick="if(event.target===this)closeS()">
+  <div class="bg2 w-full max-w-sm rounded-2xl p-5 border bc">
+    <h3 class="text-sm font-bold mb-3">売却記録</h3>
+    <p id="s-stk" class="text-xs tx2 mb-3"></p>
+    <div class="mb-3"><label class="text-[10px] tx2 block mb-1">売値（円）</label><input type="number" id="s-price" class="inp" min="1"></div>
+    <button class="btn bs mb-2" onclick="doSell()">売却記録</button>
+    <button class="btn bo" onclick="closeS()">キャンセル</button>
   </div>
 </div>
 
-<nav class="fixed bottom-0 left-0 right-0 z-40 glass border-t border-gray-800">
-
-<!-- 設定画面 -->
-<div id="settings-modal" class="hidden fixed inset-0 z-50 bg-bg overflow-y-auto" style="padding-top:calc(env(safe-area-inset-top,12px) + 8px)">
-  <div class="max-w-lg mx-auto px-4 pb-24">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-lg font-bold">⚙️ 設定</h2>
-      <button onclick="closeSettings()" class="text-gray-500 text-2xl">&times;</button>
-    </div>
-
-    <!-- AI推奨 -->
-    <div class="bg-bg-card rounded-lg p-4 mb-4 border border-gray-800">
-      <p class="text-xs text-gray-500 mb-2">過去の分析履歴からAIが最適設定を提案</p>
-      <button id="ai-rec-btn" onclick="runAIRecommend()" class="btn-primary text-sm py-2">✨ AIおすすめ設定を提案</button>
-      <div id="ai-rec-result" class="hidden mt-3 bg-blue-500/10 rounded-lg p-3 border border-blue-500/20">
-        <div id="ai-rec-body" class="text-xs text-blue-300"></div>
-        <div class="flex gap-2 mt-2">
-          <button onclick="applyAISettings()" class="btn-primary text-xs py-1.5 flex-1">適用</button>
-          <button onclick="document.getElementById('ai-rec-result').classList.add('hidden')" class="btn-outline text-xs py-1.5">閉じる</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 分析スケジュール -->
-    <div class="bg-bg-card rounded-lg p-4 mb-4 border border-gray-800">
-      <h3 class="text-sm font-medium mb-3">🕐 分析スケジュール</h3>
-      <div class="grid grid-cols-2 gap-3 mb-3">
-        <div><label class="text-[10px] text-gray-500 block mb-1">朝の分析</label>
-          <select id="s-morning" class="input-field text-sm"><option>06:00</option><option selected>07:00</option><option>08:00</option><option>09:00</option></select></div>
-        <div><label class="text-[10px] text-gray-500 block mb-1">夕方の分析</label>
-          <select id="s-evening" class="input-field text-sm"><option>15:00</option><option selected>16:00</option><option>17:00</option><option>18:00</option></select></div>
-      </div>
-      <label class="text-[10px] text-gray-500 block mb-2">実行曜日</label>
-      <div class="flex gap-2" id="s-days"></div>
-    </div>
-
-    <!-- 通知設定 -->
-    <div class="bg-bg-card rounded-lg p-4 mb-4 border border-gray-800">
-      <h3 class="text-sm font-medium mb-3">🔔 通知設定</h3>
-      <div class="mb-3">
-        <div class="flex justify-between text-xs mb-1"><span class="text-gray-400">買い通知スコア下限</span><span class="text-blue-400 font-medium" id="s-buy-val">75点</span></div>
-        <input type="range" min="60" max="95" value="75" step="5" id="s-buy" class="w-full" oninput="document.getElementById('s-buy-val').textContent=this.value+'点'">
-        <div class="flex justify-between text-[10px] text-gray-600"><span>60（緩め）</span><span>95（超厳選）</span></div>
-      </div>
-      <div class="mb-3">
-        <div class="flex justify-between text-xs mb-1"><span class="text-gray-400">危険通知スコア上限</span><span class="text-red-400 font-medium" id="s-danger-val">30点</span></div>
-        <input type="range" min="10" max="50" value="30" step="5" id="s-danger" class="w-full" oninput="document.getElementById('s-danger-val').textContent=this.value+'点'">
-        <div class="flex justify-between text-[10px] text-gray-600"><span>10（超危険のみ）</span><span>50（広め）</span></div>
-      </div>
-    </div>
-
-    <!-- スクリーニング条件 -->
-    <div class="bg-bg-card rounded-lg p-4 mb-4 border border-gray-800">
-      <h3 class="text-sm font-medium mb-3">📊 スクリーニング条件</h3>
-      <div class="grid grid-cols-2 gap-3">
-        <div><label class="text-[10px] text-gray-500 block mb-1">ROE下限（%）</label><input type="number" id="s-roe" value="10" min="0" max="30" class="input-field text-sm"></div>
-        <div><label class="text-[10px] text-gray-500 block mb-1">PBR下限（倍）</label><input type="number" id="s-pbr" value="0.8" min="0" max="5" step="0.1" class="input-field text-sm"></div>
-        <div><label class="text-[10px] text-gray-500 block mb-1">自己資本比率下限（%）</label><input type="number" id="s-equity" value="30" min="0" max="80" class="input-field text-sm"></div>
-        <div><label class="text-[10px] text-gray-500 block mb-1">PER判定モード</label>
-          <select id="s-per-mode" class="input-field text-sm"><option selected>業種別自動</option><option>固定値</option></select></div>
-      </div>
-    </div>
-
-    <!-- 売買条件 -->
-    <div class="bg-bg-card rounded-lg p-4 mb-4 border border-gray-800">
-      <h3 class="text-sm font-medium mb-3">💰 売買条件</h3>
-      <div class="grid grid-cols-2 gap-3">
-        <div><label class="text-[10px] text-gray-500 block mb-1">利益確定ライン（%）</label><input type="number" id="s-tp" value="15" min="5" max="50" class="input-field text-sm"></div>
-        <div><label class="text-[10px] text-gray-500 block mb-1">損切りライン（%）</label><input type="number" id="s-sl" value="7" min="3" max="20" class="input-field text-sm"></div>
-      </div>
-    </div>
-
-    <button onclick="saveSettings()" class="btn-primary mb-2">設定を保存</button>
-    <div id="s-saved" class="hidden text-center text-xs text-green-400 mt-2">✅ 保存しました</div>
+<!-- Settings Page -->
+<div id="set-pg" class="hidden fp" style="padding-top:calc(env(safe-area-inset-top,12px) + 8px);padding-bottom:calc(80px + env(safe-area-inset-bottom,20px))">
+  <div class="max-w-lg mx-auto px-4">
+    <div class="flex items-center gap-2 py-2 mb-3"><button onclick="closeSet()" class="tx2 text-sm">← 戻る</button><span class="text-base font-bold">設定</span></div>
+    <div class="bg2 rounded-xl p-4 mb-3 border bc"><p class="text-xs tx2 mb-2">AIが最適設定を提案</p><button id="ai-btn" onclick="aiRec()" class="btn bp text-sm py-2">✨ AIおすすめ設定</button><div id="ai-res" class="hidden mt-3 rounded-lg p-3" style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15)"><div id="ai-body" class="text-xs" style="color:var(--ac)"></div><div class="flex gap-2 mt-2"><button onclick="applyAI()" class="btn bp text-xs py-1.5 flex-1">適用</button><button onclick="document.getElementById('ai-res').classList.add('hidden')" class="btn bo text-xs py-1.5">閉じる</button></div></div></div>
+    <div class="bg2 rounded-xl p-4 mb-3 border bc"><h3 class="text-sm font-medium mb-3">分析スケジュール</h3><div class="grid grid-cols-2 gap-3 mb-3"><div><label class="text-[10px] tx2 block mb-1">朝の分析</label><select id="sm" class="inp text-sm"><option>06:00</option><option selected>07:00</option><option>08:00</option><option>09:00</option></select></div><div><label class="text-[10px] tx2 block mb-1">夕方の分析</label><select id="se" class="inp text-sm"><option>15:00</option><option selected>16:00</option><option>17:00</option><option>18:00</option></select></div></div><label class="text-[10px] tx2 block mb-2">実行曜日</label><div class="flex gap-2" id="s-days"></div></div>
+    <div class="bg2 rounded-xl p-4 mb-3 border bc"><h3 class="text-sm font-medium mb-3">通知設定</h3><div class="mb-3"><div class="flex justify-between text-xs mb-1"><span class="tx2">買い通知スコア下限</span><span id="sb-v" style="color:var(--ac)">75点</span></div><input type="range" min="60" max="95" value="75" step="5" id="sb" class="w-full" oninput="document.getElementById('sb-v').textContent=this.value+'点'"></div><div><div class="flex justify-between text-xs mb-1"><span class="tx2">危険通知スコア上限</span><span id="sd-v" style="color:var(--rd)">30点</span></div><input type="range" min="10" max="50" value="30" step="5" id="sd" class="w-full" oninput="document.getElementById('sd-v').textContent=this.value+'点'"></div></div>
+    <div class="bg2 rounded-xl p-4 mb-3 border bc"><h3 class="text-sm font-medium mb-3">スクリーニング条件</h3><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] tx2 block mb-1">ROE下限(%)</label><input type="number" id="sr" value="10" class="inp text-sm" min="0" max="30"></div><div><label class="text-[10px] tx2 block mb-1">PBR下限(倍)</label><input type="number" id="sp" value="0.8" step="0.1" class="inp text-sm" min="0" max="5"></div><div><label class="text-[10px] tx2 block mb-1">自己資本比率(%)</label><input type="number" id="sq" value="30" class="inp text-sm" min="0" max="80"></div><div><label class="text-[10px] tx2 block mb-1">PERモード</label><select id="spm" class="inp text-sm"><option selected>業種別自動</option><option>固定値</option></select></div></div></div>
+    <div class="bg2 rounded-xl p-4 mb-3 border bc"><h3 class="text-sm font-medium mb-3">売買条件</h3><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] tx2 block mb-1">利確ライン(%)</label><input type="number" id="stp" value="15" class="inp text-sm" min="1"></div><div><label class="text-[10px] tx2 block mb-1">損切ライン(%)</label><input type="number" id="ssl" value="7" class="inp text-sm" min="1"></div></div></div>
+    <button onclick="saveSet()" class="btn bp mb-2">設定を保存</button>
+    <div id="s-ok" class="hidden text-center text-xs mt-2" style="color:var(--gn)">✅ 保存しました</div>
   </div>
 </div>
-  <div class="max-w-lg mx-auto flex justify-around py-2" id="bottom-nav"></div>
+
+<!-- Bottom Nav -->
+<nav class="fixed bottom-0 left-0 right-0 z-40 glass border-t bc">
+  <div class="max-w-lg mx-auto flex justify-around py-1.5" id="bnav"></div>
   <div style="height:env(safe-area-inset-bottom,20px)"></div>
 </nav>
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/11.7.0/firebase-app.js";
-import{getFirestore,collection,query,orderBy,limit,getDocs,addDoc,updateDoc,doc,Timestamp}from"https://www.gstatic.com/firebasejs/11.7.0/firebase-firestore.js";
-
+import{getFirestore,collection,query,orderBy,limit,getDocs,doc,setDoc,getDoc}from"https://www.gstatic.com/firebasejs/11.7.0/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyB0ejbZVpUUJr_GJL5h3XZ93-WeyvRQIIc",authDomain:"nekokabushiki.firebaseapp.com",projectId:"nekokabushiki",storageBucket:"nekokabushiki.firebasestorage.app",messagingSenderId:"575051800779",appId:"1:575051800779:web:23b819dcfdd70c55f53b4e"});
 const db=getFirestore(app);
 
-// ===== ローカルストレージ =====
-const LS={
-  get(k,d=[]){try{return JSON.parse(localStorage.getItem("neko_"+k))||d}catch{return d}},
-  set(k,v){localStorage.setItem("neko_"+k,JSON.stringify(v))},
-};
+// === Utils ===
+const $=id=>document.getElementById(id);
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
+const LS={g(k,d=[]){try{return JSON.parse(localStorage.getItem("nk_"+k))||d}catch{return d}},s(k,v){localStorage.setItem("nk_"+k,JSON.stringify(v))}};
+function safe(v){return v==null||(typeof v==='number'&&isNaN(v))?null:v}
+function str(v){const s=String(v||'');return s==='NaN'||s==='null'||s==='undefined'?'':s}
 
-// ===== ウォッチリスト =====
-function getWatchlist(){return LS.get("watch")}
-function saveWatchlist(l){LS.set("watch",l)}
-function toggleWatch(code,name){
-  let l=getWatchlist();const i=l.findIndex(w=>w.code===code);
-  if(i>=0)l.splice(i,1);else l.push({code,name,addedAt:Date.now()});
-  saveWatchlist(l);renderWatchlist();renderStockList();
-}
-function isWatched(c){return getWatchlist().some(w=>w.code===c)}
+// === Firestore Sync ===
+async function syncToCloud(key,data){try{await setDoc(doc(db,"userdata",key),{data:JSON.stringify(data),updatedAt:new Date()})}catch(e){}}
+async function syncFromCloud(key){try{const snap=await getDoc(doc(db,"userdata",key));if(snap.exists()){const d=JSON.parse(snap.data().data);return d}}catch(e){}return null}
+async function initSync(key){const cloud=await syncFromCloud(key);const local=LS.g(key);if(cloud&&cloud.length>0){if(!local||local.length===0){LS.s(key,cloud);return cloud}const localTs=Math.max(...local.map(x=>x.addedAt||x.buyDate||x.date||0));const cloudTs=Math.max(...cloud.map(x=>x.addedAt||x.buyDate||x.date||0));if(cloudTs>localTs){LS.s(key,cloud);return cloud}}return local}
+function saveSync(key,data){LS.s(key,data);syncToCloud(key,data)}
 
-// ===== ポートフォリオ =====
-function getPortfolio(){return LS.get("portfolio")}
-function savePortfolio(l){LS.set("portfolio",l)}
-function getTrades(){return LS.get("trades")}
-function saveTrades(l){LS.set("trades",l)}
+// === Theme ===
+function initTheme(){const t=localStorage.getItem("nk_theme")||"dark";document.documentElement.setAttribute("data-theme",t);updTh(t)}
+function updTh(t){const d=$('t-dot');if(d)d.style.transform=t==="light"?"translateX(16px)":"none";const l=$('t-lbl');if(l)l.textContent=t==="light"?"ダークモード":"ライトモード";document.querySelector('meta[name="theme-color"]').content=t==="light"?"#f5f5f5":"#0f0f0f"}
+window.toggleTheme=()=>{const c=document.documentElement.getAttribute("data-theme")||"dark";const n=c==="dark"?"light":"dark";document.documentElement.setAttribute("data-theme",n);localStorage.setItem("nk_theme",n);updTh(n);toast(n==="light"?"ライトモードに切替":"ダークモードに切替")};
+initTheme();
 
-let buyTarget=null;
-window.openBuyModal=(code,name,price)=>{
-  buyTarget={code,name};
-  document.getElementById("buy-modal-stock").textContent=`${code} ${name}`;
-  document.getElementById("buy-price").value=price||"";
-  document.getElementById("buy-qty").value="100";
-  document.getElementById("buy-modal").classList.remove("hidden");
-};
-window.closeBuyModal=()=>document.getElementById("buy-modal").classList.add("hidden");
-window.confirmBuy=()=>{
-  const price=parseFloat(document.getElementById("buy-price").value);
-  const qty=parseInt(document.getElementById("buy-qty").value);
-  if(!price||!qty||!buyTarget)return;
-  const p=getPortfolio();
-  p.push({code:buyTarget.code,name:buyTarget.name,buyPrice:price,qty,buyDate:Date.now(),status:"holding"});
-  savePortfolio(p);
-  const t=getTrades();
-  t.push({code:buyTarget.code,name:buyTarget.name,type:"buy",price,qty,date:Date.now()});
-  saveTrades(t);
-  closeBuyModal();closeDetail();
-  switchTab("log");
-};
+// === Data ===
+let watchlist=[],portfolio=[],trades=[];
+async function loadData(){watchlist=await initSync("watch")||[];portfolio=await initSync("portfolio")||[];trades=await initSync("trades")||[]}
+function getW(){return watchlist}function getP(){return portfolio}function getT(){return trades}
+function setW(d){watchlist=d;saveSync("watch",d)}function setP(d){portfolio=d;saveSync("portfolio",d)}function setT(d){trades=d;saveSync("trades",d)}
+function isW(c){return watchlist.some(w=>w.code===c)}
+window.toggleWatch=(c,n)=>{let l=[...watchlist];const i=l.findIndex(w=>w.code===c);if(i>=0){l.splice(i,1);toast("ウォッチリストから削除")}else{l.push({code:c,name:n,addedAt:Date.now()});toast("ウォッチリストに追加")}setW(l);renderWatch();renderStockList()};
 
-let sellTarget=null;
-window.openSellModal=(code,name,idx)=>{
-  sellTarget={code,name,idx};
-  document.getElementById("sell-modal-stock").textContent=`${code} ${name}`;
-  document.getElementById("sell-price").value="";
-  document.getElementById("sell-modal").classList.remove("hidden");
-};
-window.closeSellModal=()=>document.getElementById("sell-modal").classList.add("hidden");
-window.confirmSell=()=>{
-  const price=parseFloat(document.getElementById("sell-price").value);
-  if(!price||!sellTarget)return;
-  const p=getPortfolio();
-  const item=p[sellTarget.idx];
-  if(!item)return;
-  const pnl=(price-item.buyPrice)*item.qty;
-  item.status="sold";item.sellPrice=price;item.sellDate=Date.now();item.pnl=pnl;
-  savePortfolio(p);
-  const t=getTrades();
-  t.push({code:sellTarget.code,name:sellTarget.name,type:"sell",price,qty:item.qty,date:Date.now(),pnl});
-  saveTrades(t);
-  closeSellModal();
-  renderLog();
-};
+// === Buy/Sell ===
+let buyTgt=null,sellTgt=null;
+window.openB=(c,n,p)=>{buyTgt={c,n};$('b-stk').textContent=`${c} ${n}`;$('b-price').value=p||'';$('b-qty').value='100';$('b-modal').classList.remove('hidden');document.body.classList.add('modal-open')};
+window.closeB=()=>{$('b-modal').classList.add('hidden');document.body.classList.remove('modal-open')};
+window.doBuy=()=>{const p=parseFloat($('b-price').value),q=parseInt($('b-qty').value);if(!p||p<=0||!q||q<=0||!buyTgt){toast("正しい値を入力してください");return}const pt=[...portfolio];pt.push({code:buyTgt.c,name:buyTgt.n,buyPrice:p,qty:q,buyDate:Date.now(),status:"holding"});setP(pt);const t=[...trades];t.push({code:buyTgt.c,name:buyTgt.n,type:"buy",price:p,qty:q,date:Date.now()});setT(t);closeB();closeD();toast("購入記録を保存しました");toTab("log")};
+window.openS=(c,n,idx)=>{sellTgt={c,n,idx};$('s-stk').textContent=`${c} ${n}`;$('s-price').value='';$('s-modal').classList.remove('hidden');document.body.classList.add('modal-open')};
+window.closeS=()=>{$('s-modal').classList.add('hidden');document.body.classList.remove('modal-open')};
+window.doSell=()=>{const p=parseFloat($('s-price').value);if(!p||p<=0||!sellTgt){toast("正しい値を入力してください");return}const pt=[...portfolio];const it=pt[sellTgt.idx];if(!it)return;const pnl=(p-it.buyPrice)*it.qty;it.status="sold";it.sellPrice=p;it.sellDate=Date.now();it.pnl=pnl;setP(pt);const t=[...trades];t.push({code:sellTgt.c,name:sellTgt.n,type:"sell",price:p,qty:it.qty,date:Date.now(),pnl});setT(t);closeS();toast(pnl>=0?`+${pnl.toLocaleString()}円の利益！`:`${pnl.toLocaleString()}円の損失`);renderLog()};
 
-// ===== タブ =====
-const tabs=[
-  {id:"ranking",label:"ランキング",icon:"📊"},
-  {id:"watch",label:"ウォッチ",icon:"⭐"},
-  {id:"log",label:"ログ",icon:"📈"},
-  {id:"notify",label:"通知",icon:"🔔"},
-  {id:"glossary",label:"用語",icon:"📖"},
-];
-let activeTab="ranking";
-function renderTabs(){
-  document.getElementById("bottom-nav").innerHTML=tabs.map(t=>
-    `<button onclick="switchTab('${t.id}')" class="flex flex-col items-center gap-0.5 transition ${t.id===activeTab?'text-blue-400':'text-gray-500'}">
-      <span class="text-lg">${t.icon}</span><span class="text-[10px]">${t.label}</span></button>`
-  ).join("");
-}
-window.switchTab=(id)=>{
-  activeTab=id;
-  tabs.forEach(t=>document.getElementById("view-"+t.id).classList.toggle("hidden",t.id!==id));
-  renderTabs();
-  if(id==="watch")renderWatchlist();
-  if(id==="log")renderLog();
-};
+// === Tabs ===
+const tabs=[{id:"home",l:"ホーム",s:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>'},{id:"watch",l:"ウォッチ",s:'<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>'},{id:"log",l:"ログ",s:'<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>'},{id:"menu",l:"メニュー",s:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'}];
+const allViews=["home","watch","log","menu","notify","glossary"];
+let curTab="home";
+function renderNav(){$('bnav').innerHTML=tabs.map(t=>`<button onclick="toTab('${t.id}')" class="flex flex-col items-center gap-0.5 py-1 ${t.id===curTab?'':'tx2'}" style="${t.id===curTab?'color:var(--ac)':''}"><svg class="ti" viewBox="0 0 24 24" style="${t.id===curTab?'stroke:var(--ac)':''}">${t.s}</svg><span class="text-[10px]">${t.l}</span></button>`).join("")}
+window.toTab=(id)=>{curTab=id;allViews.forEach(v=>{const e=$('v-'+v);if(e){e.classList.remove('active');e.style.display='none'}});const el=$('v-'+id);if(el){el.style.display='block';requestAnimationFrame(()=>el.classList.add('active'))}renderNav();window.scrollTo({top:0,behavior:'instant'});if(id==='watch')renderWatch();if(id==='log')renderLog()};
+window.toSub=(id)=>{allViews.forEach(v=>{const e=$('v-'+v);if(e){e.classList.remove('active');e.style.display='none'}});const el=$('v-'+id);if(el){el.style.display='block';requestAnimationFrame(()=>el.classList.add('active'))}window.scrollTo({top:0,behavior:'instant'})};
 
-// ===== プルリフレッシュ =====
-let pullStartY=0,pulling=false;
-const mainEl=document.getElementById("main-scroll");
-const pullInd=document.getElementById("pull-indicator");
-document.addEventListener("touchstart",e=>{
-  if(window.scrollY===0&&activeTab==="ranking"){pullStartY=e.touches[0].clientY;pulling=true}
-},{passive:true});
-document.addEventListener("touchmove",e=>{
-  if(!pulling)return;
-  const diff=e.touches[0].clientY-pullStartY;
-  if(diff>0&&diff<120){pullInd.style.opacity=Math.min(diff/60,1);pullInd.textContent=diff>60?"↑ 離して更新":"↓ 引っ張って更新"}
-},{passive:true});
-document.addEventListener("touchend",()=>{
-  if(!pulling)return;
-  const op=parseFloat(pullInd.style.opacity);
-  if(op>=1){pullInd.textContent="更新中...";loadAnalyses().then(()=>{pullInd.style.opacity=0})}
-  else{pullInd.style.opacity=0}
-  pulling=false;
-});
+// === Pull refresh ===
+let py=0,pl=false;const pi=$('pull-ind');
+document.addEventListener("touchstart",e=>{if(window.scrollY===0&&curTab==="home"){py=e.touches[0].clientY;pl=true}},{passive:true});
+document.addEventListener("touchmove",e=>{if(!pl)return;const d=e.touches[0].clientY-py;if(d>0&&d<120){pi.style.opacity=Math.min(d/60,1);pi.textContent=d>60?"↑ 離して更新":"↓ 引っ張って更新"}},{passive:true});
+document.addEventListener("touchend",()=>{if(!pl)return;if(parseFloat(pi.style.opacity)>=1){pi.textContent="更新中...";loadAnalyses().then(()=>{pi.style.opacity=0;toast("データを更新しました")})}else pi.style.opacity=0;pl=false});
 
-// ===== ランキング =====
-const sigMap={buy:{label:"買い",cls:"signal-buy"},danger:{label:"危険",cls:"signal-danger"},watch:{label:"様子見",cls:"signal-watch"}};
-let stocksData=[];
+// === Home ===
+const SM={buy:{l:"買い",c:"sb"},danger:{l:"危険",c:"sd"},watch:{l:"様子見",c:"sw"}};
+let sData=[],filt="all",srt="desc";
+function renderFilt(){$('filter-bar').innerHTML=[{i:"all",l:"すべて"},{i:"buy",l:"買い"},{i:"watch",l:"様子見"},{i:"danger",l:"危険"}].map(f=>`<button onclick="setF('${f.i}')" class="ch ${filt===f.i?'on':''}">${f.l}</button>`).join("")+`<button onclick="togS()" class="ch">${srt==="desc"?"↓高い順":"↑低い順"}</button>`}
+window.setF=f=>{filt=f;renderFilt();renderStockList()};
+window.togS=()=>{srt=srt==="desc"?"asc":"desc";renderFilt();renderStockList()};
+function getFiltered(){const q=($('search-input')?.value||'').toLowerCase();let l=[...sData];if(filt!=="all")l=l.filter(s=>s.signal===filt);if(q)l=l.filter(s=>(s.stockCode||'').toLowerCase().includes(q)||str(s.name).toLowerCase().includes(q));l.sort((a,b)=>srt==="desc"?(b.score||0)-(a.score||0):(a.score||0)-(b.score||0));return l}
+
+function renderPortSummary(){
+  const h=portfolio.filter(p=>p.status==="holding");
+  if(!h.length){$('port-summary').classList.add('hidden');return}
+  $('port-summary').classList.remove('hidden');
+  let totalCost=0,totalVal=0;
+  h.forEach(p=>{totalCost+=p.buyPrice*p.qty;const s=sData.find(x=>x.stockCode===p.code);if(s)totalVal+=(s.close||p.buyPrice)*p.qty;else totalVal+=p.buyPrice*p.qty});
+  const pnl=totalVal-totalCost;const pct=totalCost?((totalVal/totalCost-1)*100).toFixed(1):0;
+  $('port-count').textContent=`${h.length}銘柄保有`;
+  $('port-pnl').className=`text-lg font-bold ${pnl>=0?'pnl-p':'pnl-m'}`;
+  $('port-pnl').textContent=`${pnl>=0?'+':''}${Math.round(pnl).toLocaleString()}円`;
+  $('port-pnl-pct').textContent=`(${pnl>=0?'+':''}${pct}%)`}
+
 function renderStockList(){
-  const el=document.getElementById("stock-list");if(!stocksData.length)return;
-  el.innerHTML=stocksData.map((s,i)=>{
-    const sig=sigMap[s.signal]||sigMap.watch;const w=isWatched(s.stockCode);
-    return`<div class="stock-row border-b border-gray-800/50 fade-in" style="animation-delay:${i*40}ms">
-      <div class="star-btn"><button class="${w?'watched':''}" onclick="event.stopPropagation();toggleWatch('${s.stockCode}','${(s.name||'').replace(/'/g,'')}')">${w?'★':'☆'}</button></div>
-      <div class="stock-content px-4 py-3 flex items-center gap-3" data-idx="${i}">
-        <span class="text-xl font-bold rank-${s.rank||'B'} w-6 text-center">${s.rank||'B'}</span>
-        <div class="flex-1 min-w-0" onclick='showDetail(${JSON.stringify(s).replace(/'/g,"&#39;")})'>
-          <div class="flex items-center gap-2 mb-0.5"><span class="text-sm font-medium">${s.stockCode} ${s.name||''}</span><span class="text-[10px] px-1.5 py-0.5 rounded ${sig.cls}">${sig.label}</span></div>
-          <p class="text-xs text-gray-500 truncate">${s.summary||''}</p><span class="text-[10px] text-gray-600">${s.strategy||''}</span>
+  const el=$('stock-list');if(!sData.length)return;
+  const list=getFiltered();
+  el.innerHTML=list.map((s,i)=>{const sg=SM[s.signal]||SM.watch;const w=isW(s.stockCode);const n=str(s.name);
+    return`<div class="sr border-b bc fi" style="animation-delay:${i*25}ms"><div class="sb2"><button class="${w?'wd':''}" onclick="event.stopPropagation();toggleWatch('${s.stockCode}','${n.replace(/'/g,"")}')">${w?'★':'☆'}</button></div>
+      <div class="sc px-4 py-3 flex items-center gap-3" data-i="${i}">
+        <span class="text-xl font-bold r${s.rank||'B'} w-7 text-center">${s.rank||'B'}</span>
+        <div class="flex-1 min-w-0" onclick='showD(${JSON.stringify(s).replace(/'/g,"&#39;")})'>
+          <div class="text-[13px] font-medium leading-tight">${n}</div>
+          <div class="flex items-center gap-2 mt-0.5"><span class="text-[11px] tx2">${s.stockCode}.T 東証</span><span class="text-[10px] px-1.5 py-0.5 rounded ${sg.c}">${sg.l}</span></div>
         </div>
-        <div class="text-right" onclick='showDetail(${JSON.stringify(s).replace(/'/g,"&#39;")})'>
-          <span class="text-lg font-bold">${s.score||0}</span><span class="text-[10px] text-gray-500 block">点</span></div>
-      </div></div>`;
-  }).join("");
-  initSwipe();
-}
-function initSwipe(){
-  document.querySelectorAll(".stock-content").forEach(el=>{
-    let sx=0,cx=0,sw=false;
-    el.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;cx=0},{passive:true});
-    el.addEventListener("touchmove",e=>{const d=e.touches[0].clientX-sx;if(d<0){cx=Math.max(d,-64);el.style.transform=`translateX(${cx}px)`;el.style.transition="none"}},{passive:true});
-    el.addEventListener("touchend",()=>{el.style.transition="transform .2s ease";if(cx<-30){el.style.transform="translateX(-64px)";sw=true}else{el.style.transform="translateX(0)";sw=false}});
-    el.addEventListener("click",e=>{if(sw){e.preventDefault();e.stopPropagation();el.style.transform="translateX(0)";sw=false}},true);
-  });
-}
-async function loadAnalyses(){
-  try{
-    const q=query(collection(db,"analyses"),orderBy("analyzedAt","desc"),limit(20));
-    const snap=await getDocs(q);const all=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(!all.length){document.getElementById("loading").innerHTML='<div class="text-2xl mb-2">📊</div>分析データがまだありません';return}
-    const ld=all[0].analyzedAt?.toDate?.()||new Date();
-    document.getElementById("analysis-date").textContent=`${ld.toLocaleDateString("ja-JP")} ${ld.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"})} 更新`;
-    document.getElementById("last-updated").textContent=ld.toLocaleDateString("ja-JP");
-    const seen=new Set();stocksData=[];
-    for(const s of all){if(!seen.has(s.stockCode)){seen.add(s.stockCode);stocksData.push(s)}}
-    stocksData.sort((a,b)=>(b.score||0)-(a.score||0));
-    document.getElementById("analysis-count").textContent=`${stocksData.length}銘柄`;
-    document.getElementById("loading").classList.add("hidden");
-    renderStockList();
-  }catch(e){document.getElementById("loading").innerHTML=`<div class="text-2xl mb-2">😿</div><p class="text-sm">エラー</p><p class="text-xs text-gray-600">${e.message}</p>`}
-}
+        <div class="text-right" onclick='showD(${JSON.stringify(s).replace(/'/g,"&#39;")})'>
+          <span class="text-lg font-bold">${s.score||0}</span><span class="text-[10px] tx2 block">点</span></div>
+      </div></div>`}).join("");
+  initSw();renderPortSummary()}
 
-// ===== 詳細モーダル =====
-window.showDetail=(s)=>{
-  document.getElementById("detail-title").textContent=`${s.stockCode} ${s.name||''}`;
-  const sig=sigMap[s.signal]||sigMap.watch;
-  const holding=getPortfolio().find(p=>p.code===s.stockCode&&p.status==="holding");
-  let holdingHtml="";
-  if(holding){
-    const cur=s.close||0;const pnl=(cur-holding.buyPrice)*holding.qty;const pct=((cur/holding.buyPrice-1)*100).toFixed(1);
-    holdingHtml=`<div class="bg-bg rounded-lg p-3 mb-3 border border-gray-700">
-      <div class="text-xs text-gray-500 mb-1">保有中</div>
-      <div class="flex justify-between mb-1"><span class="text-sm">買値 ${holding.buyPrice.toLocaleString()}円 × ${holding.qty}株</span></div>
-      <div class="text-sm ${pnl>=0?'pnl-plus':'pnl-minus'}">${pnl>=0?'+':''}${pnl.toLocaleString()}円 (${pnl>=0?'+':''}${pct}%)</div>
-      <button class="btn-sell mt-2 text-sm py-2" onclick="openSellModal('${s.stockCode}','${(s.name||'').replace(/'/g,'')}',${getPortfolio().indexOf(holding)})">売った</button>
-    </div>`;
-  }
-  document.getElementById("detail-body").innerHTML=`
-    <div class="flex items-center gap-3 mb-4"><span class="text-3xl font-bold rank-${s.rank}">${s.rank}</span><div><span class="text-2xl font-bold">${s.score}点</span><span class="text-xs px-2 py-0.5 rounded ml-2 ${sig.cls}">${sig.label}</span></div></div>
-    ${holdingHtml}
-    <div class="bg-bg rounded-lg p-3 mb-3"><div class="text-xs text-gray-500 mb-1">戦略</div><div class="text-sm">${s.strategy||''}</div></div>
-    <div class="bg-bg rounded-lg p-3 mb-3"><div class="text-xs text-gray-500 mb-1">AI分析</div><div class="text-sm">${s.summary||''}</div></div>
-    ${s.reasons?.length?`<div class="bg-bg rounded-lg p-3 mb-3"><div class="text-xs text-gray-500 mb-1">買い理由</div>${s.reasons.map(r=>`<div class="text-sm text-green-400 mb-1">+ ${r}</div>`).join("")}</div>`:''}
-    ${s.risks?.length?`<div class="bg-bg rounded-lg p-3 mb-3"><div class="text-xs text-gray-500 mb-1">リスク</div>${s.risks.map(r=>`<div class="text-sm text-red-400 mb-1">- ${r}</div>`).join("")}</div>`:''}
-    <div class="grid grid-cols-3 gap-2 text-center mb-3">
-      <div class="bg-bg rounded-lg p-2"><div class="text-[10px] text-gray-500">終値</div><div class="text-sm font-medium">${s.close?.toLocaleString()||'-'}円</div></div>
-      <div class="bg-bg rounded-lg p-2"><div class="text-[10px] text-gray-500">RSI</div><div class="text-sm font-medium">${s.rsi||'-'}</div></div>
-      <div class="bg-bg rounded-lg p-2"><div class="text-[10px] text-gray-500">MACD</div><div class="text-sm font-medium">${s.macd_cross==='golden_cross'?'GC':s.macd_cross==='dead_cross'?'DC':'-'}</div></div>
-    </div>
-    ${!holding?`<button class="btn-primary" onclick="openBuyModal('${s.stockCode}','${(s.name||'').replace(/'/g,'')}',${s.close||0})">買った</button>`:''}`;
-  document.getElementById("detail-modal").classList.remove("hidden");
-};
-window.closeDetail=()=>document.getElementById("detail-modal").classList.add("hidden");
+function initSw(){document.querySelectorAll(".sc").forEach(el=>{let sx=0,cx=0,sw=false;el.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;cx=0},{passive:true});el.addEventListener("touchmove",e=>{const d=e.touches[0].clientX-sx;if(d<0){cx=Math.max(d,-64);el.style.transform=`translateX(${cx}px)`;el.style.transition="none"}},{passive:true});el.addEventListener("touchend",()=>{el.style.transition="transform .2s ease";if(cx<-30){el.style.transform="translateX(-64px)";sw=true}else{el.style.transform="translateX(0)";sw=false}});el.addEventListener("click",e=>{if(sw){e.preventDefault();e.stopPropagation();el.style.transform="translateX(0)";sw=false}},true)})}
 
-// ===== ウォッチ =====
-window.toggleWatch=toggleWatch;
-function renderWatchlist(){
-  const l=getWatchlist(),el=document.getElementById("watch-list"),em=document.getElementById("watch-empty");
-  if(!l.length){el.innerHTML="";em.classList.remove("hidden");return}
-  em.classList.add("hidden");
-  el.innerHTML=l.map(w=>{
-    const s=stocksData.find(x=>x.stockCode===w.code);
-    if(s){const sig=sigMap[s.signal]||sigMap.watch;
-      return`<div class="flex items-center gap-3 px-4 py-3 border-b border-gray-800/50">
-        <span class="text-xl font-bold rank-${s.rank} w-6 text-center">${s.rank}</span>
-        <div class="flex-1 min-w-0" onclick='showDetail(${JSON.stringify(s).replace(/'/g,"&#39;")})'>
-          <div class="flex items-center gap-2 mb-0.5"><span class="text-sm font-medium">${s.stockCode} ${s.name||''}</span><span class="text-[10px] px-1.5 py-0.5 rounded ${sig.cls}">${sig.label}</span></div>
-          <p class="text-xs text-gray-500 truncate">${s.summary||''}</p></div>
-        <div class="text-right mr-2"><span class="text-lg font-bold">${s.score||0}</span><span class="text-[10px] text-gray-500 block">点</span></div>
-        <button onclick="toggleWatch('${w.code}','')" class="text-yellow-400 text-xl">★</button></div>`}
-    return`<div class="flex items-center justify-between px-4 py-3 border-b border-gray-800/50"><span class="text-sm">${w.code} ${w.name||''}</span><button onclick="toggleWatch('${w.code}','')" class="text-yellow-400 text-xl">★</button></div>`
-  }).join("");
-}
+async function loadAnalyses(){try{const q=query(collection(db,"analyses"),orderBy("analyzedAt","desc"),limit(30));const snap=await getDocs(q);const all=snap.docs.map(d=>({id:d.id,...d.data()}));
+  if(!all.length){$('loading').innerHTML='<div class="text-center py-12 tx2">分析データがありません</div>';return}
+  const ld=all[0].analyzedAt?.toDate?.()||new Date();$('a-date').textContent=`${ld.toLocaleDateString("ja-JP")} ${ld.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"})}`;$('hdr-date').textContent=ld.toLocaleDateString("ja-JP");
+  const seen=new Set();sData=[];for(const s of all){if(!seen.has(s.stockCode)){seen.add(s.stockCode);sData.push(s)}}
+  sData.sort((a,b)=>(b.score||0)-(a.score||0));$('a-count').textContent=`${sData.length}銘柄`;$('loading').classList.add('hidden');
+  renderFilt();renderStockList()}catch(e){$('loading').innerHTML=`<div class="text-center py-12 tx2">エラー: ${e.message}</div>`}}
 
-// ===== ログ =====
+// === Detail ===
+window.showD=(s)=>{document.body.classList.add('modal-open');const sg=SM[s.signal]||SM.watch;const n=str(s.name);
+  const h=portfolio.find(p=>p.code===s.stockCode&&p.status==="holding");
+  let hH="";if(h){const c=s.close||0;const pnl=(c-h.buyPrice)*h.qty;const pc=((c/h.buyPrice-1)*100).toFixed(1);
+    hH=`<div class="bg1 rounded-lg p-3 mb-3 border bc"><div class="text-[10px] tx2 mb-1">保有中</div><div class="text-sm mb-1">買値 ${h.buyPrice.toLocaleString()}円 × ${h.qty}株</div><div class="text-sm ${pnl>=0?'pnl-p':'pnl-m'} font-medium">${pnl>=0?'+':''}${pnl.toLocaleString()}円 (${pnl>=0?'+':''}${pc}%)</div><button class="btn bs mt-2 text-sm py-2" onclick="openS('${s.stockCode}','${n.replace(/'/g,"")}',${portfolio.indexOf(h)})">売った</button></div>`}
+  $('d-body').innerHTML=`
+    <div class="flex items-center justify-between mb-3"><div><div class="text-base font-bold">${n}</div><div class="text-xs tx2">${s.stockCode}.T 東証</div></div><div class="text-right"><span class="text-2xl font-bold">${s.score}</span><span class="text-xs tx2">点</span></div></div>
+    <div class="flex gap-2 mb-3"><span class="text-sm font-bold r${s.rank}">${s.rank}ランク</span><span class="text-xs px-2 py-0.5 rounded ${sg.c}">${sg.l}</span></div>
+    ${!h?`<button class="btn bp mb-3" onclick="openB('${s.stockCode}','${n.replace(/'/g,"")}',${s.close||0})">買った</button>`:''}${hH}
+    <div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">戦略</div><div class="text-sm">${s.strategy||'-'}</div></div>
+    <div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">AI分析</div><div class="text-sm">${s.summary||'-'}</div></div>
+    ${s.reasons?.length?`<div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">買い理由</div>${s.reasons.map(r=>`<div class="text-sm pnl-p mb-0.5">+ ${r}</div>`).join("")}</div>`:''}
+    ${s.risks?.length?`<div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">リスク</div>${s.risks.map(r=>`<div class="text-sm pnl-m mb-0.5">- ${r}</div>`).join("")}</div>`:''}
+    <div class="grid grid-cols-3 gap-2 text-center"><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">終値</div><div class="text-sm font-medium">${s.close?.toLocaleString()||'-'}円</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">RSI</div><div class="text-sm font-medium">${safe(s.rsi)??'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">MACD</div><div class="text-sm font-medium">${s.macd_cross==='golden_cross'?'🟢 GC':s.macd_cross==='dead_cross'?'🔴 DC':'-'}</div></div></div>`;
+  $('d-modal').classList.remove('hidden')};
+window.closeD=()=>{$('d-modal').classList.add('hidden');document.body.classList.remove('modal-open')};
+
+// === Watch ===
+function renderWatch(){const l=watchlist,el=$('watch-list'),em=$('watch-empty');if(!l.length){el.innerHTML="";em.classList.remove('hidden');return}em.classList.add('hidden');
+  el.innerHTML=l.map(w=>{const s=sData.find(x=>x.stockCode===w.code);if(s){const sg=SM[s.signal]||SM.watch;return`<div class="flex items-center gap-3 px-4 py-3 border-b bc" onclick='showD(${JSON.stringify(s).replace(/'/g,"&#39;")})'>
+    <span class="text-xl font-bold r${s.rank} w-6 text-center">${s.rank}</span><div class="flex-1 min-w-0"><div class="text-[13px] font-medium">${str(s.name)}</div><div class="flex items-center gap-2 mt-0.5"><span class="text-[11px] tx2">${s.stockCode}.T</span><span class="text-[10px] px-1.5 py-0.5 rounded ${sg.c}">${sg.l}</span></div></div>
+    <div class="text-right mr-2"><span class="text-lg font-bold">${s.score||0}</span><span class="text-[10px] tx2 block">点</span></div>
+    <button onclick="event.stopPropagation();toggleWatch('${w.code}','')" style="color:var(--yw)" class="text-xl">★</button></div>`}
+    return`<div class="flex items-center justify-between px-4 py-3 border-b bc"><span class="text-sm">${w.code} ${str(w.name)}</span><button onclick="toggleWatch('${w.code}','')" style="color:var(--yw)" class="text-xl">★</button></div>`}).join("")}
+
+// === Log ===
+let logEd=false;
+window.toggleLogEdit=()=>{logEd=!logEd;$('log-ed').textContent=logEd?"完了":"編集";renderLog()};
+window.delTrade=(idx)=>{if(!confirm("この取引記録を削除しますか？"))return;const t=[...trades];const rm=t[idx];t.splice(idx,1);setT(t);
+  if(rm?.type==="buy"){const p=[...portfolio];const pi=p.findIndex(x=>x.code===rm.code&&x.buyPrice===rm.price&&x.qty===rm.qty);if(pi>=0){p.splice(pi,1);setP(p)}}
+  if(rm?.type==="sell"){const p=[...portfolio];const pi=p.findIndex(x=>x.code===rm.code&&x.status==="sold"&&x.sellPrice===rm.price);if(pi>=0){p[pi].status="holding";delete p[pi].sellPrice;delete p[pi].sellDate;delete p[pi].pnl;setP(p)}}
+  toast("取引記録を削除しました");renderLog()};
+
 function renderLog(){
-  const trades=getTrades(),portfolio=getPortfolio();
-  const sold=portfolio.filter(p=>p.status==="sold");
-  const holding=portfolio.filter(p=>p.status==="holding");
-  const totalPnl=sold.reduce((s,p)=>s+(p.pnl||0),0);
-  const winCount=sold.filter(p=>(p.pnl||0)>0).length;
-  const winRate=sold.length?Math.round(winCount/sold.length*100):0;
+  const sold=portfolio.filter(p=>p.status==="sold");const tp=sold.reduce((s,p)=>s+(p.pnl||0),0);const wc=sold.filter(p=>(p.pnl||0)>0).length;const wr=sold.length?Math.round(wc/sold.length*100):0;
+  $('log-sum').innerHTML=`<div class="bg2 rounded-xl p-3 text-center border bc"><div class="text-[10px] tx2 mb-1">総損益</div><div class="text-sm font-bold ${tp>=0?'pnl-p':'pnl-m'}">${tp>=0?'+':''}${tp.toLocaleString()}円</div></div>
+    <div class="bg2 rounded-xl p-3 text-center border bc"><div class="text-[10px] tx2 mb-1">勝率</div><div class="text-sm font-bold">${wr}%</div></div>
+    <div class="bg2 rounded-xl p-3 text-center border bc"><div class="text-[10px] tx2 mb-1">取引</div><div class="text-sm font-bold">${sold.length}件</div></div>`;
+  drawPnl(sold);drawMonthly(sold);
+  const all=[...trades].reverse();
+  if(!all.length){$('trade-empty').classList.remove('hidden');$('trade-list').innerHTML="";return}
+  $('trade-empty').classList.add('hidden');
+  $('trade-list').innerHTML=all.map((t,ri)=>{const oi=trades.length-1-ri;const d=new Date(t.date);const ds=`${d.getMonth()+1}/${d.getDate()}`;const ib=t.type==="buy";
+    return`<div class="flex items-center gap-3 px-4 py-3 border-b bc">${logEd?`<button onclick="delTrade(${oi})" style="color:var(--rd)" class="text-lg font-bold">−</button>`:''}
+      <span class="text-[10px] px-1.5 py-0.5 rounded ${ib?'sb':'sd'}">${ib?'買':'売'}</span>
+      <div class="flex-1 min-w-0"><span class="text-sm font-medium">${t.code}</span><span class="text-[11px] tx2 ml-2">${t.price?.toLocaleString()}円×${t.qty}</span></div>
+      <div class="text-right"><span class="text-[11px] tx2">${ds}</span>${t.pnl!=null?`<div class="text-xs font-medium ${t.pnl>=0?'pnl-p':'pnl-m'}">${t.pnl>=0?'+':''}${t.pnl.toLocaleString()}円</div>`:''}</div></div>`}).join("")}
 
-  document.getElementById("log-summary").innerHTML=`
-    <div class="bg-bg-card rounded-lg p-3 text-center"><div class="text-[10px] text-gray-500 mb-1">総損益</div><div class="text-base font-bold ${totalPnl>=0?'pnl-plus':'pnl-minus'}">${totalPnl>=0?'+':''}${totalPnl.toLocaleString()}円</div></div>
-    <div class="bg-bg-card rounded-lg p-3 text-center"><div class="text-[10px] text-gray-500 mb-1">勝率</div><div class="text-base font-bold">${winRate}%</div></div>
-    <div class="bg-bg-card rounded-lg p-3 text-center"><div class="text-[10px] text-gray-500 mb-1">取引数</div><div class="text-base font-bold">${sold.length}件</div></div>`;
+function drawPnl(sold){const cv=$('pnl-cv');const ctx=cv.getContext('2d');const W=cv.width=cv.offsetWidth*2;const H=cv.height=280;ctx.clearRect(0,0,W,H);
+  const cs=getComputedStyle(document.documentElement);
+  if(!sold.length){ctx.fillStyle=cs.getPropertyValue('--tx3');ctx.font="20px sans-serif";ctx.textAlign="center";ctx.fillText("取引データなし",W/2,H/2);return}
+  const cp=[];let cm=0;const sr=[...sold].sort((a,b)=>(a.sellDate||0)-(b.sellDate||0));for(const s of sr){cm+=(s.pnl||0);cp.push(cm)}
+  const mx=Math.max(...cp.map(Math.abs),1);const pd=40;const my=H/2;const sy=(H/2-pd)/mx;
+  ctx.strokeStyle=cs.getPropertyValue('--bd');ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pd,my);ctx.lineTo(W-10,my);ctx.stroke();
+  // gradient fill
+  const sx=(W-pd-10)/Math.max(cp.length-1,1);
+  ctx.beginPath();ctx.moveTo(pd,my);cp.forEach((v,i)=>{const x=pd+i*sx;const y=my-v*sy;ctx.lineTo(x,y)});ctx.lineTo(pd+(cp.length-1)*sx,my);ctx.closePath();
+  const grd=ctx.createLinearGradient(0,0,0,H);grd.addColorStop(0,cm>=0?"rgba(34,197,94,.15)":"rgba(239,68,68,.15)");grd.addColorStop(1,"transparent");ctx.fillStyle=grd;ctx.fill();
+  // line
+  ctx.beginPath();ctx.strokeStyle=cm>=0?"#22c55e":"#ef4444";ctx.lineWidth=2.5;cp.forEach((v,i)=>{const x=pd+i*sx;const y=my-v*sy;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});ctx.stroke();
+  cp.forEach((v,i)=>{const x=pd+i*sx;const y=my-v*sy;ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fillStyle=v>=0?"#22c55e":"#ef4444";ctx.fill()})}
 
-  // 損益グラフ
-  drawPnlChart(sold);
+function drawMonthly(sold){const cv=$('monthly-cv');const ctx=cv.getContext('2d');const W=cv.width=cv.offsetWidth*2;const H=cv.height=200;ctx.clearRect(0,0,W,H);if(!sold.length)return;
+  const monthly={};sold.forEach(s=>{const d=new Date(s.sellDate||Date.now());const k=`${d.getFullYear()}/${d.getMonth()+1}`;monthly[k]=(monthly[k]||0)+(s.pnl||0)});
+  const keys=Object.keys(monthly).sort();const vals=keys.map(k=>monthly[k]);if(!keys.length)return;
+  const mx=Math.max(...vals.map(Math.abs),1);const pd=40;const bw=Math.min(30,(W-pd*2)/keys.length*.7);const gap=(W-pd*2)/keys.length;const my=H/2-10;const sy=(my-10)/mx;
+  const cs=getComputedStyle(document.documentElement);
+  ctx.fillStyle=cs.getPropertyValue('--tx3');ctx.font="16px sans-serif";ctx.textAlign="center";ctx.fillText("月別損益",W/2,18);
+  ctx.strokeStyle=cs.getPropertyValue('--bd');ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pd,my);ctx.lineTo(W-pd,my);ctx.stroke();
+  keys.forEach((k,i)=>{const v=vals[i];const x=pd+i*gap+gap/2;const bh=Math.abs(v)*sy;const y=v>=0?my-bh:my;
+    ctx.fillStyle=v>=0?"rgba(34,197,94,.6)":"rgba(239,68,68,.6)";ctx.beginPath();ctx.roundRect(x-bw/2,y,bw,bh,3);ctx.fill();
+    ctx.fillStyle=cs.getPropertyValue('--tx3');ctx.font="12px sans-serif";ctx.textAlign="center";ctx.fillText(k.split('/')[1]+'月',x,H-5)})}
 
-  // 取引一覧
-  const allTrades=[...trades].reverse();
-  if(!allTrades.length){document.getElementById("trade-empty").classList.remove("hidden");document.getElementById("trade-list").innerHTML="";return}
-  document.getElementById("trade-empty").classList.add("hidden");
-  document.getElementById("trade-list").innerHTML=allTrades.map(t=>{
-    const d=new Date(t.date);const ds=`${d.getMonth()+1}/${d.getDate()}`;
-    const isBuy=t.type==="buy";
-    return`<div class="flex items-center gap-3 px-4 py-3 border-b border-gray-800/50">
-      <span class="text-[10px] px-1.5 py-0.5 rounded ${isBuy?'signal-buy':'signal-danger'}">${isBuy?'買':'売'}</span>
-      <div class="flex-1 min-w-0"><span class="text-sm font-medium">${t.code}</span><span class="text-xs text-gray-500 ml-2">${t.price?.toLocaleString()}円 × ${t.qty}株</span></div>
-      <div class="text-right"><span class="text-xs text-gray-500">${ds}</span>
-      ${t.pnl!==undefined?`<div class="text-sm font-medium ${t.pnl>=0?'pnl-plus':'pnl-minus'}">${t.pnl>=0?'+':''}${t.pnl.toLocaleString()}円</div>`:''}</div></div>`
-  }).join("");
-}
+// === Notifications ===
+async function loadNoti(){try{const q=query(collection(db,"notifications"),orderBy("createdAt","desc"),limit(20));const snap=await getDocs(q);const ns=snap.docs.map(d=>({id:d.id,...d.data()}));if(!ns.length)return;
+  $('noti-empty').classList.add('hidden');
+  $('noti-list').innerHTML=ns.map(n=>{const sg=SM[n.type]||SM.watch;const d=n.createdAt?.toDate?.()?n.createdAt.toDate().toLocaleDateString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}):"";
+    return`<div class="px-4 py-3 border-b bc"><div class="flex items-center gap-2 mb-1"><span class="text-[10px] px-1.5 py-0.5 rounded ${sg.c}">${sg.l}</span><span class="text-sm font-medium">${n.stockCode}</span><span class="text-xs tx2 ml-auto">${d}</span></div><p class="text-xs tx3">${n.summary||''}</p></div>`}).join("")}catch(e){}}
 
-function drawPnlChart(sold){
-  const canvas=document.getElementById("pnl-chart");const ctx=canvas.getContext("2d");
-  const W=canvas.width=canvas.offsetWidth*2;const H=canvas.height=320;
-  ctx.clearRect(0,0,W,H);
-  if(!sold.length){ctx.fillStyle="#555";ctx.font="24px sans-serif";ctx.textAlign="center";ctx.fillText("取引データなし",W/2,H/2);return}
-  const cumPnl=[];let cum=0;
-  const sorted=[...sold].sort((a,b)=>(a.sellDate||0)-(b.sellDate||0));
-  for(const s of sorted){cum+=(s.pnl||0);cumPnl.push(cum)}
-  const maxV=Math.max(...cumPnl.map(Math.abs),1);const pad=40;
-  const midY=H/2;const scaleY=(H/2-pad)/maxV;
+// === Glossary ===
+const GLS=[
+  {cat:"基本指標",items:[{t:"PER（株価収益率）",s:"業種別で判定",d:"株価÷EPS。低いほど割安。ねこ株では業種別に適正PER上限を自動設定し、高収益企業にはボーナスを付与。"},{t:"PBR（株価純資産倍率）",s:"0.8倍以上",d:"株価÷BPS。1倍未満は解散価値割れ。0.5未満は除外、0.8未満は警告。"},{t:"ROE（自己資本利益率）",s:"10%以上",d:"純利益÷自己資本×100。株主資本の効率性を示す。10%以上で通過、15%・20%超でPERボーナス付与。"},{t:"EPS（1株当たり利益）",s:"成長が重要",d:"純利益÷発行済株式数。PERの計算基礎。EPSが年々成長する企業は株価も上昇しやすい。"},{t:"自己資本比率",s:"30%以上",d:"自己資本÷総資産×100。財務の安全性を示す。銀行・保険・電気機器は構造上低いため免除。"},{t:"営業利益率",s:"高いほど優良",d:"営業利益÷売上高×100。本業の収益力。15%以上で+3、20%以上で+5、30%以上で+10のPERボーナス。"},{t:"信用倍率",s:"1倍以下が良好",d:"信用買残÷信用売残。1倍以下は売り方が多く、買い戻し需要で株価上昇しやすい。制度信用のみ参照。"},{t:"配当利回り",s:"高いと安定",d:"1株当たり配当÷株価×100。3%以上で高配当。ただし配当だけでなく成長性も重視すべき。"},{t:"時価総額",s:"企業の規模",d:"株価×発行済株式数。大型株は安定、小型株はボラティリティが高い。"}]},
+  {cat:"テクニカル指標",items:[{t:"MACD",s:"最重要指標 ★★★",d:"移動平均収束拡散法。短期EMA−長期EMAのライン。シグナルラインとのゴールデンクロス(GC)で買い、デッドクロス(DC)で売り。ねこ株で最も重視。"},{t:"RSI（相対力指数）",s:"30以下で買い ★★",d:"過去14日の値動きの強さ。30%以下=売られすぎ（買いチャンス）、80%以上=過熱（利確検討）。MACDと併用で精度UP。"},{t:"ストキャスティクス",s:"%K・%Dで判定 ★",d:"一定期間の高値安値に対する現在位置。%K20以下で売られすぎ。MACD・RSIとの3指標組み合わせで騙しを回避。"},{t:"ボリンジャーバンド",s:"偏差3タッチで買い",d:"移動平均±標準偏差のバンド。偏差2以内=95%、偏差3以内=99.7%の確率で収まる。偏差3に触れたら反発を狙う。"},{t:"移動平均線",s:"5日/25日/75日",d:"過去N日の終値平均。短期>中期>長期の並び（パーフェクトオーダー）は強い上昇トレンド。"},{t:"出来高",s:"トレンドの信頼性",d:"売買された株数。株価上昇+出来高増加=本物のトレンド。出来高を伴わない上昇は騙しの可能性。"},{t:"ゴールデンクロス",s:"買いシグナル",d:"短期線が長期線を下から上に突き抜ける現象。MACDのGCが最も重要。移動平均線のGCも参考になる。"},{t:"デッドクロス",s:"売りシグナル",d:"短期線が長期線を上から下に突き抜ける現象。保有銘柄でDCが出たら売却を検討。"}]},
+  {cat:"ねこ株の仕組み",items:[{t:"AIスコア",s:"0〜100点",d:"S(80-100)=強い買い、A(60-79)=買い候補、B(40-59)=様子見、C(0-39)=危険。テクニカル+ファンダ+4戦略の総合評価。"},{t:"高収益ボーナス",s:"PER上限を自動拡大",d:"ROEや営業利益率が高い企業は、業種別PER上限にボーナスが加算される。キーエンス（営業利益率50%超）なども適切に評価。"},{t:"3段階判定",s:"通過/警告/除外",d:"ファンダメンタルの判定。通過=条件クリア、警告=ボーダーラインだがAI分析に回す、除外=基準の1.5倍超で対象外。"},{t:"銘柄自動発掘",s:"毎週日曜200銘柄",d:"主要200銘柄をスキャンし、ファンダ+テクニカルでTOP20を自動選出。翌週の分析対象に自動反映。"},{t:"売り通知",s:"利確・損切を自動判定",d:"保有銘柄の利確ライン(+15%)・損切ライン(-7%)・MACDデッドクロス・RSI過熱を毎日チェックし通知。"}]}];
 
-  // グリッド
-  ctx.strokeStyle="#333";ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(pad,midY);ctx.lineTo(W-10,midY);ctx.stroke();
+function renderGlossary(){const q=($('gls-search')?.value||'').toLowerCase();
+  $('gls-list').innerHTML=GLS.map(cat=>{
+    const items=q?cat.items.filter(g=>g.t.toLowerCase().includes(q)||g.d.toLowerCase().includes(q)):cat.items;
+    if(!items.length)return'';
+    return`<div class="px-4 pt-4 pb-1"><span class="text-xs font-medium tx2">${cat.cat}</span></div>
+    ${items.map(g=>`<div class="px-4 py-3 border-b bc"><div class="flex justify-between items-start gap-2 mb-1.5"><span class="text-sm font-medium">${g.t}</span><span class="text-[10px] px-2 py-0.5 rounded-full ch on">${g.s}</span></div><p class="text-xs tx2 leading-relaxed">${g.d}</p></div>`).join("")}`}).join("")}
 
-  // ライン
-  ctx.beginPath();ctx.strokeStyle=cum>=0?"#22c55e":"#ef4444";ctx.lineWidth=3;
-  const stepX=(W-pad-10)/Math.max(cumPnl.length-1,1);
-  cumPnl.forEach((v,i)=>{const x=pad+i*stepX;const y=midY-v*scaleY;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});
-  ctx.stroke();
+// === Settings ===
+let setD={morningTime:"07:00",eveningTime:"16:00",activeDays:[0,1,2,3,4],buyScoreMin:75,dangerScoreMax:30,roeMin:10,pbrMin:0.8,equityMin:30,perMode:"業種別自動",takeProfit:15,stopLoss:7};
+function renderDays(){const ds=["月","火","水","木","金","土","日"];$('s-days').innerHTML=ds.map((d,i)=>`<button onclick="togDay(${i})" class="w-9 h-9 rounded-full text-xs ch ${setD.activeDays.includes(i)?'on':''}">${d}</button>`).join("")}
+window.togDay=i=>{const x=setD.activeDays.indexOf(i);if(x>=0)setD.activeDays.splice(x,1);else setD.activeDays.push(i);renderDays()};
+window.openSettings=window.openSet=async()=>{try{const snap=await getDoc(doc(db,"settings","user_settings"));if(snap.exists())setD={...setD,...snap.data()}}catch(e){}
+  $('sm').value=setD.morningTime;$('se').value=setD.eveningTime;$('sb').value=setD.buyScoreMin;$('sb-v').textContent=setD.buyScoreMin+'点';$('sd').value=setD.dangerScoreMax;$('sd-v').textContent=setD.dangerScoreMax+'点';$('sr').value=setD.roeMin;$('sp').value=setD.pbrMin;$('sq').value=setD.equityMin;$('spm').value=setD.perMode;$('stp').value=setD.takeProfit;$('ssl').value=setD.stopLoss;renderDays();$('set-pg').classList.remove('hidden')};
+window.closeSet=()=>$('set-pg').classList.add('hidden');
+window.saveSet=async()=>{const s={morningTime:$('sm').value,eveningTime:$('se').value,activeDays:setD.activeDays,buyScoreMin:parseInt($('sb').value),dangerScoreMax:parseInt($('sd').value),roeMin:parseFloat($('sr').value),pbrMin:parseFloat($('sp').value),equityMin:parseFloat($('sq').value),perMode:$('spm').value,takeProfit:parseFloat($('stp').value),stopLoss:parseFloat($('ssl').value),updatedAt:new Date()};
+  try{await setDoc(doc(db,"settings","user_settings"),s);setD={...setD,...s};$('s-ok').classList.remove('hidden');setTimeout(()=>$('s-ok').classList.add('hidden'),2000);toast("設定を保存しました")}catch(e){toast("保存エラー")}};
+let aiS=null;
+window.aiRec=()=>{const b=$('ai-btn');b.disabled=true;b.textContent="分析中...";setTimeout(()=>{aiS={buyScoreMin:80,dangerScoreMax:25,roeMin:12,pbrMin:0.8,equityMin:30,takeProfit:12,stopLoss:5};$('ai-body').innerHTML=`買い通知: <b>80点以上</b><br>危険通知: <b>25点以下</b><br>ROE: <b>12%</b><br>利確: <b>12%</b> / 損切: <b>5%</b>`;$('ai-res').classList.remove('hidden');b.disabled=false;b.textContent="✨ AIおすすめ設定"},1200)};
+window.applyAI=()=>{if(!aiS)return;$('sb').value=aiS.buyScoreMin;$('sb-v').textContent=aiS.buyScoreMin+'点';$('sd').value=aiS.dangerScoreMax;$('sd-v').textContent=aiS.dangerScoreMax+'点';$('sr').value=aiS.roeMin;$('stp').value=aiS.takeProfit;$('ssl').value=aiS.stopLoss;$('ai-res').classList.add('hidden');toast("AI推奨設定を適用しました")};
 
-  // ドット
-  cumPnl.forEach((v,i)=>{const x=pad+i*stepX;const y=midY-v*scaleY;ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle=v>=0?"#22c55e":"#ef4444";ctx.fill()});
+// === Backup ===
+window.exportBackup=()=>{const data={watchlist,portfolio,trades,exportDate:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`nekokabushiki_${new Date().toISOString().slice(0,10)}.json`;a.click();toast("バックアップをダウンロードしました")};
+window.importBackup=()=>$('imp-f').click();
+window.handleImport=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.watchlist)setW(d.watchlist);if(d.portfolio)setP(d.portfolio);if(d.trades)setT(d.trades);toast("データを復元しました");renderWatch();renderLog();renderStockList()}catch{toast("ファイル形式が不正です")}};r.readAsText(f)};
 
-  // 0ライン文字
-  ctx.fillStyle="#555";ctx.font="20px sans-serif";ctx.textAlign="right";ctx.fillText("0",pad-8,midY+6);
-}
-
-// ===== 通知 =====
-async function loadNotifications(){
-  try{
-    const q=query(collection(db,"notifications"),orderBy("createdAt","desc"),limit(20));
-    const snap=await getDocs(q);const ns=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(!ns.length)return;
-    document.getElementById("notify-empty").classList.add("hidden");
-    document.getElementById("notify-list").innerHTML=ns.map(n=>{
-      const sig=sigMap[n.type]||sigMap.watch;
-      const d=n.createdAt?.toDate?.()?n.createdAt.toDate().toLocaleDateString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}):"";
-      return`<div class="px-4 py-3 border-b border-gray-800/50"><div class="flex items-center gap-2 mb-1"><span class="text-[10px] px-1.5 py-0.5 rounded ${sig.cls}">${sig.label}</span><span class="text-sm font-medium">${n.stockCode}</span><span class="text-xs text-gray-500 ml-auto">${d}</span></div><p class="text-xs text-gray-400">${n.summary||''}</p></div>`
-    }).join("");
-  }catch(e){}
-}
-
-// ===== 用語 =====
-const glossary=[
-  {term:"PER（株価収益率）",short:"業種別で判定",detail:"株価÷EPS。業種によって適正水準が異なるため、ねこ株では業種別PER上限を自動設定。"},
-  {term:"PBR（株価純資産倍率）",short:"0.8倍以上",detail:"株価÷BPS。0.5倍未満は除外、0.8倍未満は警告付き通過。"},
-  {term:"ROE（自己資本利益率）",short:"10%以上",detail:"純利益÷自己資本×100。10%以上で通過。15%・20%超で高収益ボーナス付与。"},
-  {term:"RSI",short:"30%以下で買い",detail:"30%以下で売られすぎ。80%以上で買われすぎ。"},
-  {term:"MACD",short:"最重要指標",detail:"ゴールデンクロス(GC)が買い、デッドクロス(DC)が売り。"},
-  {term:"ストキャスティクス",short:"%K・%Dで判定",detail:"%Kが20以下で売られすぎ。MACD・RSIとの組み合わせで騙しを回避。"},
-  {term:"ボリンジャーバンド",short:"偏差3タッチで買い",detail:"偏差2以内に収まる確率が約97%。偏差3にタッチで買い時。"},
-  {term:"信用倍率",short:"1倍以下が良好",detail:"制度信用倍率1倍以下の銘柄は需給が良好。"},
-  {term:"AIスコア",short:"0〜100点",detail:"S(80-100)=強い買い、A(60-79)=買い候補、B(40-59)=様子見、C(0-39)=危険。"},
-  {term:"高収益ボーナス",short:"PER上限を自動拡大",detail:"ROE15%以上や営業利益率20%以上の企業はPER上限にボーナス加算。"},
-];
-function renderGlossary(){
-  document.getElementById("glossary-list").innerHTML=glossary.map(g=>`
-    <div class="px-4 py-3"><div class="flex justify-between items-start gap-2 mb-1"><span class="text-sm font-medium">${g.term}</span><span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 whitespace-nowrap">${g.short}</span></div><p class="text-xs text-gray-500 leading-relaxed">${g.detail}</p></div>`).join("");
-}
-
-// ===== 設定 =====
-let settingsData={morningTime:"07:00",eveningTime:"16:00",activeDays:[0,1,2,3,4],buyScoreMin:75,dangerScoreMax:30,roeMin:10,pbrMin:0.8,equityMin:30,perMode:"業種別自動",takeProfit:15,stopLoss:7};
-
-function renderDayButtons(){
-  const days=["月","火","水","木","金","土","日"];
-  const c=document.getElementById("s-days");if(!c)return;
-  c.innerHTML=days.map((d,i)=>{
-    const active=settingsData.activeDays.includes(i);
-    return`<button onclick="toggleDay(${i})" id="day-${i}" class="w-9 h-9 rounded-full text-xs ${active?'bg-blue-500/20 text-blue-400 border border-blue-500/30':'bg-transparent text-gray-500 border border-gray-700'}">${d}</button>`
-  }).join("");
-}
-window.toggleDay=(i)=>{
-  const idx=settingsData.activeDays.indexOf(i);
-  if(idx>=0)settingsData.activeDays.splice(idx,1);else settingsData.activeDays.push(i);
-  renderDayButtons();
-};
-window.openSettings=async()=>{
-  await loadSettings();
-  document.getElementById("settings-modal").classList.remove("hidden");
-};
-window.closeSettings=()=>document.getElementById("settings-modal").classList.add("hidden");
-
-async function loadSettings(){
-  try{
-    const d=await getDocs(query(collection(db,"settings"),limit(1)));
-    let found=false;
-    d.forEach(doc=>{
-      if(doc.id==="user_settings"){
-        const s=doc.data();
-        settingsData={...settingsData,...s};
-        found=true;
-      }
-    });
-    // try specific doc
-    if(!found){
-      const{getDoc}=await import("https://www.gstatic.com/firebasejs/11.7.0/firebase-firestore.js");
-      const snap=await getDoc(doc(db,"settings","user_settings"));
-      if(snap.exists())settingsData={...settingsData,...snap.data()};
-    }
-  }catch(e){}
-  // UIに反映
-  document.getElementById("s-morning").value=settingsData.morningTime||"07:00";
-  document.getElementById("s-evening").value=settingsData.eveningTime||"16:00";
-  document.getElementById("s-buy").value=settingsData.buyScoreMin||75;
-  document.getElementById("s-buy-val").textContent=(settingsData.buyScoreMin||75)+"点";
-  document.getElementById("s-danger").value=settingsData.dangerScoreMax||30;
-  document.getElementById("s-danger-val").textContent=(settingsData.dangerScoreMax||30)+"点";
-  document.getElementById("s-roe").value=settingsData.roeMin||10;
-  document.getElementById("s-pbr").value=settingsData.pbrMin||0.8;
-  document.getElementById("s-equity").value=settingsData.equityMin||30;
-  document.getElementById("s-per-mode").value=settingsData.perMode||"業種別自動";
-  document.getElementById("s-tp").value=settingsData.takeProfit||15;
-  document.getElementById("s-sl").value=settingsData.stopLoss||7;
-  renderDayButtons();
-}
-window.saveSettings=async()=>{
-  const s={
-    morningTime:document.getElementById("s-morning").value,
-    eveningTime:document.getElementById("s-evening").value,
-    activeDays:settingsData.activeDays,
-    buyScoreMin:parseInt(document.getElementById("s-buy").value),
-    dangerScoreMax:parseInt(document.getElementById("s-danger").value),
-    roeMin:parseFloat(document.getElementById("s-roe").value),
-    pbrMin:parseFloat(document.getElementById("s-pbr").value),
-    equityMin:parseFloat(document.getElementById("s-equity").value),
-    perMode:document.getElementById("s-per-mode").value,
-    takeProfit:parseFloat(document.getElementById("s-tp").value),
-    stopLoss:parseFloat(document.getElementById("s-sl").value),
-    updatedAt:new Date(),
-  };
-  try{
-    const{setDoc}=await import("https://www.gstatic.com/firebasejs/11.7.0/firebase-firestore.js");
-    await setDoc(doc(db,"settings","user_settings"),s);
-    settingsData={...settingsData,...s};
-    document.getElementById("s-saved").classList.remove("hidden");
-    setTimeout(()=>document.getElementById("s-saved").classList.add("hidden"),2000);
-  }catch(e){alert("保存エラー: "+e.message)}
-};
-
-let aiRecSettings=null;
-window.runAIRecommend=()=>{
-  const btn=document.getElementById("ai-rec-btn");
-  btn.disabled=true;btn.textContent="分析中...";
-  setTimeout(()=>{
-    aiRecSettings={buyScoreMin:80,dangerScoreMax:25,roeMin:12,pbrMin:0.8,equityMin:30,takeProfit:12,stopLoss:5};
-    document.getElementById("ai-rec-body").innerHTML=
-      `買い通知: <b>80点以上</b>（現在${settingsData.buyScoreMin}点）<br>`+
-      `危険通知: <b>25点以下</b>（現在${settingsData.dangerScoreMax}点）<br>`+
-      `ROE下限: <b>12%</b>（現在${settingsData.roeMin}%）<br>`+
-      `利確: <b>12%</b> / 損切: <b>5%</b><br>`+
-      `<span class="text-[10px] mt-1 block">分析履歴から精度が高い条件を抽出</span>`;
-    document.getElementById("ai-rec-result").classList.remove("hidden");
-    btn.disabled=false;btn.textContent="✨ AIおすすめ設定を提案";
-  },1500);
-};
-window.applyAISettings=()=>{
-  if(!aiRecSettings)return;
-  document.getElementById("s-buy").value=aiRecSettings.buyScoreMin;
-  document.getElementById("s-buy-val").textContent=aiRecSettings.buyScoreMin+"点";
-  document.getElementById("s-danger").value=aiRecSettings.dangerScoreMax;
-  document.getElementById("s-danger-val").textContent=aiRecSettings.dangerScoreMax+"点";
-  document.getElementById("s-roe").value=aiRecSettings.roeMin;
-  document.getElementById("s-tp").value=aiRecSettings.takeProfit;
-  document.getElementById("s-sl").value=aiRecSettings.stopLoss;
-  document.getElementById("ai-rec-result").classList.add("hidden");
-};
-
-// ===== 初期化 =====
-renderTabs();renderGlossary();switchTab("ranking");loadAnalyses();loadNotifications();
-document.getElementById("detail-modal").addEventListener("click",e=>{if(e.target.id==="detail-modal")closeDetail()});
-document.getElementById("buy-modal").addEventListener("click",e=>{if(e.target.id==="buy-modal")closeBuyModal()});
-document.getElementById("sell-modal").addEventListener("click",e=>{if(e.target.id==="sell-modal")closeSellModal()});
+// === Init ===
+async function init(){await loadData();renderNav();renderGlossary();toTab("home");loadAnalyses();loadNoti()}
+init();
 </script>
 </body>
 </html>
