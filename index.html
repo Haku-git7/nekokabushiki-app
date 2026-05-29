@@ -46,7 +46,7 @@ a{color:inherit;text-decoration:none}
 /* skeleton */
 .sk{background:linear-gradient(90deg,var(--bg3) 25%,var(--bd) 50%,var(--bg3) 75%);background-size:200% 100%;animation:sk 1.5s infinite}@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
 /* toast */
-#toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--bg2);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:10px 20px;font-size:13px;z-index:99;opacity:0;transition:opacity .3s;pointer-events:none}
+#toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--bg2);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:10px 20px;font-size:13px;z-index:99;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:90vw}
 #toast.show{opacity:1}
 /* view transition */
 .view{display:none;opacity:0;transition:opacity .2s ease}.view.active{display:block;opacity:1}
@@ -319,10 +319,8 @@ async function loadAnalyses(){try{const q=query(collection(db,"analyses"),orderB
   if(!all.length){$('loading').innerHTML='<div class="text-center py-12 tx2">分析データがありません</div>';return}
   const ld=all[0].analyzedAt?.toDate?.()||new Date();const jst=ld.toLocaleString("ja-JP",{timeZone:"Asia/Tokyo",month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});const jstDate=ld.toLocaleDateString("ja-JP",{timeZone:"Asia/Tokyo"});$('a-date').textContent=jst+' 更新';
   // 経過時間表示
-  const now=new Date();const diff=Math.floor((now-ld)/60000);
-  if(diff<60)$('hdr-date').textContent=`${diff}分前`;
-  else if(diff<1440)$('hdr-date').textContent=`${Math.floor(diff/60)}時間前`;
-  else $('hdr-date').textContent=jstDate;
+  const jstShort=ld.toLocaleDateString("ja-JP",{timeZone:"Asia/Tokyo",month:"numeric",day:"numeric"});
+  $('hdr-date').textContent=`最終分析：${jstShort}`;
   const seen=new Set();sData=[];for(const s of all){if(!seen.has(s.stockCode)){seen.add(s.stockCode);sData.push(s)}}
   sData.sort((a,b)=>(b.score||0)-(a.score||0));$('a-count').textContent=`${sData.length}銘柄`;$('loading').classList.add('hidden');
   renderFilt();renderStockList()}catch(e){$('loading').innerHTML=`<div class="text-center py-12 tx2">エラー: ${e.message}</div>`}}
