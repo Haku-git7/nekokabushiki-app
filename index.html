@@ -35,7 +35,7 @@ a{color:inherit;text-decoration:none}
 .ch{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--bd);color:var(--tx2);cursor:pointer;white-space:nowrap;transition:all .2s}
 .ch.on{background:rgba(59,130,246,.12);color:var(--ac);border-color:rgba(59,130,246,.25)}
 .inp{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px 12px;color:var(--tx);font-size:14px;width:100%;outline:none;transition:border .2s}.inp:focus{border-color:var(--ac)}
-.btn{border:none;border-radius:8px;padding:10px;font-size:14px;font-weight:500;width:100%;cursor:pointer;transition:opacity .15s}.btn:active{opacity:.8}
+.btn{border:none;border-radius:8px;padding:10px;font-size:14px;font-weight:500;cursor:pointer;transition:opacity .15s}.btn:active{opacity:.8}
 .bp{background:var(--ac);color:#fff}.bs{background:var(--rd);color:#fff}.bo{background:transparent;border:1px solid var(--bd);color:var(--tx)}
 .pnl-p{color:var(--gn)}.pnl-m{color:var(--rd)}
 /* swipe */
@@ -110,7 +110,7 @@ a{color:inherit;text-decoration:none}
   </div>
 
   <!-- Watch -->
-  <div id="v-watch" class="view"><div id="watch-list"></div><div id="watch-empty" class="text-center py-16 tx2"><svg class="ti mx-auto mb-3" style="width:32px;height:32px;stroke:var(--tx3)"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><p class="text-sm">監視リストに銘柄を追加</p><p class="text-xs mt-1 tx3">ホームの銘柄を左スワイプ→★</p></div></div>
+  <div id="v-watch" class="view"><div id="watch-list"></div><div id="watch-empty" class="text-center py-16 tx2"><svg class="ti mx-auto mb-3" style="width:32px;height:32px;stroke:var(--tx3)"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><p class="text-sm">ウォッチリストに銘柄を追加</p><p class="text-xs mt-1 tx3">ホームの銘柄を左スワイプ→★</p></div></div>
 
   <!-- Log -->
   <div id="v-log" class="view">
@@ -142,9 +142,12 @@ a{color:inherit;text-decoration:none}
 </main>
 
 <!-- Detail Modal -->
-<div id="d-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-end" onclick="if(event.target===this)closeD()">
-  <div class="bg2 w-full max-w-lg mx-auto rounded-t-2xl max-h-[80vh] overflow-y-auto border-t bc" style="padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px))">
-    <div class="w-10 h-1 rounded-full mx-auto mb-3" style="background:var(--tx3)"></div>
+<div id="d-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" style="background:var(--bg);padding-top:calc(env(safe-area-inset-top,12px) + 8px);padding-bottom:calc(80px + env(safe-area-inset-bottom,20px))">
+  <div class="max-w-lg mx-auto px-4">
+    <div class="flex items-center justify-between py-2 mb-2">
+      <button onclick="closeD()" class="tx2 text-sm">← 戻る</button>
+      <button onclick="closeD()" class="tx2 text-xl leading-none">&times;</button>
+    </div>
     <div id="d-body"></div>
   </div>
 </div>
@@ -156,8 +159,8 @@ a{color:inherit;text-decoration:none}
     <p id="b-stk" class="text-xs tx2 mb-3"></p>
     <div class="mb-3"><label class="text-[10px] tx2 block mb-1">買値（円）</label><input type="number" id="b-price" class="inp" min="1" placeholder="3022"></div>
     <div class="mb-3"><label class="text-[10px] tx2 block mb-1">数量（株）</label><input type="number" id="b-qty" class="inp" min="1" value="100"></div>
-    <button class="btn bp mb-2" onclick="doBuy()">記録する</button>
-    <button class="btn bo" onclick="closeB()">キャンセル</button>
+    <button class="btn bp mb-2 w-full" onclick="doBuy()">記録する</button>
+    <button class="btn bo w-full" onclick="closeB()">キャンセル</button>
   </div>
 </div>
 
@@ -167,8 +170,8 @@ a{color:inherit;text-decoration:none}
     <h3 class="text-sm font-bold mb-3">売却記録</h3>
     <p id="s-stk" class="text-xs tx2 mb-3"></p>
     <div class="mb-3"><label class="text-[10px] tx2 block mb-1">売値（円）</label><input type="number" id="s-price" class="inp" min="1"></div>
-    <button class="btn bs mb-2" onclick="doSell()">売却記録</button>
-    <button class="btn bo" onclick="closeS()">キャンセル</button>
+    <button class="btn bs mb-2 w-full" onclick="doSell()">売却記録</button>
+    <button class="btn bo w-full" onclick="closeS()">キャンセル</button>
   </div>
 </div>
 
@@ -181,7 +184,7 @@ a{color:inherit;text-decoration:none}
     <div class="bg2 rounded-xl p-4 mb-3 border bc"><h3 class="text-sm font-medium mb-3">通知設定</h3><div class="mb-3"><div class="flex justify-between text-xs mb-1"><span class="tx2">買い通知スコア下限</span><span id="sb-v" style="color:var(--ac)">75点</span></div><input type="range" min="60" max="95" value="75" step="5" id="sb" class="w-full" oninput="document.getElementById('sb-v').textContent=this.value+'点'"></div><div><div class="flex justify-between text-xs mb-1"><span class="tx2">危険通知スコア上限</span><span id="sd-v" style="color:var(--rd)">30点</span></div><input type="range" min="10" max="50" value="30" step="5" id="sd" class="w-full" oninput="document.getElementById('sd-v').textContent=this.value+'点'"></div></div>
     <div class="bg2 rounded-xl p-4 mb-3 border bc"><h3 class="text-sm font-medium mb-3">スクリーニング条件</h3><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] tx2 block mb-1">ROE下限(%)</label><input type="number" id="sr" value="10" class="inp text-sm" min="0" max="30"></div><div><label class="text-[10px] tx2 block mb-1">PBR下限(倍)</label><input type="number" id="sp" value="0.8" step="0.1" class="inp text-sm" min="0" max="5"></div><div><label class="text-[10px] tx2 block mb-1">自己資本比率(%)</label><input type="number" id="sq" value="30" class="inp text-sm" min="0" max="80"></div><div><label class="text-[10px] tx2 block mb-1">PERモード</label><select id="spm" class="inp text-sm"><option selected>業種別自動</option><option>固定値</option></select></div></div></div>
     <div class="bg2 rounded-xl p-4 mb-3 border bc"><h3 class="text-sm font-medium mb-3">売買条件</h3><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] tx2 block mb-1">利確ライン(%)</label><input type="number" id="stp" value="15" class="inp text-sm" min="1"></div><div><label class="text-[10px] tx2 block mb-1">損切ライン(%)</label><input type="number" id="ssl" value="7" class="inp text-sm" min="1"></div></div></div>
-    <button onclick="saveSet()" class="btn bp mb-2">設定を保存</button>
+    <button onclick="saveSet()" class="btn bp mb-2 w-full">設定を保存</button>
     <div id="s-ok" class="hidden text-center text-xs mt-2" style="color:var(--gn)">✅ 保存しました</div>
   </div>
 </div>
@@ -227,7 +230,7 @@ async function loadData(){watchlist=await initSync("watch")||[];portfolio=await 
 function getW(){return watchlist}function getP(){return portfolio}function getT(){return trades}
 function setW(d){watchlist=d;saveSync("watch",d)}function setP(d){portfolio=d;saveSync("portfolio",d)}function setT(d){trades=d;saveSync("trades",d)}
 function isW(c){return watchlist.some(w=>w.code===c)}
-window.toggleWatch=(c,n)=>{let l=[...watchlist];const i=l.findIndex(w=>w.code===c);if(i>=0){l.splice(i,1);toast("監視リストから削除")}else{l.push({code:c,name:n,addedAt:Date.now()});toast("監視リストに追加")}setW(l);renderWatch();renderStockList()};
+window.toggleWatch=(c,n)=>{let l=[...watchlist];const i=l.findIndex(w=>w.code===c);if(i>=0){l.splice(i,1);toast("ウォッチリストから削除")}else{l.push({code:c,name:n,addedAt:Date.now()});toast("ウォッチリストに追加")}setW(l);renderWatch();renderStockList()};
 
 // === Buy/Sell ===
 let buyTgt=null,sellTgt=null;
@@ -363,7 +366,7 @@ function renderWatch(){
 
   // 保有中セクション
   if(holdings.length>0){
-    html+=`<div class="px-4 pt-3 pb-1"><span class="text-xs font-medium tx2">💰 保有中</span></div>`;
+    html+=`<div class="px-4 pt-3 pb-1"><span class="text-xs font-medium tx2">💰 保有銘柄</span></div>`;
     html+=holdings.map((h,idx)=>{
       const pidx=portfolio.indexOf(h);
       const s=sData.find(x=>x.stockCode===h.code);
@@ -394,7 +397,7 @@ function renderWatch(){
 
   // 監視中セクション
   if(wl.length>0){
-    html+=`<div class="px-4 pt-3 pb-1"><span class="text-xs font-medium tx2">⭐ 監視中</span></div>`;
+    html+=`<div class="px-4 pt-3 pb-1"><span class="text-xs font-medium tx2">⭐ 監視銘柄</span></div>`;
     html+=wl.map(w=>{const s=sData.find(x=>x.stockCode===w.code);if(s){const sg=SM[s.signal]||SM.watch;
       return`<div class="flex items-center gap-3 px-4 py-3 border-b bc" onclick='showD(${JSON.stringify(s).replace(/'/g,"&#39;")})'>
         <span class="text-xl font-bold r${s.rank} w-6 text-center">${s.rank}</span><div class="flex-1 min-w-0"><div class="text-[13px] font-medium">${str(s.name)}</div><div class="flex items-center gap-2 mt-0.5"><span class="text-[11px] tx2">${s.stockCode}.T</span><span class="text-[10px] px-1.5 py-0.5 rounded ${sg.c}">${sg.l}</span></div></div>
@@ -471,6 +474,7 @@ function renderGlossary(){const q=($('gls-search')?.value||'').toLowerCase();
     if(!items.length)return'';
     return`<div class="px-4 pt-4 pb-1"><span class="text-xs font-medium tx2">${cat.cat}</span></div>
     ${items.map(g=>`<div class="px-4 py-3 border-b bc"><div class="flex justify-between items-start gap-2 mb-1.5"><span class="text-sm font-medium">${g.t}</span><span class="text-[10px] px-2 py-0.5 rounded-full ch on">${g.s}</span></div><p class="text-xs tx2 leading-relaxed">${g.d}</p></div>`).join("")}`}).join("")}
+window.renderGlossary=renderGlossary;
 
 // === Settings ===
 let setD={morningTime:"07:00",eveningTime:"16:00",activeDays:[0,1,2,3,4],buyScoreMin:75,dangerScoreMax:30,roeMin:10,pbrMin:0.8,equityMin:30,perMode:"業種別自動",takeProfit:15,stopLoss:7};
@@ -486,7 +490,7 @@ window.aiRec=()=>{const b=$('ai-btn');b.disabled=true;b.textContent="分析中..
 window.applyAI=()=>{if(!aiS)return;$('sb').value=aiS.buyScoreMin;$('sb-v').textContent=aiS.buyScoreMin+'点';$('sd').value=aiS.dangerScoreMax;$('sd-v').textContent=aiS.dangerScoreMax+'点';$('sr').value=aiS.roeMin;$('stp').value=aiS.takeProfit;$('ssl').value=aiS.stopLoss;$('ai-res').classList.add('hidden');toast("AI推奨設定を適用しました")};
 
 // === Backup ===
-window.exportBackup=()=>{const data={watchlist,portfolio,trades,exportDate:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`nekokabushiki_${new Date().toISOString().slice(0,10)}.json`;a.click();toast("バックアップをダウンロードしました")};
+window.exportBackup=()=>{const data={watchlist,portfolio,trades,exportDate:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`nekokabushiki_${new Date().toISOString().slice(0,10)}.json`;a.click();toast("バックアップが完了しました")};
 window.importBackup=()=>$('imp-f').click();
 window.handleImport=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.watchlist)setW(d.watchlist);if(d.portfolio)setP(d.portfolio);if(d.trades)setT(d.trades);toast("データを復元しました");renderWatch();renderLog();renderStockList()}catch{toast("ファイル形式が不正です")}};r.readAsText(f)};
 
