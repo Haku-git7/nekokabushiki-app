@@ -329,7 +329,7 @@ async function loadAnalyses(){try{const q=query(collection(db,"analyses"),orderB
 window.showD=(s)=>{document.body.classList.add('modal-open');const sg=SM[s.signal]||SM.watch;const n=str(s.name);
   const h=portfolio.find(p=>p.code===s.stockCode&&p.status==="holding");
   let hH="";if(h){const c=s.close||0;const pnl=(c-h.buyPrice)*h.qty;const pc=((c/h.buyPrice-1)*100).toFixed(1);
-    hH=`<div class="bg1 rounded-lg p-3 mb-3 border bc"><div class="text-[10px] tx2 mb-1">保有中</div><div class="text-sm mb-1">買値 ${h.buyPrice.toLocaleString()}円 × ${h.qty}株</div><div class="text-sm ${pnl>=0?'pnl-p':'pnl-m'} font-medium">${pnl>=0?'+':''}${pnl.toLocaleString()}円 (${pnl>=0?'+':''}${pc}%)</div><button class="btn bs mt-2 text-sm py-2" onclick="openS('${s.stockCode}','${n.replace(/'/g,"")}',${portfolio.indexOf(h)})">売った</button></div>`}
+    hH=`<div class="bg1 rounded-lg p-3 border bc"><div class="text-[10px] tx2 mb-1">保有中</div><div class="text-sm mb-1">買値 ${h.buyPrice.toLocaleString()}円 × ${h.qty}株</div><div class="text-sm ${pnl>=0?'pnl-p':'pnl-m'} font-medium">${pnl>=0?'+':''}${pnl.toLocaleString()}円 (${pnl>=0?'+':''}${pc}%)</div><div class="flex justify-center mt-3"><button class="btn bs py-3 text-base" style="width:80%" onclick="openS('${s.stockCode}','${n.replace(/'/g,"")}',${portfolio.indexOf(h)})">売った</button></div></div>`}
   // 推奨価格の算出
   const bb_lo=s.bollinger?.lower2;const bb_hi=s.bollinger?.upper2;const ma25=s.moving_avg?.ma25;const hi52=s.high_52w;
   const recBuy=bb_lo?Math.round(bb_lo):null;
@@ -338,16 +338,17 @@ window.showD=(s)=>{document.body.classList.add('modal-open');const sg=SM[s.signa
   $('d-body').innerHTML=`
     <div class="flex items-center justify-between mb-3"><div><div class="text-base font-bold">${n}</div><div class="text-xs tx2">${s.stockCode}.T 東証</div></div><div class="text-right"><span class="text-2xl font-bold">${s.score}</span><span class="text-xs tx2">点</span></div></div>
     <div class="flex gap-2 mb-3"><span class="text-sm font-bold r${s.rank}">${s.rank}ランク</span><span class="text-xs px-2 py-0.5 rounded ${sg.c}">${sg.l}</span>${s.confidence?`<span class="text-xs tx2">信頼度 ${s.confidence}%</span>`:''}</div>
-    ${!h?`<button class="btn bp mb-3" onclick="openB('${s.stockCode}','${n.replace(/'/g,"")}',${recBuy||s.close||0})">買った</button>`:''}${hH}
     <div class="grid grid-cols-2 gap-2 mb-3">
       <div class="bg1 rounded-lg p-3 border bc text-center"><div class="text-[10px] tx2 mb-1">推奨買い価格</div><div class="text-sm font-medium pnl-p">${recBuy?recBuy.toLocaleString()+'円':'-'}</div><div class="text-[10px] tx3">BB下限(2σ)</div></div>
       <div class="bg1 rounded-lg p-3 border bc text-center"><div class="text-[10px] tx2 mb-1">推奨売り価格</div><div class="text-sm font-medium pnl-m">${recSell?recSell.toLocaleString()+'円':'-'}</div><div class="text-[10px] tx3">BB上限(2σ)</div></div>
     </div>
+    ${!h?`<div class="flex justify-center mb-3"><button class="btn bp py-3 text-base" style="width:80%" onclick="openB('${s.stockCode}','${n.replace(/'/g,"")}',${recBuy||s.close||0})">買った</button></div>`:''}
+    ${hH?`<div class="mb-3">${hH}</div>`:''}
     <div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">戦略</div><div class="text-sm">${s.strategy||'-'}</div></div>
     <div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">AI分析</div><div class="text-sm">${s.summary||'-'}</div></div>
     ${s.reasons?.length?`<div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">買い理由</div>${s.reasons.map(r=>`<div class="text-sm pnl-p mb-0.5">+ ${r}</div>`).join("")}</div>`:''}
     ${s.risks?.length?`<div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">リスク</div>${s.risks.map(r=>`<div class="text-sm pnl-m mb-0.5">- ${r}</div>`).join("")}</div>`:''}
-    <div class="grid grid-cols-3 gap-2 text-center"><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">終値</div><div class="text-sm font-medium">${s.close?.toLocaleString()||'-'}円</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">RSI</div><div class="text-sm font-medium">${safe(s.rsi)??'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">MACD</div><div class="text-sm font-medium">${s.macd_cross==='golden_cross'?'🟢 GC':s.macd_cross==='dead_cross'?'🔴 DC':'-'}</div></div></div>`;
+    <div class="grid grid-cols-3 gap-2 text-center"><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">終値</div><div class="text-sm font-medium">${s.close?.toLocaleString()||'-'}円</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">RSI</div><div class="text-sm font-medium">${safe(s.rsi)??'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">MACD</div><div class="text-sm font-medium">${s.macd_cross==='golden_cross'?'🟢 GC':s.macd_cross==='dead_cross'?'🔴 DC':'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">MA25</div><div class="text-sm font-medium">${s.moving_avg?.ma25?Math.round(s.moving_avg.ma25).toLocaleString()+'円':'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">52週高値</div><div class="text-sm font-medium">${s.high_52w?Math.round(s.high_52w).toLocaleString()+'円':'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">信頼度</div><div class="text-sm font-medium">${s.confidence||'-'}%</div></div></div>`;
   $('d-modal').classList.remove('hidden')};
 
 window.closeD=()=>{$('d-modal').classList.add('hidden');document.body.classList.remove('modal-open')};
