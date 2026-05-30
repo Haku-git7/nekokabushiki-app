@@ -125,6 +125,7 @@ a{color:inherit;text-decoration:none}
   <!-- Menu -->
   <div id="v-menu" class="view">
     <div class="mi" onclick="openSettings()"><svg><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><div class="flex-1"><div class="text-sm">設定</div><div class="text-xs tx2">分析・通知・スクリーニング</div></div><span class="tx3">›</span></div>
+    <div class="mi" onclick="toSub('backtest')"><svg><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg><div class="flex-1"><div class="text-sm">バックテスト</div><div class="text-xs tx2">AI分析の精度・実績</div></div><span class="tx3">›</span></div>
     <div class="mi" onclick="toSub('notify')"><svg><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><div class="flex-1"><div class="text-sm">通知履歴</div><div class="text-xs tx2">買い・危険シグナル</div></div><span class="tx3">›</span></div>
     <div class="mi" onclick="toSub('glossary')"><svg><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg><div class="flex-1"><div class="text-sm">用語集</div><div class="text-xs tx2">投資用語・指標の解説</div></div><span class="tx3">›</span></div>
     <div class="mi" onclick="toggleTheme()"><svg id="t-ico"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><div class="flex-1"><div class="text-sm" id="t-lbl">ライトモード</div><div class="text-xs tx2">表示テーマを切り替え</div></div><div id="t-tog" class="w-10 h-5 rounded-full relative transition-colors" style="background:var(--tx3)"><div class="w-4 h-4 rounded-full bg-white absolute top-0.5 left-0.5 transition-all" id="t-dot"></div></div></div>
@@ -136,6 +137,9 @@ a{color:inherit;text-decoration:none}
 
   <!-- Sub: Notify -->
   <div id="v-notify" class="view"><div class="px-4 py-3 flex items-center gap-2 border-b bc"><button onclick="toTab('menu')" class="tx2 text-sm">← メニュー</button><span class="text-sm font-medium">通知履歴</span></div><div id="noti-list"></div><div id="noti-empty" class="text-center py-16 tx2"><p class="text-sm">通知はありません</p></div></div>
+
+  <!-- Sub: Backtest -->
+  <div id="v-backtest" class="view"><div class="px-4 py-3 flex items-center gap-2 border-b bc"><button onclick="toTab('menu')" class="tx2 text-sm">← メニュー</button><span class="text-sm font-medium">バックテスト</span></div><div id="bt-content" class="px-4 py-3"></div></div>
 
   <!-- Sub: Glossary -->
   <div id="v-glossary" class="view"><div class="px-4 py-3 flex items-center gap-2 border-b bc"><button onclick="toTab('menu')" class="tx2 text-sm">← メニュー</button><span class="text-sm font-medium">用語集</span></div><div class="px-4 py-2"><input type="text" id="gls-search" class="inp text-sm" placeholder="用語を検索" oninput="renderGlossary()"></div><div id="gls-list"></div></div>
@@ -265,11 +269,71 @@ window.doSell=()=>{const p=parseFloat($('s-price').value);if(!p||p<=0||!sellTgt)
 
 // === Tabs ===
 const tabs=[{id:"home",l:"ホーム",s:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>'},{id:"watch",l:"ウォッチ",s:'<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>'},{id:"log",l:"ログ",s:'<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>'},{id:"menu",l:"メニュー",s:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'}];
-const allViews=["home","watch","log","menu","notify","glossary"];
+const allViews=["home","watch","log","menu","notify","glossary","backtest"];
 let curTab="home";
 function renderNav(){$('bnav').innerHTML=tabs.map(t=>`<button onclick="toTab('${t.id}')" class="flex flex-col items-center gap-0.5 py-1 ${t.id===curTab?'':'tx2'}" style="${t.id===curTab?'color:var(--ac)':''}"><svg class="ti" viewBox="0 0 24 24" style="${t.id===curTab?'stroke:var(--ac)':''}">${t.s}</svg><span class="text-[10px]">${t.l}</span></button>`).join("")}
 window.toTab=(id)=>{curTab=id;allViews.forEach(v=>{const e=$('v-'+v);if(e){e.classList.remove('active');e.style.display='none'}});const el=$('v-'+id);if(el){el.style.display='block';requestAnimationFrame(()=>el.classList.add('active'))}renderNav();window.scrollTo({top:0,behavior:'instant'});if(id==='watch')renderWatch();if(id==='log')renderLog()};
-window.toSub=(id)=>{allViews.forEach(v=>{const e=$('v-'+v);if(e){e.classList.remove('active');e.style.display='none'}});const el=$('v-'+id);if(el){el.style.display='block';requestAnimationFrame(()=>el.classList.add('active'))}window.scrollTo({top:0,behavior:'instant'})};
+window.toSub=(id)=>{allViews.forEach(v=>{const e=$('v-'+v);if(e){e.classList.remove('active');e.style.display='none'}});const el=$('v-'+id);if(el){el.style.display='block';requestAnimationFrame(()=>el.classList.add('active'))}window.scrollTo({top:0,behavior:'instant'});if(id==='backtest')loadBacktest()};
+
+async function loadBacktest(){
+  const el=$('bt-content');
+  el.innerHTML='<div class="text-center py-12 tx2">読み込み中...</div>';
+  try{
+    const snap=await getDoc(doc(db,"settings","ai_learning"));
+    if(!snap.exists()){el.innerHTML='<div class="text-center py-16 tx2"><div class="text-3xl mb-3">📊</div><p class="text-sm">まだバックテスト結果がありません</p><p class="text-xs mt-1 tx3">毎週日曜20時に自動実行されます</p></div>';return}
+    const d=snap.data();const acc=d.accuracy||{};const bt=d.backtest||{};
+    const upd=d.updatedAt?.toDate?.()?d.updatedAt.toDate().toLocaleString("ja-JP",{timeZone:"Asia/Tokyo",month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}):"不明";
+    const sig=acc.signal_accuracy||{};const strat=acc.strategy_accuracy||{};const score=acc.score_accuracy||{};
+    let html=`<div class="text-xs tx3 mb-3">最終実行：${upd}</div>`;
+
+    // バックテスト結果サマリー
+    if(bt.total_trades){
+      const ret=bt.total_return_pct||0;
+      html+=`<div class="bg2 rounded-xl p-4 mb-3 border bc"><div class="text-xs tx2 mb-2">バックテスト（過去の買いシグナルで売買した場合）</div>
+        <div class="flex items-baseline gap-2 mb-3"><span class="text-2xl font-bold ${ret>=0?'pnl-p':'pnl-m'}">${ret>=0?'+':''}${ret}%</span><span class="text-sm tx2">${bt.total_pnl>=0?'+':''}${(bt.total_pnl||0).toLocaleString()}円</span></div>
+        <div class="grid grid-cols-3 gap-2 text-center">
+          <div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">勝率</div><div class="text-sm font-bold">${bt.win_rate||0}%</div></div>
+          <div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">取引数</div><div class="text-sm font-bold">${bt.total_trades||0}件</div></div>
+          <div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">平均保有</div><div class="text-sm font-bold">${bt.avg_hold_days||0}日</div></div>
+        </div>`;
+      if(bt.exit_reasons){const er=bt.exit_reasons;html+=`<div class="flex gap-2 mt-3 text-[11px] tx2"><span>利確 ${er['利確']||0}</span><span>損切 ${er['損切']||0}</span><span>期限切れ ${er['期限切れ']||0}</span></div>`}
+      html+=`</div>`;
+    }
+
+    // シグナル別的中率
+    if(Object.keys(sig).length){
+      html+=`<div class="bg2 rounded-xl p-4 mb-3 border bc"><div class="text-xs tx2 mb-3">シグナル別的中率（5日後）</div>`;
+      const sigJp={buy:"買い",danger:"危険",watch:"様子見"};const sigCol={buy:"pnl-p",danger:"pnl-m",watch:""};
+      for(const[k,v]of Object.entries(sig)){
+        html+=`<div class="flex items-center justify-between py-1.5"><span class="text-sm ${sigCol[k]||''}">${sigJp[k]||k}</span><div class="text-right"><span class="text-sm font-bold">${v.accuracy}%</span><span class="text-[11px] tx2 ml-2">${v.total}件 (平均${v.avg_change_5d>=0?'+':''}${v.avg_change_5d}%)</span></div></div>`;
+      }
+      html+=`</div>`;
+    }
+
+    // スコア帯別
+    if(Object.keys(score).length){
+      html+=`<div class="bg2 rounded-xl p-4 mb-3 border bc"><div class="text-xs tx2 mb-3">スコア帯別的中率</div>`;
+      for(const[k,v]of Object.entries(score)){
+        const pct=v.accuracy;const barColor=pct>=60?'var(--gn)':pct>=40?'var(--yw)':'var(--rd)';
+        html+=`<div class="py-1.5"><div class="flex justify-between text-sm mb-1"><span>${k}</span><span class="font-bold">${pct}% <span class="text-[11px] tx2">(${v.total}件)</span></span></div><div class="h-1.5 rounded-full bg1"><div class="h-1.5 rounded-full" style="width:${pct}%;background:${barColor}"></div></div></div>`;
+      }
+      html+=`</div>`;
+    }
+
+    // 戦略別
+    if(Object.keys(strat).length){
+      html+=`<div class="bg2 rounded-xl p-4 mb-3 border bc"><div class="text-xs tx2 mb-3">戦略別的中率</div>`;
+      for(const[k,v]of Object.entries(strat)){
+        html+=`<div class="flex items-center justify-between py-1.5"><span class="text-sm flex-1 min-w-0 truncate">${k}</span><div class="text-right ml-2"><span class="text-sm font-bold">${v.accuracy}%</span><span class="text-[11px] tx2 ml-2">${v.total}件</span></div></div>`;
+      }
+      html+=`</div>`;
+    }
+
+    html+=`<div class="text-[11px] tx3 leading-relaxed mt-2">※ 過去の分析結果と実際の株価変動を比較した実績です。バックテストは「スコア70点以上の買いシグナルで購入し、利確+15%/損切-7%で売却」した場合のシミュレーションです。</div>`;
+    el.innerHTML=html;
+  }catch(e){el.innerHTML=`<div class="text-center py-12 tx2">エラー: ${e.message}</div>`}
+}
+window.loadBacktest=loadBacktest;
 
 // === Pull refresh ===
 let py=0,pl=false;const pi=$('pull-ind');
