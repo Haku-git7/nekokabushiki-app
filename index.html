@@ -136,13 +136,13 @@ a{color:inherit;text-decoration:none}
   </div>
 
   <!-- Sub: Notify -->
-  <div id="v-notify" class="view"><div class="px-4 py-3 flex items-center gap-2 border-b bc"><button onclick="toTab('menu')" class="tx2 text-sm">← メニュー</button><span class="text-sm font-medium">通知履歴</span></div><div id="noti-list"></div><div id="noti-empty" class="text-center py-16 tx2"><p class="text-sm">通知はありません</p></div></div>
+  <div id="v-notify" class="view"><div class="px-4 py-3 flex items-center gap-2 border-b bc"><button onclick="toTab('menu')" class="tx2 text-sm">← 戻る</button><span class="text-sm font-medium">通知履歴</span></div><div id="noti-list"></div><div id="noti-empty" class="text-center py-16 tx2"><p class="text-sm">通知はありません</p></div></div>
 
   <!-- Sub: Backtest -->
-  <div id="v-backtest" class="view"><div class="px-4 py-3 flex items-center gap-2 border-b bc"><button onclick="toTab('menu')" class="tx2 text-sm">← メニュー</button><span class="text-sm font-medium">バックテスト</span></div><div id="bt-content" class="px-4 py-3"></div></div>
+  <div id="v-backtest" class="view"><div class="px-4 py-3 flex items-center gap-2 border-b bc"><button onclick="toTab('menu')" class="tx2 text-sm">← 戻る</button><span class="text-sm font-medium">バックテスト</span></div><div id="bt-content" class="px-4 py-3"></div></div>
 
   <!-- Sub: Glossary -->
-  <div id="v-glossary" class="view"><div class="px-4 py-3 flex items-center gap-2 border-b bc"><button onclick="toTab('menu')" class="tx2 text-sm">← メニュー</button><span class="text-sm font-medium">用語集</span></div><div class="px-4 py-2"><input type="text" id="gls-search" class="inp text-sm" placeholder="用語を検索" oninput="renderGlossary()"></div><div id="gls-list"></div></div>
+  <div id="v-glossary" class="view"><div class="px-4 py-3 flex items-center gap-2 border-b bc"><button onclick="toTab('menu')" class="tx2 text-sm">← 戻る</button><span class="text-sm font-medium">用語集</span></div><div class="px-4 py-2"><input type="text" id="gls-search" class="inp text-sm" placeholder="用語を検索" oninput="renderGlossary()"></div><div id="gls-list"></div></div>
 </main>
 
 <!-- Detail Modal -->
@@ -181,10 +181,25 @@ a{color:inherit;text-decoration:none}
 
 <!-- Settings Page -->
 <div id="set-pg" class="hidden fp" style="padding-top:calc(env(safe-area-inset-top,12px) + 8px);padding-bottom:calc(80px + env(safe-area-inset-bottom,20px))">
-  <div class="max-w-lg mx-auto px-4">
-    <div class="flex items-center gap-2 py-2 mb-3"><button onclick="closeSet()" class="tx2 text-sm">← 戻る</button><span class="text-base font-bold">設定</span></div>
+  <div class="glass border-b bc px-4 pb-2 sticky top-0 z-10" style="padding-top:calc(env(safe-area-inset-top,12px) + 8px);margin-top:calc(-1 * (env(safe-area-inset-top,12px) + 8px))">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2"><img src="/icon.png" alt="" width="26" height="26" style="border-radius:6px"><span class="text-lg font-bold tracking-tight">ねこ株</span></div>
+      <button onclick="closeSet()" class="tx2 text-sm">← 戻る</button>
+    </div>
+  </div>
+  <div class="max-w-lg mx-auto px-4 pt-4">
     <div class="bg2 rounded-xl p-4 mb-3 border bc"><p class="text-xs tx2 mb-2">AIが最適設定を提案</p><button id="ai-btn" onclick="aiRec()" class="btn bp text-sm py-2">✨ AIおすすめ設定</button><div id="ai-res" class="hidden mt-3 rounded-lg p-3" style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15)"><div id="ai-body" class="text-xs" style="color:var(--ac)"></div><div class="flex gap-2 mt-2"><button onclick="applyAI()" class="btn bp text-xs py-1.5 flex-1">適用</button><button onclick="document.getElementById('ai-res').classList.add('hidden')" class="btn bo text-xs py-1.5">閉じる</button></div></div></div>
-    <div class="bg2 rounded-xl p-4 mb-3 border bc"><h3 class="text-sm font-medium mb-3">分析スケジュール</h3><div class="grid grid-cols-2 gap-3 mb-3"><div><label class="text-[10px] tx2 block mb-1">朝の分析</label><select id="sm" class="inp text-sm"><option>06:00</option><option selected>07:00</option><option>08:00</option><option>09:00</option></select></div><div><label class="text-[10px] tx2 block mb-1">夕方の分析</label><select id="se" class="inp text-sm"><option>15:00</option><option selected>16:00</option><option>17:00</option><option>18:00</option></select></div></div><label class="text-[10px] tx2 block mb-2">実行曜日</label><div class="flex gap-2" id="s-days"></div></div>
+    <div class="bg2 rounded-xl p-4 mb-3 border bc">
+      <h3 class="text-sm font-medium mb-3">分析スケジュール</h3>
+      <div class="mb-3"><label class="text-[10px] tx2 block mb-1">分析時刻</label>
+        <select id="sat" class="inp text-sm">
+          <option>06:00</option><option>06:30</option><option>07:00</option><option>07:30</option><option selected>08:00</option><option>08:30</option><option>09:00</option><option>16:00</option><option>16:30</option><option>17:00</option><option>17:30</option><option>18:00</option><option>18:30</option><option>19:00</option><option>19:30</option><option>20:00</option><option>20:30</option><option>21:00</option><option>21:30</option><option>22:00</option>
+        </select>
+        <p class="text-[10px] tx3 mt-1">※ 時刻を変更してもGitHub Actionsの実行時間は自動変更されません</p>
+      </div>
+      <label class="text-[10px] tx2 block mb-2">実行曜日</label>
+      <div class="flex gap-2" id="s-days"></div>
+    </div>
     <div class="bg2 rounded-xl p-4 mb-3 border bc"><h3 class="text-sm font-medium mb-3">通知設定</h3><div class="mb-3"><div class="flex justify-between text-xs mb-1"><span class="tx2">買い通知スコア下限</span><span id="sb-v" style="color:var(--ac)">75点</span></div><input type="range" min="60" max="95" value="75" step="5" id="sb" class="w-full" oninput="document.getElementById('sb-v').textContent=this.value+'点'"></div><div><div class="flex justify-between text-xs mb-1"><span class="tx2">危険通知スコア上限</span><span id="sd-v" style="color:var(--rd)">30点</span></div><input type="range" min="10" max="50" value="30" step="5" id="sd" class="w-full" oninput="document.getElementById('sd-v').textContent=this.value+'点'"></div></div>
     <div class="bg2 rounded-xl p-4 mb-3 border bc"><h3 class="text-sm font-medium mb-3">スクリーニング条件</h3><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] tx2 block mb-1">ROE下限(%)</label><input type="number" id="sr" value="10" class="inp text-sm" min="0" max="30"></div><div><label class="text-[10px] tx2 block mb-1">PBR下限(倍)</label><input type="number" id="sp" value="0.8" step="0.1" class="inp text-sm" min="0" max="5"></div><div><label class="text-[10px] tx2 block mb-1">自己資本比率(%)</label><input type="number" id="sq" value="30" class="inp text-sm" min="0" max="80"></div><div><label class="text-[10px] tx2 block mb-1">PERモード</label><select id="spm" class="inp text-sm"><option selected>業種別自動</option><option>固定値</option></select></div></div></div>
     <div class="bg2 rounded-xl p-4 mb-3 border bc"><h3 class="text-sm font-medium mb-3">売買条件</h3><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] tx2 block mb-1">利確ライン(%)</label><input type="number" id="stp" value="15" class="inp text-sm" min="1"></div><div><label class="text-[10px] tx2 block mb-1">損切ライン(%)</label><input type="number" id="ssl" value="7" class="inp text-sm" min="1"></div></div></div>
@@ -260,12 +275,12 @@ window.openS=(c,n,idx)=>{sellTgt={c,n,idx};
   $('s-price').value=cur||'';
   $('s-modal').classList.remove('hidden');document.body.classList.add('modal-open')};
 window.closeS=()=>{$('s-modal').classList.add('hidden');document.body.classList.remove('modal-open')};
-window.doSell=()=>{const p=parseFloat($('s-price').value);if(!p||p<=0||!sellTgt){toast("正しい値を入力してください");return}const pt=[...portfolio];const it=pt[sellTgt.idx];if(!it)return;const pnl=(p-it.buyPrice)*it.qty;it.status="sold";it.sellPrice=p;it.sellDate=Date.now();it.pnl=pnl;
+window.doSell=()=>{const p=parseFloat($('s-price').value);if(!p||p<=0||!sellTgt){toast("正しい値を入力してください");return}const pt=[...portfolio];const it=pt[sellTgt.idx];if(!it){toast("対象が見つかりません");return}const pnl=(p-it.buyPrice)*it.qty;it.status="sold";it.sellPrice=p;it.sellDate=Date.now();it.pnl=pnl;
   const t=[...trades];t.push({code:sellTgt.c,name:sellTgt.n,type:"sell",price:p,qty:it.qty,date:Date.now(),pnl});
   atomicTradeSave(pt,t);
-  $('s-modal').classList.add('hidden');document.body.classList.remove('modal-open');
+  $('s-modal').classList.add('hidden');$('d-modal').classList.add('hidden');document.body.classList.remove('modal-open');
   toast(pnl>=0?`+${pnl.toLocaleString()}円の利益！`:`${pnl.toLocaleString()}円の損失`);
-  setTimeout(()=>renderLog(),100)};
+  setTimeout(()=>{renderWatch();renderStockList();renderLog()},100)};
 
 // === Tabs ===
 const tabs=[{id:"home",l:"ホーム",s:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>'},{id:"watch",l:"ウォッチ",s:'<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>'},{id:"log",l:"ログ",s:'<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>'},{id:"menu",l:"メニュー",s:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'}];
@@ -379,13 +394,20 @@ function renderStockList(){
 
 function initSw(){document.querySelectorAll(".sc").forEach(el=>{let sx=0,cx=0,sw=false;el.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;cx=0},{passive:true});el.addEventListener("touchmove",e=>{const d=e.touches[0].clientX-sx;if(d<0){cx=Math.max(d,-64);el.style.transform=`translateX(${cx}px)`;el.style.transition="none"}},{passive:true});el.addEventListener("touchend",()=>{el.style.transition="transform .2s ease";if(cx<-30){el.style.transform="translateX(-64px)";sw=true}else{el.style.transform="translateX(0)";sw=false}});el.addEventListener("click",e=>{if(sw){e.preventDefault();e.stopPropagation();el.style.transform="translateX(0)";sw=false}},true)})}
 
-async function loadAnalyses(){try{const q=query(collection(db,"analyses"),orderBy("analyzedAt","desc"),limit(30));const snap=await getDocs(q);const all=snap.docs.map(d=>({id:d.id,...d.data()}));
+async function loadAnalyses(){try{const q=query(collection(db,"analyses"),orderBy("analyzedAt","desc"),limit(100));const snap=await getDocs(q);const all=snap.docs.map(d=>({id:d.id,...d.data()}));
   if(!all.length){$('loading').innerHTML='<div class="text-center py-12 tx2">分析データがありません</div>';return}
-  const ld=all[0].analyzedAt?.toDate?.()||new Date();const jst=ld.toLocaleString("ja-JP",{timeZone:"Asia/Tokyo",month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});const jstDate=ld.toLocaleDateString("ja-JP",{timeZone:"Asia/Tokyo"});$('a-date').textContent=jst+' 更新';
-  // 経過時間表示
+  const ld=all[0].analyzedAt?.toDate?.()||new Date();const jst=ld.toLocaleString("ja-JP",{timeZone:"Asia/Tokyo",month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});$('a-date').textContent=jst+' 更新';
   const jstShort=ld.toLocaleDateString("ja-JP",{timeZone:"Asia/Tokyo",month:"numeric",day:"numeric"});
   $('hdr-date').textContent=`最終分析：${jstShort}`;
-  const seen=new Set();sData=[];for(const s of all){if(!seen.has(s.stockCode)){seen.add(s.stockCode);sData.push(s)}}
+  // 最新分析日のデータのみ表示（古いデータの混入を防ぐ）
+  const latestDay=ld.toLocaleDateString("ja-JP",{timeZone:"Asia/Tokyo"});
+  const seen=new Set();sData=[];
+  for(const s of all){
+    const sd=s.analyzedAt?.toDate?.();if(!sd)continue;
+    const sDay=sd.toLocaleDateString("ja-JP",{timeZone:"Asia/Tokyo"});
+    if(sDay!==latestDay)continue;  // 最新日のみ
+    if(!seen.has(s.stockCode)){seen.add(s.stockCode);sData.push(s)}
+  }
   sData.sort((a,b)=>(b.score||0)-(a.score||0));$('a-count').textContent=`${sData.length}銘柄`;$('loading').classList.add('hidden');
   renderFilt();renderStockList()}catch(e){$('loading').innerHTML=`<div class="text-center py-12 tx2">エラー: ${e.message}</div>`}}
 
@@ -412,7 +434,10 @@ window.showD=(s)=>{document.body.classList.add('modal-open');const sg=SM[s.signa
     <div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">AI分析</div><div class="text-sm">${s.summary||'-'}</div></div>
     ${s.reasons?.length?`<div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">買い理由</div>${s.reasons.map(r=>`<div class="text-sm pnl-p mb-0.5">+ ${r}</div>`).join("")}</div>`:''}
     ${s.risks?.length?`<div class="bg1 rounded-lg p-3 mb-2"><div class="text-[10px] tx2 mb-1">リスク</div>${s.risks.map(r=>`<div class="text-sm pnl-m mb-0.5">- ${r}</div>`).join("")}</div>`:''}
-    <div class="grid grid-cols-3 gap-2 text-center"><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">終値</div><div class="text-sm font-medium">${s.close?.toLocaleString()||'-'}円</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">RSI</div><div class="text-sm font-medium">${safe(s.rsi)??'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">MACD</div><div class="text-sm font-medium">${s.macd_cross==='golden_cross'?'🟢 GC':s.macd_cross==='dead_cross'?'🔴 DC':'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">MA25</div><div class="text-sm font-medium">${s.moving_avg?.ma25?Math.round(s.moving_avg.ma25).toLocaleString()+'円':'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">52週高値</div><div class="text-sm font-medium">${s.high_52w?Math.round(s.high_52w).toLocaleString()+'円':'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">信頼度</div><div class="text-sm font-medium">${s.confidence||'-'}%</div></div></div>`;
+    <div class="grid grid-cols-3 gap-2 text-center"><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">終値</div><div class="text-sm font-medium">${s.close?.toLocaleString()||'-'}円</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">RSI</div><div class="text-sm font-medium">${safe(s.rsi)??'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">MACD</div><div class="text-sm font-medium">${s.macd_cross==='golden_cross'?'🟢 GC':s.macd_cross==='dead_cross'?'🔴 DC':'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">MA25</div><div class="text-sm font-medium">${s.moving_avg?.ma25?Math.round(s.moving_avg.ma25).toLocaleString()+'円':'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">52週高値</div><div class="text-sm font-medium">${s.high_52w?Math.round(s.high_52w).toLocaleString()+'円':'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">信頼度</div><div class="text-sm font-medium">${s.confidence||'-'}%</div></div></div>
+    <div class="text-[10px] tx2 mt-3 mb-1 px-1">ファンダメンタル</div>
+    <div class="grid grid-cols-3 gap-2 text-center"><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">PER</div><div class="text-sm font-medium">${safe(s.per)??'-'}倍</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">PBR</div><div class="text-sm font-medium">${safe(s.pbr)??'-'}倍</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">ROE</div><div class="text-sm font-medium">${safe(s.roe)??'-'}%</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">配当利回り</div><div class="text-sm font-medium">${safe(s.dividend_yield)??'-'}%</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">利益成長</div><div class="text-sm font-medium ${s.earnings_growth>0?'pnl-p':s.earnings_growth<0?'pnl-m':''}">${safe(s.earnings_growth)!=null?(s.earnings_growth>0?'+':'')+s.earnings_growth+'%':'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">目標株価余地</div><div class="text-sm font-medium ${s.analyst_upside>0?'pnl-p':s.analyst_upside<0?'pnl-m':''}">${safe(s.analyst_upside)!=null?(s.analyst_upside>0?'+':'')+s.analyst_upside+'%':'-'}</div></div></div>
+    ${s.analyst_rec?`<div class="text-[10px] tx3 mt-2 px-1">アナリスト評価: ${s.analyst_rec}/5.0（1=強い買い、5=売り）</div>`:''}`;
   $('d-modal').classList.remove('hidden')};
 
 window.closeD=()=>{$('d-modal').classList.add('hidden');document.body.classList.remove('modal-open')};
@@ -474,10 +499,11 @@ function renderWatch(){
 // === Log ===
 let logEd=false;
 window.toggleLogEdit=()=>{logEd=!logEd;$('log-ed').textContent=logEd?"完了":"編集";renderLog()};
-window.delTrade=(idx)=>{if(!confirm("この取引記録を削除しますか？"))return;const t=[...trades];const rm=t[idx];t.splice(idx,1);setT(t);
-  if(rm?.type==="buy"){const p=[...portfolio];const pi=p.findIndex(x=>x.code===rm.code&&x.buyPrice===rm.price&&x.qty===rm.qty);if(pi>=0){p.splice(pi,1);setP(p)}}
-  if(rm?.type==="sell"){const p=[...portfolio];const pi=p.findIndex(x=>x.code===rm.code&&x.status==="sold"&&x.sellPrice===rm.price);if(pi>=0){p[pi].status="holding";delete p[pi].sellPrice;delete p[pi].sellDate;delete p[pi].pnl;setP(p)}}
-  toast("削除しました");setTimeout(()=>renderLog(),50)};
+window.delTrade=(idx)=>{if(!confirm("この取引記録を削除しますか？"))return;const t=[...trades];const rm=t[idx];t.splice(idx,1);let p=[...portfolio];
+  if(rm?.type==="buy"){const pi=p.findIndex(x=>x.code===rm.code&&x.buyPrice===rm.price&&x.qty===rm.qty);if(pi>=0)p.splice(pi,1)}
+  if(rm?.type==="sell"){const pi=p.findIndex(x=>x.code===rm.code&&x.status==="sold"&&x.sellPrice===rm.price);if(pi>=0){p[pi].status="holding";delete p[pi].sellPrice;delete p[pi].sellDate;delete p[pi].pnl}}
+  atomicTradeSave(p,t);
+  toast("削除しました");setTimeout(()=>{renderWatch();renderStockList();renderLog()},50)};
 
 function renderLog(){
   const sold=portfolio.filter(p=>p.status==="sold");const tp=sold.reduce((s,p)=>s+(p.pnl||0),0);const wc=sold.filter(p=>(p.pnl||0)>0).length;const wr=sold.length?Math.round(wc/sold.length*100):0;
@@ -540,13 +566,13 @@ function renderGlossary(){const q=($('gls-search')?.value||'').toLowerCase();
 window.renderGlossary=renderGlossary;
 
 // === Settings ===
-let setD={morningTime:"07:00",eveningTime:"16:00",activeDays:[0,1,2,3,4],buyScoreMin:75,dangerScoreMax:30,roeMin:10,pbrMin:0.8,equityMin:30,perMode:"業種別自動",takeProfit:15,stopLoss:7};
+let setD={analysisTime:"08:00",activeDays:[0,1,2,3,4],buyScoreMin:75,dangerScoreMax:30,roeMin:10,pbrMin:0.8,equityMin:30,perMode:"業種別自動",takeProfit:15,stopLoss:7};
 function renderDays(){const ds=["月","火","水","木","金","土","日"];$('s-days').innerHTML=ds.map((d,i)=>`<button onclick="togDay(${i})" class="w-9 h-9 rounded-full text-xs ch ${setD.activeDays.includes(i)?'on':''}">${d}</button>`).join("")}
 window.togDay=i=>{const x=setD.activeDays.indexOf(i);if(x>=0)setD.activeDays.splice(x,1);else setD.activeDays.push(i);renderDays()};
 window.openSettings=window.openSet=async()=>{try{const snap=await getDoc(doc(db,"settings","user_settings"));if(snap.exists())setD={...setD,...snap.data()}}catch(e){}
-  $('sm').value=setD.morningTime;$('se').value=setD.eveningTime;$('sb').value=setD.buyScoreMin;$('sb-v').textContent=setD.buyScoreMin+'点';$('sd').value=setD.dangerScoreMax;$('sd-v').textContent=setD.dangerScoreMax+'点';$('sr').value=setD.roeMin;$('sp').value=setD.pbrMin;$('sq').value=setD.equityMin;$('spm').value=setD.perMode;$('stp').value=setD.takeProfit;$('ssl').value=setD.stopLoss;renderDays();$('set-pg').classList.remove('hidden')};
+  $('sat').value=setD.analysisTime||"08:00";$('sb').value=setD.buyScoreMin||75;$('sb-v').textContent=(setD.buyScoreMin||75)+'点';$('sd').value=setD.dangerScoreMax||30;$('sd-v').textContent=(setD.dangerScoreMax||30)+'点';$('sr').value=setD.roeMin||10;$('sp').value=setD.pbrMin||0.8;$('sq').value=setD.equityMin||30;$('spm').value=setD.perMode||"業種別自動";$('stp').value=setD.takeProfit||15;$('ssl').value=setD.stopLoss||7;renderDays();$('set-pg').classList.remove('hidden')};
 window.closeSet=()=>$('set-pg').classList.add('hidden');
-window.saveSet=async()=>{const s={morningTime:$('sm').value,eveningTime:$('se').value,activeDays:setD.activeDays,buyScoreMin:parseInt($('sb').value),dangerScoreMax:parseInt($('sd').value),roeMin:parseFloat($('sr').value),pbrMin:parseFloat($('sp').value),equityMin:parseFloat($('sq').value),perMode:$('spm').value,takeProfit:parseFloat($('stp').value),stopLoss:parseFloat($('ssl').value),updatedAt:new Date()};
+window.saveSet=async()=>{const s={analysisTime:$('sat').value,activeDays:setD.activeDays,buyScoreMin:parseInt($('sb').value),dangerScoreMax:parseInt($('sd').value),roeMin:parseFloat($('sr').value),pbrMin:parseFloat($('sp').value),equityMin:parseFloat($('sq').value),perMode:$('spm').value,takeProfit:parseFloat($('stp').value),stopLoss:parseFloat($('ssl').value),updatedAt:new Date()};
   try{await setDoc(doc(db,"settings","user_settings"),s);setD={...setD,...s};$('s-ok').classList.remove('hidden');setTimeout(()=>$('s-ok').classList.add('hidden'),2000);toast("設定を保存しました")}catch(e){toast("保存エラー")}};
 let aiS=null;
 window.aiRec=()=>{const b=$('ai-btn');b.disabled=true;b.textContent="分析中...";setTimeout(()=>{aiS={buyScoreMin:80,dangerScoreMax:25,roeMin:12,pbrMin:0.8,equityMin:30,takeProfit:12,stopLoss:5};$('ai-body').innerHTML=`買い通知: <b>80点以上</b><br>危険通知: <b>25点以下</b><br>ROE: <b>12%</b><br>利確: <b>12%</b> / 損切: <b>5%</b>`;$('ai-res').classList.remove('hidden');b.disabled=false;b.textContent="✨ AIおすすめ設定"},1200)};
