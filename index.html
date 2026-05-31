@@ -34,7 +34,9 @@ a{color:inherit;text-decoration:none}
 .mi:active{background:var(--bg3)}.mi svg{width:20px;height:20px;stroke:var(--tx2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .ch{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--bd);color:var(--tx2);cursor:pointer;white-space:nowrap;transition:all .2s}
 .ch.on{background:rgba(59,130,246,.12);color:var(--ac);border-color:rgba(59,130,246,.25)}
-.inp{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px 12px;color:var(--tx);font-size:14px;width:100%;outline:none;transition:border .2s}.inp:focus{border-color:var(--ac)}
+.inp{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px 12px;color:var(--tx);font-size:16px;width:100%;outline:none;transition:border .2s}.inp:focus{border-color:var(--ac)}
+/* iOSで入力時にズームしないよう全入力欄を16px以上に固定（text-smより高い詳細度で上書き）*/
+input.inp,select.inp,textarea.inp,input,select,textarea{font-size:16px}
 .btn{border:none;border-radius:8px;padding:10px;font-size:14px;font-weight:500;cursor:pointer;transition:opacity .15s}.btn:active{opacity:.8}
 .bp{background:var(--ac);color:#fff}.bs{background:var(--rd);color:#fff}.bo{background:transparent;border:1px solid var(--bd);color:var(--tx)}
 .pnl-p{color:var(--gn)}.pnl-m{color:var(--rd)}
@@ -176,7 +178,7 @@ a{color:inherit;text-decoration:none}
       </div>
 
       <div class="bg2 rounded-xl p-4 mb-3 border bc">
-        <div class="flex items-center gap-2 mb-2"><span class="text-base">🧠</span><span class="text-sm font-bold">AI学習・バックテスト</span></div>
+        <div class="flex items-center gap-2 mb-2"><span class="text-base">🤖</span><span class="text-sm font-bold">AI学習・バックテスト</span></div>
         <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:rgba(34,197,94,.12);color:var(--gn)">毎週日曜 20:00</span></div>
         <p class="text-xs tx2 leading-relaxed">過去のAI予測が当たったかを検証します。買い・危険シグナルの的中率、戦略別・スコア帯別の成績を集計し、AIにフィードバックします。これによりAIは自分の精度を学習し、判断が改善されていきます。バックテストの結果はメニューの「バックテスト」で確認できます。</p>
       </div>
@@ -200,6 +202,50 @@ a{color:inherit;text-decoration:none}
       <div class="rounded-xl p-4 mb-3" style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2)">
         <div class="flex items-center gap-2 mb-2"><span class="text-base">💡</span><span class="text-sm font-bold" style="color:var(--yw)">ワンポイント</span></div>
         <p class="text-xs tx2 leading-relaxed">分析は毎朝4時に自動実行され、LINE通知の時刻・曜日は設定画面で変更できます。AIの分析はあくまで参考情報です。最終的な投資判断はご自身で行ってください。</p>
+      </div>
+
+      <div class="text-sm font-bold mt-6 mb-2 px-1">分析に使う指標の意味</div>
+      <p class="text-xs tx2 leading-relaxed mb-3 px-1">AIは大きく3種類のデータを総合して判断します。それぞれの意味を知っておくと、分析結果が読みやすくなります。</p>
+
+      <div class="bg2 rounded-xl p-4 mb-3 border bc">
+        <div class="text-sm font-bold mb-2" style="color:var(--ac)">📈 モメンタムとは</div>
+        <p class="text-xs tx2 leading-relaxed mb-2">株価が「どれだけの勢いで動いているか」を表します。一定期間でどれだけ上がった（下がった）かの変化率です。</p>
+        <p class="text-xs tx2 leading-relaxed">勢いの強い銘柄は上昇が続きやすい傾向があります。ねこ株では1ヶ月・3ヶ月の変化率を見ます。ただし出来高（取引量）を伴わない上昇は「だまし」のこともあるため、出来高トレンドと合わせて判断します。</p>
+        <div class="mt-2 pt-2 border-t bc text-[10px] tx3 leading-relaxed">例：3ヶ月+83% = 3ヶ月で株価が1.83倍。非常に強い上昇。ただし過熱（買われすぎ）の可能性も。</div>
+      </div>
+
+      <div class="bg2 rounded-xl p-4 mb-3 border bc">
+        <div class="text-sm font-bold mb-2" style="color:var(--ac)">📊 ファンダメンタルとは</div>
+        <p class="text-xs tx2 leading-relaxed mb-2">企業の「業績・財務の健全さ」を表します。会社が本当に儲かっているか、割安か割高かを見る指標です。</p>
+        <div class="text-[11px] tx2 leading-relaxed space-y-1">
+          <div><span class="font-medium">PER（株価収益率）</span>：株価が利益の何倍か。低いほど割安。業種で適正値が違う</div>
+          <div><span class="font-medium">PBR（株価純資産倍率）</span>：株価が資産の何倍か。1倍未満は資産より安い</div>
+          <div><span class="font-medium">ROE（自己資本利益率）</span>：自己資本でどれだけ稼ぐか。高いほど効率的（15%超で優良）</div>
+          <div><span class="font-medium">自己資本比率</span>：財務の安定性。高いほど倒産しにくい</div>
+          <div><span class="font-medium">利益/売上成長率</span>：前年比でどれだけ伸びたか。成長株の判断材料</div>
+          <div><span class="font-medium">配当利回り</span>：株価に対する年間配当の割合。高いと下値支持になりやすい</div>
+        </div>
+      </div>
+
+      <div class="bg2 rounded-xl p-4 mb-3 border bc">
+        <div class="text-sm font-bold mb-2" style="color:var(--ac)">📉 テクニカルとは</div>
+        <p class="text-xs tx2 leading-relaxed mb-2">株価チャートの「形・パターン」から売買タイミングを読む指標です。いつ買うか・売るかの判断に使います。</p>
+        <div class="text-[11px] tx2 leading-relaxed space-y-1">
+          <div><span class="font-medium">RSI</span>：買われすぎ/売られすぎ。70超で過熱、30未満で割安</div>
+          <div><span class="font-medium">MACD</span>：トレンドの転換。ゴールデンクロス（GC）は買い、デッドクロス（DC）は売り</div>
+          <div><span class="font-medium">移動平均線（MA）</span>：一定期間の平均株価。短期が長期を上抜けると上昇トレンド</div>
+          <div><span class="font-medium">ボリンジャーバンド（BB）</span>：株価の振れ幅。下限は買い候補、上限は売り候補</div>
+        </div>
+      </div>
+
+      <div class="bg2 rounded-xl p-4 mb-3 border bc">
+        <div class="text-sm font-bold mb-2" style="color:var(--ac)">🎯 アナリスト評価とは</div>
+        <p class="text-xs tx2 leading-relaxed">証券会社のプロ（アナリスト）による評価の平均です。1（強い買い）〜5（売り）の5段階で、数字が小さいほど強気。「目標株価上昇余地」は、プロの目標株価まで現在値からどれだけ上がる余地があるかを示します（マイナスは割高の示唆）。</p>
+      </div>
+
+      <div class="rounded-xl p-4 mb-3" style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15)">
+        <div class="text-sm font-bold mb-2" style="color:var(--ac)">総合判断の考え方</div>
+        <p class="text-xs tx2 leading-relaxed">ねこ株のAIは「テクニカル（タイミング）」「モメンタム（勢い）」「ファンダ（企業の質）」「アナリスト（プロの見方）」を組み合わせて0〜100点で採点します。1つの指標だけで判断せず、複数を総合するのがポイントです。同じ高スコアでも、割安な優良株か・勢い任せの過熱株かで意味が変わります。</p>
       </div>
 
       <div class="text-center tx3 text-xs py-4">ねこ株 v2.0</div>
@@ -491,14 +537,14 @@ window.showD=(s)=>{document.body.classList.add('modal-open');const sg=SM[s.signa
     hH=`<div class="bg1 rounded-lg p-3 border bc"><div class="text-[10px] tx2 mb-1">保有中</div><div class="text-sm mb-1">買値 ${h.buyPrice.toLocaleString()}円 × ${h.qty}株</div><div class="text-sm ${pnl>=0?'pnl-p':'pnl-m'} font-medium">${pnl>=0?'+':''}${pnl.toLocaleString()}円 (${pnl>=0?'+':''}${pc}%)</div><div class="flex justify-center mt-3"><button class="btn bs py-3 text-base" style="width:80%" onclick="openS('${s.stockCode}','${n.replace(/'/g,"")}',${portfolio.indexOf(h)})">売った</button></div></div>`}
   // 推奨価格の算出
   const bb_lo=s.bollinger?.lower2;const bb_hi=s.bollinger?.upper2;const ma25=s.moving_avg?.ma25;const hi52=s.high_52w;
-  const recBuy=bb_lo?Math.round(bb_lo):null;
+  const recBuy=ma25?Math.round(ma25):null;
   const recSell=bb_hi?Math.round(bb_hi):null;
 
   $('d-body').innerHTML=`
     <div class="flex items-center justify-between mb-3"><div><div class="text-base font-bold">${n}</div><div class="text-xs tx2">${s.stockCode}.T 東証</div></div><div class="text-right"><span class="text-2xl font-bold">${s.score}</span><span class="text-xs tx2">点</span></div></div>
     <div class="flex gap-2 mb-3"><span class="text-sm font-bold r${s.rank}">${s.rank}ランク</span><span class="text-xs px-2 py-0.5 rounded ${sg.c}">${sg.l}</span>${s.confidence?`<span class="text-xs tx2">信頼度 ${s.confidence}%</span>`:''}</div>
     <div class="grid grid-cols-2 gap-2 mb-3">
-      <div class="bg1 rounded-lg p-3 border bc text-center"><div class="text-[10px] tx2 mb-1">推奨買い価格</div><div class="text-sm font-medium pnl-p">${recBuy?recBuy.toLocaleString()+'円':'-'}</div><div class="text-[10px] tx3">BB下限(2σ)</div></div>
+      <div class="bg1 rounded-lg p-3 border bc text-center"><div class="text-[10px] tx2 mb-1">推奨買い価格</div><div class="text-sm font-medium pnl-p">${recBuy?recBuy.toLocaleString()+'円':'-'}</div><div class="text-[10px] tx3">MA25（押し目の目安）</div></div>
       <div class="bg1 rounded-lg p-3 border bc text-center"><div class="text-[10px] tx2 mb-1">推奨売り価格</div><div class="text-sm font-medium pnl-m">${recSell?recSell.toLocaleString()+'円':'-'}</div><div class="text-[10px] tx3">BB上限(2σ)</div></div>
     </div>
     ${!h?`<div class="flex justify-center mb-3"><button class="btn bp py-3 text-base" style="width:80%" onclick="openB('${s.stockCode}','${n.replace(/'/g,"")}',${recBuy||s.close||0})">買った</button></div>`:''}
