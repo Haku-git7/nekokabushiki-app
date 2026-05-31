@@ -128,7 +128,7 @@ a{color:inherit;text-decoration:none}
     <div class="mi" onclick="toSub('backtest')"><svg><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg><div class="flex-1"><div class="text-sm">バックテスト</div><div class="text-xs tx2">AI分析の精度・実績</div></div><span class="tx3">›</span></div>
     <div class="mi" onclick="toSub('notify')"><svg><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><div class="flex-1"><div class="text-sm">通知履歴</div><div class="text-xs tx2">買い・危険シグナル</div></div><span class="tx3">›</span></div>
     <div class="mi" onclick="toSub('glossary')"><svg><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg><div class="flex-1"><div class="text-sm">用語集</div><div class="text-xs tx2">投資用語・指標の解説</div></div><span class="tx3">›</span></div>
-    <div class="mi" onclick="toggleTheme()"><svg id="t-ico"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><div class="flex-1"><div class="text-sm" id="t-lbl">ライトモード</div><div class="text-xs tx2">表示テーマを切り替え</div></div><div id="t-tog" class="w-10 h-5 rounded-full relative transition-colors" style="background:var(--tx3)"><div class="w-4 h-4 rounded-full bg-white absolute top-0.5 left-0.5 transition-all" id="t-dot"></div></div></div>
+    <div class="mi" onclick="cycleTheme()"><svg id="t-ico"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><div class="flex-1"><div class="text-sm">テーマ</div><div class="text-xs tx2">表示モードを切り替え</div></div><span id="t-lbl" class="text-sm" style="color:var(--ac)">ダーク</span></div>
     <div class="mi" onclick="exportBackup()"><svg><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><div class="flex-1"><div class="text-sm">バックアップ</div><div class="text-xs tx2">データをエクスポート</div></div><span class="tx3">›</span></div>
     <div class="mi" onclick="importBackup()"><svg><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><div class="flex-1"><div class="text-sm">復元</div><div class="text-xs tx2">バックアップから復元</div></div><span class="tx3">›</span></div>
     <input type="file" id="imp-f" accept=".json" class="hidden" onchange="handleImport(event)">
@@ -180,15 +180,16 @@ a{color:inherit;text-decoration:none}
 </div>
 
 <!-- Settings Page -->
-<div id="set-pg" class="hidden fp" style="padding-top:calc(env(safe-area-inset-top,12px) + 8px);padding-bottom:calc(80px + env(safe-area-inset-bottom,20px))">
-  <div class="glass border-b bc px-4 pb-2 sticky top-0 z-10" style="padding-top:calc(env(safe-area-inset-top,12px) + 8px);margin-top:calc(-1 * (env(safe-area-inset-top,12px) + 8px))">
+<div id="set-pg" class="hidden fp" style="padding-bottom:calc(80px + env(safe-area-inset-bottom,20px))">
+  <div class="sticky top-0 z-10 glass border-b bc px-4 pb-2" style="padding-top:calc(env(safe-area-inset-top,12px) + 8px)">
     <div class="flex items-center justify-between">
-      <div class="flex items-center gap-2"><img src="/icon.png" alt="" width="26" height="26" style="border-radius:6px"><span class="text-lg font-bold tracking-tight">ねこ株</span></div>
       <button onclick="closeSet()" class="tx2 text-sm">← 戻る</button>
+      <div class="flex items-center gap-2"><img src="/icon.png" alt="" width="24" height="24" style="border-radius:6px"><span class="text-base font-bold tracking-tight">ねこ株</span></div>
+      <span class="text-sm" style="width:44px"></span>
     </div>
   </div>
   <div class="max-w-lg mx-auto px-4 pt-4">
-    <div class="bg2 rounded-xl p-4 mb-3 border bc"><p class="text-xs tx2 mb-2">AIが最適設定を提案</p><button id="ai-btn" onclick="aiRec()" class="btn bp text-sm py-2">✨ AIおすすめ設定</button><div id="ai-res" class="hidden mt-3 rounded-lg p-3" style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15)"><div id="ai-body" class="text-xs" style="color:var(--ac)"></div><div class="flex gap-2 mt-2"><button onclick="applyAI()" class="btn bp text-xs py-1.5 flex-1">適用</button><button onclick="document.getElementById('ai-res').classList.add('hidden')" class="btn bo text-xs py-1.5">閉じる</button></div></div></div>
+    <div class="bg2 rounded-xl p-4 mb-3 border bc"><p class="text-xs tx2 mb-2">AIが最適設定を提案</p><button id="ai-btn" onclick="aiRec()" class="btn bp text-sm py-2 w-full">✨ AIおすすめ設定</button><div id="ai-res" class="hidden mt-3 rounded-lg p-3" style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15)"><div id="ai-body" class="text-xs" style="color:var(--ac)"></div><div class="flex gap-2 mt-2"><button onclick="applyAI()" class="btn bp text-xs py-1.5 flex-1">適用</button><button onclick="document.getElementById('ai-res').classList.add('hidden')" class="btn bo text-xs py-1.5">閉じる</button></div></div></div>
     <div class="bg2 rounded-xl p-4 mb-3 border bc">
       <h3 class="text-sm font-medium mb-3">分析スケジュール</h3>
       <div class="mb-3"><label class="text-[10px] tx2 block mb-1">分析時刻</label>
@@ -238,9 +239,19 @@ function atomicTradeSave(p,t){portfolio=p;trades=t;LS.s("portfolio",p);LS.s("tra
 let searchTimer;window.debounceSearch=()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>renderStockList(),200)};
 
 // === Theme ===
-function initTheme(){const t=localStorage.getItem("nk_theme")||"dark";document.documentElement.setAttribute("data-theme",t);updTh(t)}
-function updTh(t){const d=$('t-dot');if(d)d.style.transform=t==="light"?"translateX(16px)":"none";const l=$('t-lbl');if(l)l.textContent=t==="light"?"ダークモード":"ライトモード";document.querySelector('meta[name="theme-color"]').content=t==="light"?"#f5f5f5":"#0f0f0f"}
-window.toggleTheme=()=>{const c=document.documentElement.getAttribute("data-theme")||"dark";const n=c==="dark"?"light":"dark";document.documentElement.setAttribute("data-theme",n);localStorage.setItem("nk_theme",n);updTh(n);toast(n==="light"?"ライトモードに切替":"ダークモードに切替")};
+// テーマ: dark / light / system の3モード
+function getSystemTheme(){return window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'}
+function applyTheme(mode){
+  const actual=mode==='system'?getSystemTheme():mode;
+  document.documentElement.setAttribute("data-theme",actual);
+  document.querySelector('meta[name="theme-color"]').content=actual==="light"?"#f5f5f5":"#0f0f0f";
+  const l=$('t-lbl');if(l)l.textContent=mode==='system'?'システム':mode==='light'?'ライト':'ダーク';
+}
+function initTheme(){const m=localStorage.getItem("nk_theme")||"dark";applyTheme(m);
+  // システム設定変更を監視（systemモード時のみ反映）
+  if(window.matchMedia){window.matchMedia('(prefers-color-scheme: light)').addEventListener('change',()=>{if((localStorage.getItem("nk_theme")||"dark")==='system')applyTheme('system')})}
+}
+window.cycleTheme=()=>{const c=localStorage.getItem("nk_theme")||"dark";const next=c==="dark"?"light":c==="light"?"system":"dark";localStorage.setItem("nk_theme",next);applyTheme(next);const jp=next==='system'?'システム連動':next==='light'?'ライトモード':'ダークモード';toast(jp+'に切替')};
 initTheme();
 
 // === Data ===
