@@ -128,6 +128,7 @@ a{color:inherit;text-decoration:none}
     <div class="mi" onclick="toSub('backtest')"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg><div class="flex-1"><div class="text-sm">バックテスト</div><div class="text-xs tx2">AI分析の精度・実績</div></div><span class="tx3">›</span></div>
     <div class="mi" onclick="toSub('notify')"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><div class="flex-1"><div class="text-sm">通知履歴</div><div class="text-xs tx2">買い・危険シグナル</div></div><span class="tx3">›</span></div>
     <div class="mi" onclick="toSub('glossary')"><svg viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg><div class="flex-1"><div class="text-sm">用語集</div><div class="text-xs tx2">投資用語・指標の解説</div></div><span class="tx3">›</span></div>
+    <div class="mi" onclick="toSub('help')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><div class="flex-1"><div class="text-sm">使い方・自動更新</div><div class="text-xs tx2">分析スケジュールと仕組み</div></div><span class="tx3">›</span></div>
     <div class="mi" onclick="cycleTheme()"><svg id="t-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><div class="flex-1"><div class="text-sm">テーマ</div><div class="text-xs tx2">表示モードを切り替え</div></div><span id="t-lbl" class="text-sm" style="color:var(--ac)">ダーク</span></div>
     <div class="mi" onclick="exportBackup()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><div class="flex-1"><div class="text-sm">バックアップ</div><div class="text-xs tx2">データをエクスポート</div></div><span class="tx3">›</span></div>
     <div class="mi" onclick="importBackup()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><div class="flex-1"><div class="text-sm">復元</div><div class="text-xs tx2">バックアップから復元</div></div><span class="tx3">›</span></div>
@@ -143,6 +144,61 @@ a{color:inherit;text-decoration:none}
 
   <!-- Sub: Glossary -->
   <div id="v-glossary" class="view"><div class="px-4 py-3 flex items-center gap-2 border-b bc"><button onclick="toTab('menu')" class="tx2 text-sm">← 戻る</button><span class="text-sm font-medium">用語集</span></div><div class="px-4 py-2"><input type="text" id="gls-search" class="inp text-sm" placeholder="用語を検索" oninput="renderGlossary()"></div><div id="gls-list"></div></div>
+
+  <!-- Sub: Help -->
+  <div id="v-help" class="view">
+    <div class="px-4 py-3 flex items-center gap-2 border-b bc"><button onclick="toTab('menu')" class="tx2 text-sm">← 戻る</button><span class="text-sm font-medium">使い方・自動更新</span></div>
+    <div class="px-4 py-3">
+      <p class="text-xs tx2 leading-relaxed mb-4">ねこ株はバックグラウンドで自動的に分析を行い、結果をアプリとLINEに届けます。各処理のスケジュールと内容です。</p>
+
+      <div class="bg2 rounded-xl p-4 mb-3 border bc">
+        <div class="flex items-center gap-2 mb-2"><span class="text-base">📊</span><span class="text-sm font-bold">日次分析</span></div>
+        <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:rgba(59,130,246,.12);color:var(--ac)">平日 朝8:00</span></div>
+        <p class="text-xs tx2 leading-relaxed">監視銘柄・保有銘柄・発掘された銘柄をAIが分析し、0〜100点でスコアリングします。テクニカル指標（MACD・RSI等）に加え、EPS・成長率・配当・アナリスト評価まで総合的に判断します。買い・危険シグナルがあればLINEで通知します。</p>
+      </div>
+
+      <div class="bg2 rounded-xl p-4 mb-3 border bc">
+        <div class="flex items-center gap-2 mb-2"><span class="text-base">🔔</span><span class="text-sm font-bold">売りシグナル通知</span></div>
+        <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:rgba(59,130,246,.12);color:var(--ac)">平日 朝8:00（日次分析と同時）</span></div>
+        <p class="text-xs tx2 leading-relaxed">保有中の銘柄をチェックし、売り時が来たら通知します。利確ライン（+15%）・損切ライン（-7%）到達、MACDデッドクロス、RSI過熱（80以上）が条件です。ラインは設定で変更できます。</p>
+      </div>
+
+      <div class="bg2 rounded-xl p-4 mb-3 border bc">
+        <div class="flex items-center gap-2 mb-2"><span class="text-base">🔍</span><span class="text-sm font-bold">銘柄自動発掘</span></div>
+        <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:rgba(34,197,94,.12);color:var(--gn)">毎週日曜 18:00</span></div>
+        <p class="text-xs tx2 leading-relaxed">主要な約120銘柄をスキャンし、テクニカルとファンダメンタルが優れた上位20銘柄を自動選出します。選ばれた銘柄は翌週の日次分析の対象に自動追加され、新しい投資チャンスを見つけます。</p>
+      </div>
+
+      <div class="bg2 rounded-xl p-4 mb-3 border bc">
+        <div class="flex items-center gap-2 mb-2"><span class="text-base">🧠</span><span class="text-sm font-bold">AI学習・バックテスト</span></div>
+        <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:rgba(34,197,94,.12);color:var(--gn)">毎週日曜 20:00</span></div>
+        <p class="text-xs tx2 leading-relaxed">過去のAI予測が当たったかを検証します。買い・危険シグナルの的中率、戦略別・スコア帯別の成績を集計し、AIにフィードバックします。これによりAIは自分の精度を学習し、判断が改善されていきます。バックテストの結果はメニューの「バックテスト」で確認できます。</p>
+      </div>
+
+      <div class="bg2 rounded-xl p-4 mb-3 border bc">
+        <div class="flex items-center gap-2 mb-2"><span class="text-base">🗑️</span><span class="text-sm font-bold">古いデータの自動削除</span></div>
+        <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:rgba(34,197,94,.12);color:var(--gn)">毎週日曜 20:00（バックテストと同時）</span></div>
+        <p class="text-xs tx2 leading-relaxed">60日以上前の分析結果・通知履歴を自動削除し、データベースを軽量に保ちます。取引記録や保有銘柄は削除されません。</p>
+      </div>
+
+      <div class="bg2 rounded-xl p-4 mb-3 border bc">
+        <div class="flex items-center gap-2 mb-2"><span class="text-base">⚠️</span><span class="text-sm font-bold">障害時の通知</span></div>
+        <p class="text-xs tx2 leading-relaxed">自動処理（日次分析・銘柄発掘・バックテスト）が何らかの理由で失敗した場合、LINEに通知が届きます。分析が止まっても気づけるようになっています。</p>
+      </div>
+
+      <div class="bg2 rounded-xl p-4 mb-3 border bc">
+        <div class="flex items-center gap-2 mb-2"><span class="text-base">💾</span><span class="text-sm font-bold">データの同期</span></div>
+        <p class="text-xs tx2 leading-relaxed">保有銘柄・監視銘柄・取引記録は端末に保存されると同時にクラウドにも同期されます。別の端末で開いても同じデータが表示されます。メニューの「バックアップ」で手動保存もできます。</p>
+      </div>
+
+      <div class="rounded-xl p-4 mb-3" style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2)">
+        <div class="flex items-center gap-2 mb-2"><span class="text-base">💡</span><span class="text-sm font-bold" style="color:var(--yw)">ワンポイント</span></div>
+        <p class="text-xs tx2 leading-relaxed">分析時刻は設定画面で変更できますが、実際の自動実行時間（GitHub Actions）は別途設定が必要です。AIの分析はあくまで参考情報です。最終的な投資判断はご自身で行ってください。</p>
+      </div>
+
+      <div class="text-center tx3 text-xs py-4">ねこ株 v2.0</div>
+    </div>
+  </div>
 </main>
 
 <!-- Detail Modal -->
@@ -295,7 +351,7 @@ window.doSell=()=>{const p=parseFloat($('s-price').value);if(!p||p<=0||!sellTgt)
 
 // === Tabs ===
 const tabs=[{id:"home",l:"ホーム",s:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>'},{id:"watch",l:"ウォッチ",s:'<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>'},{id:"log",l:"ログ",s:'<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>'},{id:"menu",l:"メニュー",s:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'}];
-const allViews=["home","watch","log","menu","notify","glossary","backtest"];
+const allViews=["home","watch","log","menu","notify","glossary","backtest","help"];
 let curTab="home";
 function renderNav(){$('bnav').innerHTML=tabs.map(t=>`<button onclick="toTab('${t.id}')" class="flex flex-col items-center gap-0.5 py-1 ${t.id===curTab?'':'tx2'}" style="${t.id===curTab?'color:var(--ac)':''}"><svg class="ti" viewBox="0 0 24 24" style="${t.id===curTab?'stroke:var(--ac)':''}">${t.s}</svg><span class="text-[10px]">${t.l}</span></button>`).join("")}
 window.toTab=(id)=>{curTab=id;allViews.forEach(v=>{const e=$('v-'+v);if(e){e.classList.remove('active');e.style.display='none'}});const el=$('v-'+id);if(el){el.style.display='block';requestAnimationFrame(()=>el.classList.add('active'))}renderNav();window.scrollTo({top:0,behavior:'instant'});if(id==='watch')renderWatch();if(id==='log')renderLog()};
