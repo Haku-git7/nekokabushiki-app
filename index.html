@@ -153,13 +153,19 @@ a{color:inherit;text-decoration:none}
 
       <div class="bg2 rounded-xl p-4 mb-3 border bc">
         <div class="flex items-center gap-2 mb-2"><span class="text-base">📊</span><span class="text-sm font-bold">日次分析</span></div>
-        <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:rgba(59,130,246,.12);color:var(--ac)">平日 朝8:00</span></div>
-        <p class="text-xs tx2 leading-relaxed">監視銘柄・保有銘柄・発掘された銘柄をAIが分析し、0〜100点でスコアリングします。テクニカル指標（MACD・RSI等）に加え、EPS・成長率・配当・アナリスト評価まで総合的に判断します。買い・危険シグナルがあればLINEで通知します。</p>
+        <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:rgba(59,130,246,.12);color:var(--ac)">平日 朝4:00</span></div>
+        <p class="text-xs tx2 leading-relaxed">監視銘柄・保有銘柄・発掘された銘柄をAIが分析し、0〜100点でスコアリングします。テクニカル指標（MACD・RSI等）に加え、価格モメンタム・出来高・EPS・成長率・配当・アナリスト評価・決算接近まで総合的に判断します。結果はアプリにすぐ反映され、買い・危険シグナルは指定時刻にLINE通知されます。</p>
+      </div>
+
+      <div class="bg2 rounded-xl p-4 mb-3 border bc">
+        <div class="flex items-center gap-2 mb-2"><span class="text-base">📱</span><span class="text-sm font-bold">LINE通知</span></div>
+        <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:rgba(59,130,246,.12);color:var(--ac)">設定時刻（5:00〜10:00で選択）</span></div>
+        <p class="text-xs tx2 leading-relaxed">朝4時の分析結果を、設定画面で指定した時刻・曜日にLINEで届けます。買い・危険シグナルと保有銘柄の売り時をまとめて1通で通知します。通知時刻と曜日は設定画面の「LINE通知スケジュール」で変更できます。</p>
       </div>
 
       <div class="bg2 rounded-xl p-4 mb-3 border bc">
         <div class="flex items-center gap-2 mb-2"><span class="text-base">🔔</span><span class="text-sm font-bold">売りシグナル通知</span></div>
-        <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:rgba(59,130,246,.12);color:var(--ac)">平日 朝8:00（日次分析と同時）</span></div>
+        <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:rgba(59,130,246,.12);color:var(--ac)">LINE通知に含まれる</span></div>
         <p class="text-xs tx2 leading-relaxed">保有中の銘柄をチェックし、売り時が来たら通知します。利確ライン（+15%）・損切ライン（-7%）到達、MACDデッドクロス、RSI過熱（80以上）が条件です。ラインは設定で変更できます。</p>
       </div>
 
@@ -193,7 +199,7 @@ a{color:inherit;text-decoration:none}
 
       <div class="rounded-xl p-4 mb-3" style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2)">
         <div class="flex items-center gap-2 mb-2"><span class="text-base">💡</span><span class="text-sm font-bold" style="color:var(--yw)">ワンポイント</span></div>
-        <p class="text-xs tx2 leading-relaxed">分析時刻は設定画面で変更できますが、実際の自動実行時間（GitHub Actions）は別途設定が必要です。AIの分析はあくまで参考情報です。最終的な投資判断はご自身で行ってください。</p>
+        <p class="text-xs tx2 leading-relaxed">分析は毎朝4時に自動実行され、LINE通知の時刻・曜日は設定画面で変更できます。AIの分析はあくまで参考情報です。最終的な投資判断はご自身で行ってください。</p>
       </div>
 
       <div class="text-center tx3 text-xs py-4">ねこ株 v2.0</div>
@@ -247,18 +253,18 @@ a{color:inherit;text-decoration:none}
   <div class="max-w-lg mx-auto px-4 pt-4">
     <div class="bg2 rounded-xl p-4 mb-3 border bc"><p class="text-xs tx2 mb-2">AIが最適設定を提案</p><button id="ai-btn" onclick="aiRec()" class="btn bp text-sm py-2 w-full">✨ AIおすすめ設定</button><div id="ai-res" class="hidden mt-3 rounded-lg p-3" style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15)"><div id="ai-body" class="text-xs" style="color:var(--ac)"></div><div class="flex gap-2 mt-2"><button onclick="applyAI()" class="btn bp text-xs py-1.5 flex-1">適用</button><button onclick="document.getElementById('ai-res').classList.add('hidden')" class="btn bo text-xs py-1.5">閉じる</button></div></div></div>
     <div class="bg2 rounded-xl p-4 mb-3 border bc">
-      <h3 class="text-sm font-medium mb-3">分析スケジュール</h3>
-      <div class="mb-3"><label class="text-[10px] tx2 block mb-1">分析時刻</label>
+      <h3 class="text-sm font-medium mb-3">LINE通知スケジュール</h3>
+      <div class="mb-3"><label class="text-[10px] tx2 block mb-1">通知時刻</label>
         <select id="sat" class="inp text-sm">
-          <option>06:00</option><option>06:30</option><option>07:00</option><option>07:30</option><option selected>08:00</option><option>08:30</option><option>09:00</option><option>16:00</option><option>16:30</option><option>17:00</option><option>17:30</option><option>18:00</option><option>18:30</option><option>19:00</option><option>19:30</option><option>20:00</option><option>20:30</option><option>21:00</option><option>21:30</option><option>22:00</option>
+          <option>05:00</option><option>05:30</option><option>06:00</option><option>06:30</option><option>07:00</option><option>07:30</option><option selected>08:00</option><option>08:30</option><option>09:00</option><option>09:30</option><option>10:00</option>
         </select>
-        <p class="text-[10px] tx3 mt-1">※ 時刻を変更してもGitHub Actionsの実行時間は自動変更されません</p>
+        <p class="text-[10px] tx3 mt-1">※ 分析は毎朝4時に自動実行。この時刻にLINEで結果を通知します</p>
       </div>
-      <label class="text-[10px] tx2 block mb-2">実行曜日</label>
+      <label class="text-[10px] tx2 block mb-2">通知する曜日</label>
       <div class="flex gap-2" id="s-days"></div>
     </div>
     <div class="bg2 rounded-xl p-4 mb-3 border bc"><h3 class="text-sm font-medium mb-3">通知設定</h3><div class="mb-3"><div class="flex justify-between text-xs mb-1"><span class="tx2">買い通知スコア下限</span><span id="sb-v" style="color:var(--ac)">75点</span></div><input type="range" min="60" max="95" value="75" step="5" id="sb" class="w-full" oninput="document.getElementById('sb-v').textContent=this.value+'点'"></div><div><div class="flex justify-between text-xs mb-1"><span class="tx2">危険通知スコア上限</span><span id="sd-v" style="color:var(--rd)">30点</span></div><input type="range" min="10" max="50" value="30" step="5" id="sd" class="w-full" oninput="document.getElementById('sd-v').textContent=this.value+'点'"></div></div>
-    <div class="bg2 rounded-xl p-4 mb-3 border bc"><h3 class="text-sm font-medium mb-3">スクリーニング条件</h3><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] tx2 block mb-1">ROE下限(%)</label><input type="number" id="sr" value="10" class="inp text-sm" min="0" max="30"></div><div><label class="text-[10px] tx2 block mb-1">PBR下限(倍)</label><input type="number" id="sp" value="0.8" step="0.1" class="inp text-sm" min="0" max="5"></div><div><label class="text-[10px] tx2 block mb-1">自己資本比率(%)</label><input type="number" id="sq" value="30" class="inp text-sm" min="0" max="80"></div><div><label class="text-[10px] tx2 block mb-1">PERモード</label><select id="spm" class="inp text-sm"><option selected>業種別自動</option><option>固定値</option></select></div></div></div>
+    <div class="bg2 rounded-xl p-4 mb-3 border bc"><h3 class="text-sm font-medium mb-3">スクリーニング条件</h3><p class="text-[10px] tx3 mb-3">分析対象に含める銘柄の最低基準。PERは業種別に自動判定されます。</p><div class="grid grid-cols-3 gap-3"><div><label class="text-[10px] tx2 block mb-1">ROE下限(%)</label><input type="number" id="sr" value="10" class="inp text-sm" min="0" max="30"></div><div><label class="text-[10px] tx2 block mb-1">PBR下限(倍)</label><input type="number" id="sp" value="0.8" step="0.1" class="inp text-sm" min="0" max="5"></div><div><label class="text-[10px] tx2 block mb-1">自己資本(%)</label><input type="number" id="sq" value="30" class="inp text-sm" min="0" max="80"></div></div></div>
     <div class="bg2 rounded-xl p-4 mb-3 border bc"><h3 class="text-sm font-medium mb-3">売買条件</h3><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] tx2 block mb-1">利確ライン(%)</label><input type="number" id="stp" value="15" class="inp text-sm" min="1"></div><div><label class="text-[10px] tx2 block mb-1">損切ライン(%)</label><input type="number" id="ssl" value="7" class="inp text-sm" min="1"></div></div></div>
     <button onclick="saveSet()" class="btn bp mb-2 w-full">設定を保存</button>
     <div id="s-ok" class="hidden text-center text-xs mt-2" style="color:var(--gn)">✅ 保存しました</div>
@@ -504,6 +510,9 @@ window.showD=(s)=>{document.body.classList.add('modal-open');const sg=SM[s.signa
     <div class="grid grid-cols-3 gap-2 text-center"><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">終値</div><div class="text-sm font-medium">${s.close?.toLocaleString()||'-'}円</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">RSI</div><div class="text-sm font-medium">${safe(s.rsi)??'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">MACD</div><div class="text-sm font-medium">${s.macd_cross==='golden_cross'?'🟢 GC':s.macd_cross==='dead_cross'?'🔴 DC':'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">MA25</div><div class="text-sm font-medium">${s.moving_avg?.ma25?Math.round(s.moving_avg.ma25).toLocaleString()+'円':'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">52週高値</div><div class="text-sm font-medium">${s.high_52w?Math.round(s.high_52w).toLocaleString()+'円':'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">信頼度</div><div class="text-sm font-medium">${s.confidence||'-'}%</div></div></div>
     <div class="text-[10px] tx2 mt-3 mb-1 px-1">ファンダメンタル</div>
     <div class="grid grid-cols-3 gap-2 text-center"><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">PER</div><div class="text-sm font-medium">${safe(s.per)??'-'}倍</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">PBR</div><div class="text-sm font-medium">${safe(s.pbr)??'-'}倍</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">ROE</div><div class="text-sm font-medium">${safe(s.roe)??'-'}%</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">配当利回り</div><div class="text-sm font-medium">${safe(s.dividend_yield)??'-'}%</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">利益成長</div><div class="text-sm font-medium ${s.earnings_growth>0?'pnl-p':s.earnings_growth<0?'pnl-m':''}">${safe(s.earnings_growth)!=null?(s.earnings_growth>0?'+':'')+s.earnings_growth+'%':'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">目標株価余地</div><div class="text-sm font-medium ${s.analyst_upside>0?'pnl-p':s.analyst_upside<0?'pnl-m':''}">${safe(s.analyst_upside)!=null?(s.analyst_upside>0?'+':'')+s.analyst_upside+'%':'-'}</div></div></div>
+    <div class="text-[10px] tx2 mt-3 mb-1 px-1">モメンタム・需給</div>
+    <div class="grid grid-cols-3 gap-2 text-center"><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">1ヶ月変化</div><div class="text-sm font-medium ${s.mom_1m>0?'pnl-p':s.mom_1m<0?'pnl-m':''}">${safe(s.mom_1m)!=null?(s.mom_1m>0?'+':'')+s.mom_1m+'%':'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">3ヶ月変化</div><div class="text-sm font-medium ${s.mom_3m>0?'pnl-p':s.mom_3m<0?'pnl-m':''}">${safe(s.mom_3m)!=null?(s.mom_3m>0?'+':'')+s.mom_3m+'%':'-'}</div></div><div class="bg1 rounded-lg p-2"><div class="text-[10px] tx2">出来高</div><div class="text-sm font-medium">${s.vol_trend||'-'}</div></div></div>
+    ${s.earnings_days!=null&&s.earnings_days>=0?`<div class="text-[10px] mt-2 px-1 ${s.earnings_days<=5?'pnl-m':'tx3'}">📅 次回決算まで約${s.earnings_days}日${s.earnings_days<=5?'（決算前は値動きに注意）':''}</div>`:''}
     ${s.analyst_rec?`<div class="text-[10px] tx3 mt-2 px-1">アナリスト評価: ${s.analyst_rec}/5.0（1=強い買い、5=売り）</div>`:''}`;
   $('d-modal').classList.remove('hidden')};
 
@@ -633,10 +642,10 @@ function renderGlossary(){const q=($('gls-search')?.value||'').toLowerCase();
 window.renderGlossary=renderGlossary;
 
 // === Settings ===
-let setD={analysisTime:"08:00",activeDays:[0,1,2,3,4],buyScoreMin:75,dangerScoreMax:30,roeMin:10,pbrMin:0.8,equityMin:30,perMode:"業種別自動",takeProfit:15,stopLoss:7};
-function renderDays(){const ds=["月","火","水","木","金","土","日"];$('s-days').innerHTML=ds.map((d,i)=>`<button onclick="togDay(${i})" class="w-9 h-9 rounded-full text-xs ch ${setD.activeDays.includes(i)?'on':''}">${d}</button>`).join("")}
-window.togDay=i=>{const x=setD.activeDays.indexOf(i);if(x>=0)setD.activeDays.splice(x,1);else setD.activeDays.push(i);renderDays()};
-function fillSettings(){$('sat').value=setD.analysisTime||"08:00";$('sb').value=setD.buyScoreMin||75;$('sb-v').textContent=(setD.buyScoreMin||75)+'点';$('sd').value=setD.dangerScoreMax||30;$('sd-v').textContent=(setD.dangerScoreMax||30)+'点';$('sr').value=setD.roeMin||10;$('sp').value=setD.pbrMin||0.8;$('sq').value=setD.equityMin||30;$('spm').value=setD.perMode||"業種別自動";$('stp').value=setD.takeProfit||15;$('ssl').value=setD.stopLoss||7;renderDays()}
+let setD={notifyTime:"08:00",notifyDays:[0,1,2,3,4],buyScoreMin:75,dangerScoreMax:30,roeMin:10,pbrMin:0.8,equityMin:30,takeProfit:15,stopLoss:7};
+function renderDays(){const ds=["月","火","水","木","金"];$('s-days').innerHTML=ds.map((d,i)=>`<button onclick="togDay(${i})" class="flex-1 h-10 rounded-lg text-sm ch ${setD.notifyDays.includes(i)?'on':''}">${d}</button>`).join("")}
+window.togDay=i=>{const x=setD.notifyDays.indexOf(i);if(x>=0)setD.notifyDays.splice(x,1);else setD.notifyDays.push(i);renderDays()};
+function fillSettings(){$('sat').value=setD.notifyTime||"08:00";$('sb').value=setD.buyScoreMin||75;$('sb-v').textContent=(setD.buyScoreMin||75)+'点';$('sd').value=setD.dangerScoreMax||30;$('sd-v').textContent=(setD.dangerScoreMax||30)+'点';$('sr').value=setD.roeMin||10;$('sp').value=setD.pbrMin||0.8;$('sq').value=setD.equityMin||30;$('stp').value=setD.takeProfit||15;$('ssl').value=setD.stopLoss||7;renderDays()}
 window.openSettings=window.openSet=()=>{
   // 即座に画面表示（現在の設定値で）+ スクロール最上部リセット
   fillSettings();
@@ -646,7 +655,7 @@ window.openSettings=window.openSet=()=>{
   getDoc(doc(db,"settings","user_settings")).then(snap=>{if(snap.exists()){setD={...setD,...snap.data()};fillSettings()}}).catch(()=>{});
 };
 window.closeSet=()=>$('set-pg').classList.add('hidden');
-window.saveSet=async()=>{const s={analysisTime:$('sat').value,activeDays:setD.activeDays,buyScoreMin:parseInt($('sb').value),dangerScoreMax:parseInt($('sd').value),roeMin:parseFloat($('sr').value),pbrMin:parseFloat($('sp').value),equityMin:parseFloat($('sq').value),perMode:$('spm').value,takeProfit:parseFloat($('stp').value),stopLoss:parseFloat($('ssl').value),updatedAt:new Date()};
+window.saveSet=async()=>{const s={notifyTime:$('sat').value,notifyDays:setD.notifyDays,buyScoreMin:parseInt($('sb').value),dangerScoreMax:parseInt($('sd').value),roeMin:parseFloat($('sr').value),pbrMin:parseFloat($('sp').value),equityMin:parseFloat($('sq').value),takeProfit:parseFloat($('stp').value),stopLoss:parseFloat($('ssl').value),updatedAt:new Date()};
   try{await setDoc(doc(db,"settings","user_settings"),s);setD={...setD,...s};$('s-ok').classList.remove('hidden');setTimeout(()=>$('s-ok').classList.add('hidden'),2000);toast("設定を保存しました")}catch(e){toast("保存エラー")}};
 let aiS=null;
 window.aiRec=()=>{const b=$('ai-btn');b.disabled=true;b.textContent="分析中...";setTimeout(()=>{aiS={buyScoreMin:80,dangerScoreMax:25,roeMin:12,pbrMin:0.8,equityMin:30,takeProfit:12,stopLoss:5};$('ai-body').innerHTML=`買い通知: <b>80点以上</b><br>危険通知: <b>25点以下</b><br>ROE: <b>12%</b><br>利確: <b>12%</b> / 損切: <b>5%</b>`;$('ai-res').classList.remove('hidden');b.disabled=false;b.textContent="✨ AIおすすめ設定"},1200)};
